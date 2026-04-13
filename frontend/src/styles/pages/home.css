@@ -1,0 +1,228 @@
+.home-hero {
+  position: relative;
+  margin-top: var(--gm-navbar-height);
+  min-height: calc(100vh - var(--gm-navbar-height));
+  background-image: url("/hero-home.png");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.home-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.42) 0%,
+    rgba(0, 0, 0, 0.16) 55%,
+    rgba(0, 0, 0, 0.28) 100%
+  );
+}
+
+.home-hero__content {
+  position: relative;
+  z-index: 2;
+  padding-top: 64px;
+}
+
+.home-hero__title {
+  margin: 0;
+  max-width: 1220px;
+  font-size: 5.7rem;
+  line-height: 0.95;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--gm-white);
+  text-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.home-scroll-pill {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 2;
+  padding: 8px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  color: #f3f3f3;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.home-scroll-pill:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.home-scroll-pill:focus-visible {
+  outline: 2px solid var(--gm-btn-start);
+  outline-offset: 3px;
+}
+
+.home-overview {
+  position: relative;
+  padding: 72px 0;
+}
+
+.home-overview__eyebrow {
+  margin: 0 0 34px;
+  font-size: 1.35rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.home-overview__title {
+  margin: 0;
+  max-width: 1220px;
+  font-size: 4rem;
+  line-height: 1.08;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.home-principles {
+  margin-top: 56px;
+  width: fit-content;
+}
+
+.home-principle {
+  margin-bottom: 18px;
+}
+
+.home-principle__title {
+  color: var(--gm-accent);
+  font-size: 1.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.home-principle__description {
+  margin: 6px 0 0 84px;
+  color: var(--gm-text-main);
+  opacity: 0.92;
+  font-size: 1.15rem;
+  font-weight: 400;
+}
+
+.home-price-card {
+  margin: 52px auto 50px;
+  max-width: 930px;
+  padding: 26px 32px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.home-price-card__left {
+  min-width: 320px;
+}
+
+.home-price-card__label {
+  margin: 0 0 8px;
+  color: var(--gm-white);
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.home-price-card__price {
+  color: var(--gm-btn-start);
+  font-size: 4.4rem;
+  font-weight: 700;
+  line-height: 0.95;
+}
+
+.home-price-card__right {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.home-price-card__cta {
+  min-width: 180px;
+  text-decoration: none;
+}
+
+.home-price-card__included {
+  margin: 0;
+  color: var(--gm-btn-start);
+  font-size: 1.15rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.home-benefits {
+  position: relative;
+  margin-top: 24px;
+  padding-top: 26px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 34px 54px;
+}
+
+.home-benefits::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gm-divider-accent-gradient);
+}
+
+.home-benefit {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.home-benefit__icon {
+  flex: 0 0 54px;
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  color: var(--gm-btn-start);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-benefit__icon-image {
+  display: block;
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+}
+
+.home-benefit__content {
+  flex: 1;
+}
+
+.home-benefit__title {
+  margin: 0 0 6px;
+  font-size: 1.55rem;
+  line-height: 1;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.home-benefit__description {
+  margin: 0;
+  color: var(--gm-text-secondary);
+  font-size: 1.08rem;
+  line-height: 1.35;
+}

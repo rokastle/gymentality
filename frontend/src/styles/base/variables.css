@@ -1,0 +1,62 @@
+:root {
+  --gm-bg-start: #141414;
+  --gm-bg-end: #242424;
+  --gm-surface-start: #1e2124;
+  --gm-surface-end: #2c3033;
+  --gm-border: rgba(255, 255, 255, 0.35);
+  --gm-text-main: #ffffff;
+  --gm-text-secondary: #b3b3b3;
+  --gm-accent: #e6a900;
+
+  --gm-black: #000000;
+  --gm-white: #ffffff;
+
+  --gm-btn-start: #ffc300;
+  --gm-btn-end: #ffd600;
+
+  --gm-btn-hover-yellow-start: #ffb800;
+  --gm-btn-hover-yellow-end: #ffda00;
+
+  --gm-btn-hover-orange-start: #ff9800;
+  --gm-btn-hover-orange-end: #ff6f00;
+
+  --gm-btn-hover-danger-start: #ff5f6d;
+  --gm-btn-hover-danger-end: #f04b4b;
+
+  --gm-btn-locked-bg: rgba(255, 255, 255, 0.12);
+  --gm-btn-locked-border: rgba(255, 255, 255, 0.75);
+  --gm-btn-locked-text: rgba(255, 255, 255, 0.9);
+
+  --gm-danger: #ff7f7f;
+  --gm-locked-text: rgba(255, 255, 255, 0.9);
+  --gm-locked-bg: rgba(255, 255, 255, 0.12);
+  --gm-locked-border: rgba(255, 255, 255, 0.75);
+
+  --gm-navbar-height: 88px;
+  --gm-page-max-width: 1360px;
+  --gm-page-side-gap: 90px;
+
+  --gm-section-bg:
+    radial-gradient(circle at 24% 16%, rgba(255, 195, 0, 0.09), transparent 26%),
+    linear-gradient(90deg, #151515 0%, #0f0f10 52%, #131313 100%);
+
+  --gm-surface-bg:
+    linear-gradient(135deg, rgba(30, 33, 36, 0.95), rgba(44, 48, 51, 0.88));
+
+  --gm-footer-bg:
+    linear-gradient(90deg, #23272d 0%, #2b3138 40%, #1e2228 100%);
+
+  --gm-macro-protein: #ffc300;
+  --gm-macro-carbs: #47c97d;
+  --gm-macro-fats: #6f8dff;
+
+  --gm-divider-accent: rgba(255, 195, 0, 0.75);
+  --gm-divider-accent-strong: var(--gm-btn-start);
+
+  --gm-divider-accent-gradient: linear-gradient(90deg,
+      rgba(255, 195, 0, 0) 0%,
+      rgba(255, 195, 0, 0.22) 18%,
+      rgba(255, 195, 0, 0.8) 50%,
+      rgba(255, 195, 0, 0.22) 82%,
+      rgba(255, 195, 0, 0) 100%);
+}

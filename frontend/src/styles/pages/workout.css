@@ -1,0 +1,115 @@
+.workout-page {
+  margin-top: var(--gm-navbar-height);
+  min-height: calc(100vh - var(--gm-navbar-height));
+  padding: 36px 0 24px;
+}
+
+.workout-page__container {
+  min-height: calc(100vh - var(--gm-navbar-height) - 60px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.workout-page__title {
+  margin: 20px 0 50px;
+  color: var(--gm-white);
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.workout-page__grid {
+  width: 100%;
+  max-width: 980px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  justify-content: center;
+}
+
+.workout-card {
+  min-height: 500px;
+  padding: 24px 24px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.workout-card__title {
+  margin: 10px 0 20px;
+  color: var(--gm-btn-start);
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.1rem;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.workout-card__pricing {
+  text-align: center;
+}
+
+.workout-card__price {
+  margin: 0 0 8px;
+  color: var(--gm-white);
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.workout-card__description {
+  margin: 0 0 20px;
+  min-height: 58px;
+}
+
+.workout-card__description p {
+  margin: 0;
+  color: var(--gm-white);
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.22;
+  opacity: 0.95;
+}
+
+.workout-card__includes-label {
+  margin: 0;
+  color: var(--gm-white);
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.workout-card__divider {
+  margin: 22px 0 22px;
+}
+
+.workout-card__features {
+  margin: 0;
+  padding-left: 18px;
+  list-style: disc;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.workout-card__feature {
+  color: rgba(255, 255, 255, 0.96);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.workout-page__cta {
+  margin-top: 55px;
+  display: flex;
+  justify-content: center;
+}
+
+.workout-page__button {
+  align-self: center;
+  min-width: 180px;
+  text-decoration: none;
+}

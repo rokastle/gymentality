@@ -1,0 +1,194 @@
+.gm-navbar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 1000;
+  height: var(--gm-navbar-height);
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.gm-navbar__inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.gm-logo {
+  flex-shrink: 0;
+  color: var(--gm-accent);
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-decoration: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.gm-logo:hover {
+  opacity: 0.9;
+}
+
+.gm-logo:focus-visible {
+  outline: 2px solid var(--gm-accent);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.gm-navbar__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 38px;
+  flex: 1;
+}
+
+.gm-navbar__link {
+  position: relative;
+  color: #101010;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.gm-navbar__link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 0;
+  height: 2px;
+  background: var(--gm-accent);
+  transition: width 0.2s ease;
+}
+
+.gm-navbar__link:hover,
+.gm-navbar__link.is-active {
+  color: var(--gm-accent);
+}
+
+.gm-navbar__link:hover::after,
+.gm-navbar__link.is-active::after {
+  width: 100%;
+}
+
+.gm-navbar__link:focus-visible {
+  outline: 2px solid var(--gm-accent);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.gm-navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.gm-icon-btn {
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.gm-icon-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.gm-icon-btn:active {
+  transform: scale(0.97);
+}
+
+.gm-icon-btn:focus-visible {
+  outline: 2px solid var(--gm-accent);
+  outline-offset: 3px;
+}
+
+.gm-navbar__profile-icon {
+  display: block;
+}
+
+.gm-navbar__join-btn {
+  min-width: 148px;
+}
+
+.gm-lang-btn {
+  min-width: 74px;
+  height: 46px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 2px solid rgba(0, 0, 0, 0.55);
+  background: transparent;
+  color: #111111;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.gm-lang-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.7);
+}
+
+.gm-lang-btn:active {
+  transform: translateY(0);
+}
+
+.gm-lang-btn:focus-visible {
+  outline: 2px solid var(--gm-accent);
+  outline-offset: 3px;
+}
+
+.gm-lang-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #111111;
+  display: inline-block;
+}
+
+.gm-navbar__welcome {
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  line-height: 1.05;
+}
+
+.gm-navbar__welcome-label {
+  color: #111111;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gm-navbar__welcome-name {
+  color: #111111;
+  font-size: 1.55rem;
+  font-weight: 700;
+}

@@ -1,0 +1,225 @@
+.classes-page {
+  margin-top: var(--gm-navbar-height);
+  min-height: calc(100vh - var(--gm-navbar-height));
+  padding: 36px 0 40px;
+}
+
+.classes-page__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.classes-page__header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.classes-page__heading-block {
+  width: 100%;
+  text-align: center;
+}
+
+.classes-page__title {
+  margin: 20px 0 12px;
+  color: var(--gm-white);
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.classes-page__subtitle {
+  margin: 0 0 30px;
+  max-width: 760px;
+  color: var(--gm-white);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.classes-page__filters {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 22px;
+  margin-bottom: 34px;
+  flex-wrap: wrap;
+}
+
+.classes-page__filter {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.classes-page__filter-label {
+  color: var(--gm-white);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.classes-page__select {
+  min-width: 220px;
+  height: 42px;
+  padding: 0 42px 0 16px;
+  border: none;
+  border-radius: 14px;
+  background-color: rgba(255, 255, 255, 0.96);
+  color: #111111;
+  font-size: 0.92rem;
+  font-weight: 500;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%23111111' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 14px;
+  transition:
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.classes-page__select:focus {
+  box-shadow: 0 0 0 2px rgba(255, 195, 0, 0.45);
+}
+
+.classes-page__filter-button {
+  min-width: 110px;
+  align-self: flex-end;
+}
+
+.classes-page__results {
+  width: 100%;
+  max-width: 1120px;
+}
+
+.classes-page__results-top {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 18px;
+}
+
+.classes-page__results-count {
+  margin: 0;
+  color: var(--gm-btn-start);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.classes-page__grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px 22px;
+}
+
+.class-card__media {
+  overflow: hidden;
+  border-radius: 16px;
+  aspect-ratio: 1 / 0.82;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.class-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.28s ease;
+}
+
+.class-card:hover .class-card__image {
+  transform: scale(1.03);
+}
+
+.class-card__body {
+  padding-top: 12px;
+  text-align: center;
+}
+
+.class-card__title {
+  margin: 0;
+  color: var(--gm-white);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.class-card__category {
+  margin: 6px 0 0;
+  color: var(--gm-btn-start);
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.classes-page__empty {
+  min-height: 260px;
+  display: grid;
+  place-items: center;
+  width: 100%;
+}
+
+.classes-page__empty-text {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+@media (max-width: 1200px) {
+  .classes-page__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .classes-page__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .classes-page__title {
+    font-size: 2.35rem;
+  }
+
+  .classes-page__subtitle {
+    font-size: 0.95rem;
+  }
+
+  .classes-page__filters {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .classes-page__filter {
+    width: 100%;
+  }
+
+  .classes-page__select {
+    min-width: 100%;
+  }
+
+  .classes-page__filter-button {
+    width: 100%;
+  }
+
+  .classes-page__grid {
+    grid-template-columns: 1fr;
+  }
+}

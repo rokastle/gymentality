@@ -1,0 +1,637 @@
+.signup-timeline {
+  width: 100%;
+  max-width: 760px;
+  margin: 28px auto 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signup-timeline__item {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.signup-timeline__item:last-child {
+  flex: 0 0 auto;
+}
+
+.signup-timeline__dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #c9c9c9;
+  flex: 0 0 18px;
+}
+
+.signup-timeline__dot.is-active {
+  background: var(--gm-btn-start);
+}
+
+.signup-timeline__segment {
+  height: 2px;
+  flex: 1;
+  background: #9a9a9a;
+}
+
+.signup-timeline__segment.is-active {
+  background: var(--gm-btn-start);
+}
+
+/* MEMBERSHIP + WORKOUT SIGNUP */
+.signup-selection-page {
+  margin-top: var(--gm-navbar-height);
+  min-height: calc(100vh - var(--gm-navbar-height));
+  padding: 18px 0 42px;
+}
+
+.signup-selection-page__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.signup-selection-page__title {
+  margin: 0 0 42px;
+  color: var(--gm-white);
+  font-size: 3.1rem;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.signup-selection-page__grid {
+  width: 100%;
+  max-width: 980px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.signup-plan-card {
+  min-height: 480px;
+  padding: 24px 24px 20px;
+  border-radius: 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.signup-plan-card__title {
+  margin: 10px 0 25px;
+  color: var(--gm-btn-start);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.signup-plan-card__pricing {
+  text-align: center;
+}
+
+.signup-plan-card__price {
+  margin: 0 0 12px;
+  color: var(--gm-white);
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.signup-plan-card__subtitle p,
+.signup-plan-card__secondary p,
+.signup-plan-card__description p,
+.signup-plan-card__includes-label {
+  margin: 0;
+  color: var(--gm-white);
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.28;
+  opacity: 0.95;
+}
+
+.signup-plan-card__secondary {
+  margin-top: 16px;
+}
+
+.signup-plan-card__description {
+  margin: 0 0 20px;
+  min-height: 58px;
+}
+
+.signup-plan-card__includes-label {
+  margin-top: 6px;
+}
+
+.signup-plan-card__divider {
+  margin: 30px 0 30px;
+}
+
+.signup-plan-card__features {
+  margin: 0;
+  padding-left: 18px;
+  list-style: disc;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.signup-plan-card__feature {
+  color: rgba(255, 255, 255, 0.96);
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+.signup-plan-card__footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  padding-top: 26px;
+}
+
+.signup-plan-card__button {
+  text-decoration: none;
+}
+
+/* DETAILS PAGE */
+.signup-details-page {
+  margin-top: var(--gm-navbar-height);
+  min-height: calc(100vh - var(--gm-navbar-height));
+  padding: 18px 0 42px;
+}
+
+.signup-details-page__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.signup-details-page__title {
+  margin: 0 0 34px;
+  color: var(--gm-white);
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.signup-details-page__layout {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: 24px;
+  align-items: start;
+}
+
+.signup-details-page__form-card {
+  padding: 28px 28px 22px;
+  border-radius: 22px;
+}
+
+.signup-details-page__section + .signup-details-page__section {
+  margin-top: 16px;
+}
+
+.signup-details-page__section-title {
+  margin: 0 0 12px;
+  color: var(--gm-btn-start);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.signup-details-page__grid {
+  display: grid;
+  gap: 12px 18px;
+}
+
+.signup-details-page__grid--two {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.signup-details-page__grid--one {
+  grid-template-columns: 1fr;
+}
+
+.signup-details-page__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 108px;
+}
+
+.signup-details-page__field span {
+  color: var(--gm-white);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.signup-details-page__control {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  outline: none;
+  background: rgba(255, 255, 255, 0.95);
+  color: #111111;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.signup-details-page__control:focus {
+  border-color: rgba(255, 195, 0, 0.75);
+  box-shadow: 0 0 0 3px rgba(255, 195, 0, 0.14);
+}
+
+.signup-details-page__control.is-valid {
+  border-color: #44c27a;
+  background: rgba(236, 255, 244, 0.96);
+}
+
+.signup-details-page__control.is-invalid {
+  border-color: #ff6b6b;
+  background: rgba(255, 240, 240, 0.98);
+}
+
+.signup-details-page__field select.signup-details-page__control {
+  appearance: none;
+  cursor: pointer;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #111111 50%),
+    linear-gradient(135deg, #111111 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% - 3px),
+    calc(100% - 12px) calc(50% - 3px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 36px;
+}
+
+.signup-details-page__password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.signup-details-page__password-wrapper .signup-details-page__control {
+  padding-right: 3.25rem;
+}
+
+.signup-details-page__password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signup-details-page__password-toggle-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+  object-fit: contain;
+}
+
+.signup-details-page__password-toggle:focus-visible {
+  outline: 2px solid #f0c400;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.signup-details-page__error {
+  display: block;
+  min-height: 21px;
+  margin-top: 4px;
+  color: #ff8f8f;
+  font-size: 0.84rem;
+  line-height: 1.25;
+}
+
+.signup-details-page__checkbox + .signup-details-page__error,
+.signup-details-page__field .signup-details-page__error {
+  display: block;
+}
+
+.signup-details-page__gender-row {
+  margin-top: 2px;
+}
+
+.signup-details-page__options {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  min-height: 42px;
+}
+
+.signup-details-page__options label,
+.signup-details-page__checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--gm-white);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.signup-details-page__options input,
+.signup-details-page__checkbox input {
+  width: 16px;
+  height: 16px;
+}
+
+.signup-details-page__checkbox {
+  margin-top: 14px;
+}
+
+.signup-details-page__api-error {
+  margin: 14px 0 0;
+  color: #ff9c9c;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.signup-details-page__submit {
+  display: flex;
+  justify-content: center;
+  padding-top: 26px;
+}
+
+.signup-details-page__submit-button {
+  min-width: 170px;
+  font-size: 0.92rem;
+}
+
+.signup-details-page__submit-button:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.signup-details-page__sidebar {
+  display: grid;
+  gap: 14px;
+}
+
+.signup-details-page__summary-card,
+.signup-details-page__help-card {
+  border-radius: 22px;
+}
+
+.signup-details-page__summary-card {
+  padding: 22px 22px 24px;
+}
+
+.signup-details-page__summary-label,
+.signup-details-page__summary-subtitle {
+  margin: 0;
+  color: var(--gm-btn-start);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.signup-details-page__summary-title {
+  margin: 10px 0 18px;
+  color: var(--gm-white);
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.signup-details-page__summary-block + .signup-details-page__summary-block {
+  margin-top: 18px;
+}
+
+.signup-details-page__summary-row {
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: rgba(255, 255, 255, 0.96);
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.signup-details-page__summary-row--stack {
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.signup-details-page__summary-total {
+  margin-top: 22px;
+}
+
+.signup-details-page__summary-total p {
+  margin: 0 0 6px;
+  color: var(--gm-btn-start);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.signup-details-page__summary-total strong {
+  color: var(--gm-white);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.signup-details-page__help-card {
+  min-height: 90px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.signup-details-page__help-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.96);
+  color: #111111;
+  font-size: 2rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.signup-details-page__help-card span {
+  color: var(--gm-btn-start);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* COMPLETE PAGE */
+.signup-complete-page {
+  margin-top: var(--gm-navbar-height);
+  min-height: calc(100vh - var(--gm-navbar-height));
+  padding: 18px 0 42px;
+}
+
+.signup-complete-page__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.signup-complete-page__title {
+  margin: 14px 0 46px;
+  color: var(--gm-btn-start);
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.signup-complete-page__card {
+  width: 100%;
+  max-width: 760px;
+  padding: 38px 34px 32px;
+  border-radius: 22px;
+}
+
+.signup-complete-page__rows {
+  max-width: 400px;
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+}
+
+.signup-complete-page__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: var(--gm-white);
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.signup-complete-page__actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 46px;
+}
+
+.signup-complete-page__button {
+  text-decoration: none;
+}
+
+/* REGISTER PAGE */
+.register-page {
+  margin-top: var(--gm-navbar-height);
+  min-height: calc(100vh - var(--gm-navbar-height));
+  padding: 36px 0 42px;
+}
+
+.register-page__container {
+  min-height: calc(100vh - var(--gm-navbar-height) - 78px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.register-page__card {
+  width: 100%;
+  max-width: 760px;
+  padding: 34px 32px 30px;
+  border-radius: 22px;
+}
+
+.register-page__eyebrow {
+  margin: 0;
+  color: var(--gm-btn-start);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.register-page__title {
+  margin: 14px 0 34px;
+  color: var(--gm-white);
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.register-page__form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px 18px;
+}
+
+.register-page__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.register-page__field--full {
+  grid-column: 1 / -1;
+}
+
+.register-page__label {
+  color: var(--gm-white);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.register-page__input {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.95);
+  color: #111111;
+  font-size: 0.95rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.register-page__input::placeholder {
+  color: rgba(17, 17, 17, 0.52);
+}
+
+.register-page__input:focus {
+  border-color: rgba(255, 195, 0, 0.75);
+  box-shadow: 0 0 0 3px rgba(255, 195, 0, 0.14);
+}
+
+.register-page__submit {
+  grid-column: 1 / -1;
+  justify-self: center;
+  min-width: 190px;
+  margin-top: 8px;
+}
+
+@media (max-width: 640px) {
+  .register-page__title {
+    font-size: 2.35rem;
+  }
+
+  .register-page__form {
+    grid-template-columns: 1fr;
+  }
+
+  .register-page__field--full,
+  .register-page__submit {
+    grid-column: auto;
+  }
+
+  .register-page__submit {
+    width: 100%;
+  }
+}
