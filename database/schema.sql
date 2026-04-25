@@ -1,211 +1,219 @@
--- Crear base de datos
+-- ==================================================
+-- Gymentality database schema
+-- Modelo actual alineado con las entidades JPA
+-- ==================================================
+
 CREATE DATABASE IF NOT EXISTS gymentality;
 USE gymentality;
 
---------------------------------------------------
--- Tabla: usuario
--- Almacena los datos básicos de todos los usuarios
---------------------------------------------------
-CREATE TABLE IF NOT EXISTS usuario (
-    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL,
-    apellidos VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
+SET FOREIGN_KEY_CHECKS = 0;
+
+DROP TABLE IF EXISTS class_notification_requests;
+DROP TABLE IF EXISTS bookings;
+DROP TABLE IF EXISTS facilities;
+DROP TABLE IF EXISTS club_classes;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS memberships;
+DROP TABLE IF EXISTS clubs;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- ==================================================
+-- CLUBS
+-- Sedes físicas: Teatinos, Centro Histórico, Vialia...
+-- ==================================================
+CREATE TABLE clubs (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    city VARCHAR(255) NOT NULL,
+    phone VARCHAR(255),
+    email VARCHAR(255),
+    description VARCHAR(1000)
+);
+
+-- ==================================================
+-- MEMBERSHIPS
+-- Planes de acceso y planes de coaching actuales.
+-- Pendiente futuro: separar WorkoutPlan de Membership.
+-- ==================================================
+CREATE TABLE memberships (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(1000),
+    price DECIMAL(10, 2) NOT NULL,
+    duration_in_days INT NOT NULL,
+    category VARCHAR(32) NOT NULL
+);
+
+-- ==================================================
+-- USERS
+-- Usuarios registrados de la plataforma.
+-- ==================================================
+CREATE TABLE users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    telefono VARCHAR(20),
-    fecha_registro DATE,
-    estado_cuenta VARCHAR(20) DEFAULT 'activo'
+    phone VARCHAR(255) NOT NULL,
+    role VARCHAR(32) NOT NULL,
+    gender VARCHAR(16),
+    date_of_birth DATE,
+    address VARCHAR(255),
+    postal_code VARCHAR(5),
+    city VARCHAR(255),
+    country VARCHAR(255),
+    region VARCHAR(255),
+    iban VARCHAR(34),
+    club_id BIGINT,
+    membership_plan_id BIGINT,
+    workout_plan_id BIGINT,
+
+    CONSTRAINT fk_users_club
+        FOREIGN KEY (club_id)
+        REFERENCES clubs(id),
+
+    CONSTRAINT fk_users_membership_plan
+        FOREIGN KEY (membership_plan_id)
+        REFERENCES memberships(id),
+
+    CONSTRAINT fk_users_workout_plan
+        FOREIGN KEY (workout_plan_id)
+        REFERENCES memberships(id)
 );
 
---------------------------------------------------
--- Tabla: club
--- Almacena los datos de los clubs/gimnasios
---------------------------------------------------
-CREATE TABLE IF NOT EXISTS club (
-    id_club INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    direccion VARCHAR(255),
-    ciudad VARCHAR(50),
-    codigo_postal VARCHAR(10),
-    telefono VARCHAR(20),
-    email VARCHAR(100)
+-- ==================================================
+-- FACILITIES
+-- Instalaciones disponibles en cada club.
+-- ==================================================
+CREATE TABLE facilities (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(1000),
+    club_id BIGINT NOT NULL,
+
+    CONSTRAINT fk_facilities_club
+        FOREIGN KEY (club_id)
+        REFERENCES clubs(id)
+        ON DELETE CASCADE
 );
 
---------------------------------------------------
--- Tabla: socio
--- Datos específicos de los socios
---------------------------------------------------
-CREATE TABLE IF NOT EXISTS socio (
-    id_usuario INT PRIMARY KEY,
-    fecha_alta DATE,
-    puntos_acumulados INT DEFAULT 0,
-    estado_suscripcion VARCHAR(20) DEFAULT 'activa',
-    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+-- ==================================================
+-- CLUB CLASSES
+-- Clases recurrentes ofrecidas por cada club.
+-- Ejemplo: Yoga en Teatinos los martes a las 20:00.
+-- ==================================================
+CREATE TABLE club_classes (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(1000),
+    schedule VARCHAR(255) NOT NULL,
+    capacity INT NOT NULL,
+    category VARCHAR(32) NOT NULL,
+    club_id BIGINT NOT NULL,
+
+    CONSTRAINT fk_club_classes_club
+        FOREIGN KEY (club_id)
+        REFERENCES clubs(id)
+        ON DELETE CASCADE
 );
 
---------------------------------------------------
--- Tabla: admin
--- Datos específicos de administradores
---------------------------------------------------
-CREATE TABLE IF NOT EXISTS admin (
-    id_usuario INT PRIMARY KEY,
-    tipo_admin ENUM('Global','Local') NOT NULL,
-    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+-- ==================================================
+-- BOOKINGS
+-- Reservas de usuarios para una ClubClass en una fecha concreta.
+-- ==================================================
+CREATE TABLE bookings (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    class_date DATE NOT NULL,
+    booking_date DATETIME NOT NULL,
+    status VARCHAR(32) NOT NULL,
+    created_at DATETIME NOT NULL,
+    cancelled_at DATETIME,
+    user_id BIGINT NOT NULL,
+    club_class_id BIGINT NOT NULL,
+
+    CONSTRAINT uq_bookings_user_club_class_date
+        UNIQUE (user_id, club_class_id, class_date),
+
+    CONSTRAINT fk_bookings_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_bookings_club_class
+        FOREIGN KEY (club_class_id)
+        REFERENCES club_classes(id)
+        ON DELETE CASCADE
 );
 
---------------------------------------------------
--- Tabla: monitor
--- Almacena los monitores que imparten clases
---------------------------------------------------
-CREATE TABLE IF NOT EXISTS monitor (
-    id_monitor INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL,
-    apellidos VARCHAR(50),
-    especialidad VARCHAR(50)
+-- ==================================================
+-- CLASS NOTIFICATION REQUESTS
+-- Solicitudes de aviso antes de apertura de reserva.
+-- ==================================================
+CREATE TABLE class_notification_requests (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    class_date DATE NOT NULL,
+    created_at DATETIME NOT NULL,
+    active BOOLEAN NOT NULL,
+    notified_at DATETIME,
+    user_id BIGINT NOT NULL,
+    club_class_id BIGINT NOT NULL,
+
+    CONSTRAINT uq_class_notifications_user_club_class_date
+        UNIQUE (user_id, club_class_id, class_date),
+
+    CONSTRAINT fk_class_notifications_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_class_notifications_club_class
+        FOREIGN KEY (club_class_id)
+        REFERENCES club_classes(id)
+        ON DELETE CASCADE
 );
 
---------------------------------------------------
--- Tabla: inscripcion
--- Vincula usuarios con clubs
---------------------------------------------------
-CREATE TABLE IF NOT EXISTS inscripcion (
-    id_inscripcion INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT NOT NULL,
-    id_club INT NOT NULL,
-    fecha_inicio DATE,
-    fecha_fin DATE,
-    estado VARCHAR(20),
-    metodo_pago VARCHAR(50),
-    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
-    FOREIGN KEY (id_club) REFERENCES club(id_club) ON DELETE CASCADE
-);
+-- ==================================================
+-- INDEXES
+-- Índices útiles para consultas frecuentes.
+-- ==================================================
 
---------------------------------------------------
--- Tabla: cuota
--- Cuotas asociadas a cada inscripción
---------------------------------------------------
-CREATE TABLE IF NOT EXISTS cuota (
-    id_cuota INT AUTO_INCREMENT PRIMARY KEY,
-    id_inscripcion INT NOT NULL,
-    nombre VARCHAR(50),
-    precio DECIMAL(10,2),
-    duracion VARCHAR(20),
-    FOREIGN KEY (id_inscripcion) REFERENCES inscripcion(id_inscripcion) ON DELETE CASCADE
-);
+CREATE INDEX idx_users_email
+    ON users(email);
 
---------------------------------------------------
--- Tabla: plan_entrenamiento
--- Planes personalizados por inscripción
---------------------------------------------------
-CREATE TABLE IF NOT EXISTS plan_entrenamiento (
-    id_plan INT AUTO_INCREMENT PRIMARY KEY,
-    id_inscripcion INT NOT NULL,
-    tipo_plan VARCHAR(50),
-    precio_extra DECIMAL(10,2),
-    FOREIGN KEY (id_inscripcion) REFERENCES inscripcion(id_inscripcion) ON DELETE CASCADE
-);
+CREATE INDEX idx_users_club_id
+    ON users(club_id);
 
---------------------------------------------------
--- Tabla: pago
--- Registra los pagos asociados a una inscripción
---------------------------------------------------
-CREATE TABLE IF NOT EXISTS pago (
-    id_pago INT AUTO_INCREMENT PRIMARY KEY,
-    id_inscripcion INT NOT NULL,
-    fecha_pago DATE,
-    monto DECIMAL(10,2),
-    metodo VARCHAR(50),
-    estado VARCHAR(20),
-    FOREIGN KEY (id_inscripcion) REFERENCES inscripcion(id_inscripcion) ON DELETE CASCADE
-);
+CREATE INDEX idx_facilities_club_id
+    ON facilities(club_id);
 
---------------------------------------------------
--- Tabla: canjear
--- Canjes de puntos de los usuarios
---------------------------------------------------
-CREATE TABLE IF NOT EXISTS canjear (
-    id_canjear INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT NOT NULL,
-    fecha DATE,
-    puntos_usados INT,
-    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
-);
+CREATE INDEX idx_club_classes_club_id
+    ON club_classes(club_id);
 
---------------------------------------------------
--- Tabla: recompensa
--- Recompensas obtenidas por canjes
---------------------------------------------------
-CREATE TABLE IF NOT EXISTS recompensa (
-    id_recompensa INT AUTO_INCREMENT PRIMARY KEY,
-    id_canjear INT NOT NULL,
-    nombre VARCHAR(100) NOT NULL,
-    puntos_necesarios INT NOT NULL,
-    FOREIGN KEY (id_canjear) REFERENCES canjear(id_canjear) ON DELETE CASCADE
-);
+CREATE INDEX idx_club_classes_category
+    ON club_classes(category);
 
---------------------------------------------------
--- Tabla: notificacion
--- Notificaciones enviadas a usuarios
---------------------------------------------------
-CREATE TABLE IF NOT EXISTS notificacion (
-    id_notificacion INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT NOT NULL,
-    titulo VARCHAR(100) NOT NULL,
-    mensaje TEXT,
-    fecha_envio DATE,
-    tipo VARCHAR(50),
-    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
-);
+CREATE INDEX idx_bookings_user_id
+    ON bookings(user_id);
 
---------------------------------------------------
--- Tabla: instalaciones_club
--- Instalaciones disponibles en cada club
---------------------------------------------------
-CREATE TABLE IF NOT EXISTS instalaciones_club (
-    id_instalaciones INT AUTO_INCREMENT PRIMARY KEY,
-    id_club INT NOT NULL,
-    nombre VARCHAR(100) NOT NULL,
-    FOREIGN KEY (id_club) REFERENCES club(id_club) ON DELETE CASCADE
-);
+CREATE INDEX idx_bookings_club_class_id
+    ON bookings(club_class_id);
 
---------------------------------------------------
--- Tabla: clase
--- Clases impartidas en los clubs
---------------------------------------------------
-CREATE TABLE IF NOT EXISTS clase (
-    id_clase INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL,
-    descripcion TEXT,
-    horario TIME NOT NULL,
-    id_monitor INT,
-    id_club INT NOT NULL,
-    FOREIGN KEY (id_monitor) REFERENCES monitor(id_monitor) ON DELETE SET NULL,
-    FOREIGN KEY (id_club) REFERENCES club(id_club) ON DELETE CASCADE
-);
+CREATE INDEX idx_bookings_class_date
+    ON bookings(class_date);
 
---------------------------------------------------
--- Tabla: reserva_clase
--- Relaciona usuarios con clases reservadas
---------------------------------------------------
-CREATE TABLE IF NOT EXISTS reserva_clase (
-    id_reserva INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT NOT NULL,
-    id_clase INT NOT NULL,
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
-    FOREIGN KEY (id_clase) REFERENCES clase(id_clase) ON DELETE CASCADE
-);
+CREATE INDEX idx_bookings_status
+    ON bookings(status);
 
---------------------------------------------------
--- Tabla: valoracion_club
--- Valoraciones de usuarios sobre clubs
---------------------------------------------------
-CREATE TABLE IF NOT EXISTS valoracion_club (
-    id_valoracion INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT NOT NULL,
-    id_club INT NOT NULL,
-    puntuacion INT,
-    comentario TEXT,
-    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
-    FOREIGN KEY (id_club) REFERENCES club(id_club) ON DELETE CASCADE
-);
+CREATE INDEX idx_class_notification_requests_user_id
+    ON class_notification_requests(user_id);
+
+CREATE INDEX idx_class_notification_requests_club_class_id
+    ON class_notification_requests(club_class_id);
+
+CREATE INDEX idx_class_notification_requests_class_date
+    ON class_notification_requests(class_date);
+
+CREATE INDEX idx_class_notification_requests_active
+    ON class_notification_requests(active);
