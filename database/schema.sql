@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS bookings;
 DROP TABLE IF EXISTS facilities;
 DROP TABLE IF EXISTS club_classes;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS workout_plans;
 DROP TABLE IF EXISTS memberships;
 DROP TABLE IF EXISTS clubs;
 
@@ -34,21 +35,35 @@ CREATE TABLE clubs (
 
 -- ==================================================
 -- MEMBERSHIPS
--- Planes de acceso y planes de coaching actuales.
--- Pendiente futuro: separar WorkoutPlan de Membership.
+-- Planes de acceso al club.
+-- Ejemplo: Monthly Plan, Quarterly Plan, Annual Plan.
 -- ==================================================
 CREATE TABLE memberships (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description VARCHAR(1000),
     price DECIMAL(10, 2) NOT NULL,
-    duration_in_days INT NOT NULL,
-    category VARCHAR(32) NOT NULL
+    duration_in_days INT NOT NULL
+);
+
+-- ==================================================
+-- WORKOUT PLANS
+-- Planes de entrenamiento/nutrición.
+-- Ejemplo: Free, Personal Plan, Integral Plan.
+-- ==================================================
+CREATE TABLE workout_plans (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(1000),
+    price DECIMAL(10, 2) NOT NULL,
+    duration_in_days INT NOT NULL
 );
 
 -- ==================================================
 -- USERS
 -- Usuarios registrados de la plataforma.
+-- El usuario selecciona club, membership y workout plan
+-- durante el flujo de registro.
 -- ==================================================
 CREATE TABLE users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -80,7 +95,7 @@ CREATE TABLE users (
 
     CONSTRAINT fk_users_workout_plan
         FOREIGN KEY (workout_plan_id)
-        REFERENCES memberships(id)
+        REFERENCES workout_plans(id)
 );
 
 -- ==================================================
@@ -184,6 +199,12 @@ CREATE INDEX idx_users_email
 
 CREATE INDEX idx_users_club_id
     ON users(club_id);
+
+CREATE INDEX idx_users_membership_plan_id
+    ON users(membership_plan_id);
+
+CREATE INDEX idx_users_workout_plan_id
+    ON users(workout_plan_id);
 
 CREATE INDEX idx_facilities_club_id
     ON facilities(club_id);

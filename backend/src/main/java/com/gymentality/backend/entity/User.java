@@ -60,7 +60,7 @@ public class User {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workout_plan_id")
-    private Membership workoutPlan;
+    private WorkoutPlan workoutPlan;
 
     public User() {
     }
@@ -213,11 +213,11 @@ public class User {
         return this;
     }
 
-    public Membership getWorkoutPlan() {
+    public WorkoutPlan getWorkoutPlan() {
         return workoutPlan;
     }
 
-    public User setWorkoutPlan(Membership workoutPlan) {
+    public User setWorkoutPlan(WorkoutPlan workoutPlan) {
         this.workoutPlan = workoutPlan;
         return this;
     }

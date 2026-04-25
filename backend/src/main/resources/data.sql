@@ -1,9 +1,10 @@
 -- Limpiar datos previos para evitar errores al reiniciar
 DELETE FROM class_notification_requests;
 DELETE FROM bookings;
+DELETE FROM users;
 DELETE FROM facilities;
 DELETE FROM club_classes;
-DELETE FROM users;
+DELETE FROM workout_plans;
 DELETE FROM memberships;
 DELETE FROM clubs;
 
@@ -14,13 +15,18 @@ INSERT INTO clubs (id, name, address, city, phone, email, description) VALUES
 (3, 'Gymentality Vialia & Larios', 'Calle Cuarteles 30', 'Málaga', '951000103', 'vialia@gymentality.com', 'Club estratégico entre Vialia y el entorno de Larios, con zona acuática, cardio, cycling y clases grupales de alto ritmo.');
 
 -- MEMBERSHIPS
-INSERT INTO memberships (id, name, description, price, duration_in_days, category) VALUES
-(1, 'Monthly Plan', '39.99 €/month. No commitment. Total flexibility. Free daily-use locker. Book up to 24 hours in advance. Online workouts. Discounts with partner brands. Automatic monthly renewal.', 39.99, 30, 'ACCESS'),
-(2, 'Quarterly Plan', '104.97 € every 3 months. Equivalent to 34.99 €/month, save 12%. Free daily-use locker. Book up to 24 hours in advance. Online workouts. Discounts with partner brands. Automatic renewal.', 104.97, 90, 'ACCESS'),
-(3, 'Annual Plan', '359.88 € per year. Equivalent to 29.99 €/month, save 25%. Free daily-use locker. Book up to 24 hours in advance. Online workouts. Discounts with partner brands. Automatic renewal.', 359.88, 365, 'ACCESS'),
-(4, 'Workout Basic Plan', 'Free. Perfect for experienced or self-motivated members. Access to all training areas during opening hours. Use of cardio, strength and functional equipment. Freedom to follow your own routine at your own pace.', 0.00, 30, 'COACHING'),
-(5, 'Personal Plan', '30 €/month. Work one-on-one with a certified personal trainer. Personalized training program tailored to your goals. One-on-one coaching sessions. Technique correction and injury-prevention guidance. Weekly progress check-ins and program adjustments.', 30.00, 30, 'COACHING'),
-(6, 'Integral Plan', '50 €/month. Full professional support. Customized nutrition advice based on your goals. Meal guidance and healthy habit strategies. Ongoing trainer and nutrition follow-ups. Adjustments based on progress and lifestyle.', 50.00, 30, 'COACHING');
+-- Planes de acceso al club
+INSERT INTO memberships (id, name, description, price, duration_in_days) VALUES
+(1, 'Monthly Plan', '39.99 €/month. No commitment. Total flexibility. Free daily-use locker. Book up to 24 hours in advance. Online workouts. Discounts with partner brands. Automatic monthly renewal.', 39.99, 30),
+(2, 'Quarterly Plan', '104.97 € every 3 months. Equivalent to 34.99 €/month, save 12%. Free daily-use locker. Book up to 24 hours in advance. Online workouts. Discounts with partner brands. Automatic renewal.', 104.97, 90),
+(3, 'Annual Plan', '359.88 € per year. Equivalent to 29.99 €/month, save 25%. Free daily-use locker. Book up to 24 hours in advance. Online workouts. Discounts with partner brands. Automatic renewal.', 359.88, 365);
+
+-- WORKOUT PLANS
+-- Planes de entrenamiento/nutrición
+INSERT INTO workout_plans (id, name, description, price, duration_in_days) VALUES
+(1, 'Workout Basic Plan', 'Free. Perfect for experienced or self-motivated members. Access to all training areas during opening hours. Use of cardio, strength and functional equipment. Freedom to follow your own routine at your own pace.', 0.00, 30),
+(2, 'Personal Plan', '30 €/month. Work one-on-one with a certified personal trainer. Personalized training program tailored to your goals. One-on-one coaching sessions. Technique correction and injury-prevention guidance. Weekly progress check-ins and program adjustments.', 30.00, 30),
+(3, 'Integral Plan', '50 €/month. Full professional support. Customized nutrition advice based on your goals. Meal guidance and healthy habit strategies. Ongoing trainer and nutrition follow-ups. Adjustments based on progress and lifestyle.', 50.00, 30);
 
 -- USERS
 -- Usuario seed ficticio para desarrollo local.
@@ -62,7 +68,7 @@ INSERT INTO users (
   'ES0000000000000000000000',
   1,
   3,
-  6
+  3
 );
 
 -- FACILITIES
