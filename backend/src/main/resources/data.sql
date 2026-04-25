@@ -23,12 +23,8 @@ INSERT INTO memberships (id, name, description, price, duration_in_days, categor
 (6, 'Integral Plan', '50 €/month. Full professional support. Customized nutrition advice based on your goals. Meal guidance and healthy habit strategies. Ongoing trainer and nutrition follow-ups. Adjustments based on progress and lifestyle.', 50.00, 30, 'COACHING');
 
 -- USERS
--- Sin usuarios seed por ahora.
--- Los usuarios se crearán desde el flujo real de registro en la web.
--- USERS
--- Usuario seed para no tener que registrarlo cada vez
--- USERS
--- Usuario seed para desarrollo
+-- Usuario seed ficticio para desarrollo local.
+-- Password: usar la contraseña conocida del hash BCrypt actual en entorno local.
 INSERT INTO users (
   id,
   email,
@@ -49,21 +45,21 @@ INSERT INTO users (
   membership_plan_id,
   workout_plan_id
 ) VALUES (
-  7,
-  'robertocastillojimenez@gmail.com',
-  'Roberto',
-  'Castillo Jiménez',
+  1,
+  'demo.user@gymentality.local',
+  'Demo',
+  'User',
   '$2a$10$hCK4i0bR6j6U0NBN.qvt0O4lHy38sR5F7fylwbf2/d0AgAtsy9tJS',
-  '+34 645-263-577',
+  '+34 600000000',
   'USER',
-  'male',
-  '1984-12-31',
-  'Miguel Bueno Lara 10, 3 C 2',
-  '29013',
+  'other',
+  '1990-01-01',
+  'Demo Street 1',
+  '29000',
   'Málaga',
   'España',
   'Andalucía',
-  'ES3000811749274977643919',
+  'ES0000000000000000000000',
   1,
   3,
   6
