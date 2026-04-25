@@ -1,0 +1,376 @@
+.weekly-calendar {
+  --wc-bg: rgba(255, 255, 255, 0.06);
+  --wc-month-title-bg: var(--gm-white);
+  --wc-month-title-color: var(--gm-black);
+
+  --wc-nav-fallback-color: var(--gm-btn-start);
+  --wc-nav-fallback-hover-color: var(--gm-btn-hover-orange-start);
+
+  --wc-day-text: var(--gm-text-secondary);
+  --wc-day-border: #666;
+
+  --wc-selectable-border: var(--gm-btn-start);
+  --wc-selectable-text: var(--gm-btn-start);
+
+  --wc-disabled-border: #575757;
+  --wc-disabled-text: var(--gm-text-secondary);
+
+  --wc-today-bg: transparent;
+  --wc-today-border: var(--gm-white);
+  --wc-today-text: var(--gm-white);
+  --wc-today-weekday-hover: var(--gm-white);
+  --wc-today-shadow: 0 6px 14px var(--gm-white-shadow, rgba(255, 255, 255, 0.16));
+
+  --wc-completed-bg: var(--gm-success-dark, #145214);
+  --wc-completed-border: var(--gm-success, #28c937);
+  --wc-completed-text: var(--gm-white);
+
+  --wc-hover-bg: linear-gradient(
+    180deg,
+    var(--gm-btn-hover-yellow-start),
+    var(--gm-btn-hover-yellow-end)
+  );
+  --wc-hover-border: var(--gm-btn-hover-yellow-start);
+  --wc-hover-text: var(--gm-black);
+  --wc-hover-weekday: var(--gm-white);
+  --wc-hover-shadow: 0 6px 14px rgba(255, 184, 0, 0.22);
+
+  /* Seleccionado global = igual que hover */
+  --wc-selected-bg: linear-gradient(
+    180deg,
+    var(--gm-btn-hover-yellow-start),
+    var(--gm-btn-hover-yellow-end)
+  );
+  --wc-selected-border: var(--gm-btn-hover-yellow-start);
+  --wc-selected-text: var(--gm-black);
+  --wc-selected-weekday: var(--gm-white);
+  --wc-selected-shadow: 0 6px 14px rgba(255, 184, 0, 0.22);
+
+  --wc-completed-hover-bg: linear-gradient(
+    180deg,
+    var(--gm-btn-hover-yellow-start),
+    var(--gm-btn-hover-yellow-end)
+  );
+  --wc-completed-hover-border: var(--gm-btn-hover-yellow-start);
+  --wc-completed-hover-text: var(--gm-black);
+  --wc-completed-hover-weekday: var(--gm-white);
+  --wc-completed-hover-shadow: 0 6px 14px rgba(255, 184, 0, 0.22);
+
+  /* Completado + seleccionado = igual que hover */
+  --wc-selected-completed-bg: linear-gradient(
+    180deg,
+    var(--gm-btn-hover-yellow-start),
+    var(--gm-btn-hover-yellow-end)
+  );
+  --wc-selected-completed-border: var(--gm-btn-hover-yellow-start);
+  --wc-selected-completed-text: var(--gm-black);
+  --wc-selected-completed-weekday: var(--gm-white);
+  --wc-selected-completed-shadow: 0 6px 14px rgba(255, 184, 0, 0.22);
+
+  width: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--wc-bg);
+}
+
+.weekly-calendar__month-title {
+  padding: 8px 20px;
+  background: var(--wc-month-title-bg);
+  color: var(--wc-month-title-color);
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.weekly-calendar__body {
+  display: grid;
+  grid-template-columns: 3rem 1fr 3rem;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 20px 20px;
+}
+
+.weekly-calendar__nav {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.weekly-calendar__nav:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.weekly-calendar__nav--placeholder {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.weekly-calendar__nav-icon {
+  width: 2.2rem;
+  height: 2.2rem;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.weekly-calendar__nav-icon--left {
+  transform: rotate(180deg);
+}
+
+.weekly-calendar__nav-fallback {
+  color: var(--wc-nav-fallback-color);
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.weekly-calendar__nav:not(:disabled):hover {
+  transform: scale(1.06);
+}
+
+.weekly-calendar__nav:not(:disabled):hover .weekly-calendar__nav-fallback {
+  color: var(--wc-nav-fallback-hover-color);
+}
+
+.weekly-calendar__days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.weekly-calendar__day {
+  border: none;
+  background: transparent;
+  color: var(--wc-day-text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 0;
+  min-height: 116px;
+  overflow: visible;
+}
+
+.weekly-calendar__day:disabled {
+  cursor: not-allowed;
+}
+
+.weekly-calendar__day--empty {
+  min-height: 116px;
+  cursor: default;
+  pointer-events: none;
+}
+
+.weekly-calendar__weekday {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: color 0.2s ease;
+}
+
+.weekly-calendar__number-wrap {
+  position: relative;
+  width: 54px;
+  height: 72px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.weekly-calendar__number {
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  border: 3px solid var(--wc-day-border);
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: transparent;
+  color: inherit;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.weekly-calendar__extra {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.weekly-calendar__extra img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.weekly-calendar__day.is-selectable .weekly-calendar__number,
+.weekly-calendar__day.is-future .weekly-calendar__number {
+  border-color: var(--wc-selectable-border);
+  color: var(--wc-selectable-text);
+}
+
+.weekly-calendar__day.is-disabled .weekly-calendar__number,
+.weekly-calendar__day.is-past .weekly-calendar__number {
+  border-color: var(--wc-disabled-border);
+  color: var(--wc-disabled-text);
+}
+
+.weekly-calendar__day.is-completed .weekly-calendar__number {
+  border-color: var(--wc-completed-border);
+  background: var(--wc-completed-bg);
+  color: var(--wc-completed-text);
+}
+
+.weekly-calendar__day.is-today .weekly-calendar__number {
+  border-color: var(--wc-today-border);
+  background: var(--wc-today-bg);
+  color: var(--wc-today-text);
+}
+
+.weekly-calendar__day:not(:disabled):not(.is-disabled):not(.is-past):hover .weekly-calendar__weekday {
+  color: var(--wc-hover-weekday);
+}
+
+.weekly-calendar__day:not(:disabled):not(.is-disabled):not(.is-past):hover .weekly-calendar__number {
+  background: var(--wc-hover-bg);
+  border-color: var(--wc-hover-border);
+  color: var(--wc-hover-text);
+  transform: scale(1.04);
+  box-shadow: var(--wc-hover-shadow);
+}
+
+.weekly-calendar__day.is-today:not(.is-selected):not(:disabled):hover .weekly-calendar__weekday {
+  color: var(--wc-today-weekday-hover);
+}
+
+.weekly-calendar__day.is-today:not(.is-selected):not(:disabled):hover .weekly-calendar__number {
+  background: var(--wc-today-bg);
+  border-color: var(--wc-today-border);
+  color: var(--wc-today-text);
+  transform: scale(1.04);
+  box-shadow: var(--wc-today-shadow);
+}
+
+.weekly-calendar__day.is-completed:not(.is-selected):not(:disabled):hover .weekly-calendar__weekday {
+  color: var(--wc-completed-hover-weekday);
+}
+
+.weekly-calendar__day.is-completed:not(.is-selected):not(:disabled):hover .weekly-calendar__number {
+  background: var(--wc-completed-hover-bg);
+  border-color: var(--wc-completed-hover-border);
+  color: var(--wc-completed-hover-text);
+  transform: scale(1.04);
+  box-shadow: var(--wc-completed-hover-shadow);
+}
+
+.weekly-calendar__day.is-disabled:hover .weekly-calendar__weekday,
+.weekly-calendar__day.is-past:hover .weekly-calendar__weekday {
+  color: var(--wc-disabled-text);
+}
+
+.weekly-calendar__day.is-disabled:hover .weekly-calendar__number,
+.weekly-calendar__day.is-past:hover .weekly-calendar__number {
+  background: transparent;
+  border-color: var(--wc-disabled-border);
+  color: var(--wc-disabled-text);
+  transform: none;
+  box-shadow: none;
+}
+
+/* El seleccionado siempre gana */
+.weekly-calendar__day.is-selected .weekly-calendar__weekday,
+.weekly-calendar__day.is-selected:hover .weekly-calendar__weekday {
+  color: var(--wc-selected-weekday);
+}
+
+.weekly-calendar__day.is-selected .weekly-calendar__number,
+.weekly-calendar__day.is-future.is-selected .weekly-calendar__number,
+.weekly-calendar__day.is-today.is-selected .weekly-calendar__number,
+.weekly-calendar__day.is-selected:hover .weekly-calendar__number {
+  background: var(--wc-selected-bg);
+  border-color: var(--wc-selected-border);
+  color: var(--wc-selected-text);
+  box-shadow: var(--wc-selected-shadow);
+}
+
+.weekly-calendar__day.is-completed.is-selected .weekly-calendar__weekday,
+.weekly-calendar__day.is-completed.is-selected:hover .weekly-calendar__weekday {
+  color: var(--wc-selected-completed-weekday);
+}
+
+.weekly-calendar__day.is-completed.is-selected .weekly-calendar__number,
+.weekly-calendar__day.is-completed.is-selected:hover .weekly-calendar__number {
+  background: var(--wc-selected-completed-bg);
+  border-color: var(--wc-selected-completed-border);
+  color: var(--wc-selected-completed-text);
+  box-shadow: var(--wc-selected-completed-shadow);
+}
+
+@media (max-width: 1100px) {
+  .weekly-calendar__body {
+    grid-template-columns: 2.5rem 1fr 2.5rem;
+  }
+
+  .weekly-calendar__days {
+    gap: 8px;
+  }
+
+  .weekly-calendar__day,
+  .weekly-calendar__day--empty {
+    min-height: 108px;
+  }
+
+  .weekly-calendar__number-wrap {
+    width: 50px;
+    height: 68px;
+  }
+
+  .weekly-calendar__number {
+    width: 50px;
+    height: 50px;
+    font-size: 1.35rem;
+  }
+
+  .weekly-calendar__extra {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media (max-width: 700px) {
+  .weekly-calendar__days {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .weekly-calendar__body {
+    grid-template-columns: 1fr;
+  }
+
+  .weekly-calendar__nav {
+    justify-self: center;
+  }
+}

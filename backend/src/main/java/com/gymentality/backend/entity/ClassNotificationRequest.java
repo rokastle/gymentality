@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(
-    name = "bookings",
+    name = "class_notification_requests",
     uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "gym_class_id", "class_date"})
     }
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
-public class Booking {
+public class ClassNotificationRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,20 +31,15 @@ public class Booking {
     @ToString.Include
     private LocalDate classDate;
 
-    @Column(name = "booking_date", nullable = false)
-    @ToString.Include
-    private LocalDateTime bookingDate;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @ToString.Include
-    private BookingStatus status;
-
     @Column(name = "created_at", nullable = false)
+    @ToString.Include
     private LocalDateTime createdAt;
 
-    @Column(name = "cancelled_at")
-    private LocalDateTime cancelledAt;
+    @Column(nullable = false)
+    private boolean active;
+
+    @Column(name = "notified_at")
+    private LocalDateTime notifiedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)

@@ -6,6 +6,7 @@ import com.gymentality.backend.exception.*;
 import com.gymentality.backend.repository.*;
 import com.gymentality.backend.security.CustomUserDetailsService;
 import com.gymentality.backend.security.JwtService;
+import java.util.Objects;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -44,13 +45,29 @@ public class AuthService {
             throw new BadRequestException("You must accept the terms");
         }
 
-        Club club = clubRepository.findById(request.getClubId())
+        Long clubId = request.getClubId();
+        Long membershipPlanId = request.getMembershipPlanId();
+        Long workoutPlanId = request.getWorkoutPlanId();
+
+        if (clubId == null) {
+            throw new BadRequestException("Club is required");
+        }
+
+        if (membershipPlanId == null) {
+            throw new BadRequestException("Membership plan is required");
+        }
+
+        if (workoutPlanId == null) {
+            throw new BadRequestException("Workout plan is required");
+        }
+
+        Club club = clubRepository.findById(clubId)
             .orElseThrow(() -> new ResourceNotFoundException("Club not found"));
 
-        Membership membershipPlan = membershipRepository.findById(request.getMembershipPlanId())
+        Membership membershipPlan = membershipRepository.findById(membershipPlanId)
             .orElseThrow(() -> new ResourceNotFoundException("Membership plan not found"));
 
-        Membership workoutPlan = membershipRepository.findById(request.getWorkoutPlanId())
+        Membership workoutPlan = membershipRepository.findById(workoutPlanId)
             .orElseThrow(() -> new ResourceNotFoundException("Workout plan not found"));
 
         if (membershipPlan.getCategory() != MembershipCategory.ACCESS) {
@@ -80,7 +97,7 @@ public class AuthService {
             .setMembershipPlan(membershipPlan)
             .setWorkoutPlan(workoutPlan);
 
-        User savedUser = userRepository.save(user);
+        User savedUser = userRepository.save(Objects.requireNonNull(user));
 
         return buildAuthResponse(savedUser);
     }
