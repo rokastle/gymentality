@@ -1,7 +1,7 @@
 import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { useMemo } from "react";
 import SignUpTimeline from "../components/signup/SignUpTimeline";
-import { clubs } from "../data/clubsData";
+import { useClubById } from "../hooks/useClubs";
 import {
   getMembershipPlanById,
   mapMembershipPlanFromApi,
@@ -15,7 +15,11 @@ export default function SignUpWorkoutPage() {
   const clubId = searchParams.get("clubId");
   const membershipId = searchParams.get("membership");
 
-  const club = clubs.find((item) => String(item.id) === String(clubId));
+  const {
+    club,
+    loading: clubLoading,
+    error: clubError,
+  } = useClubById(clubId);
 
   const {
     plans: membershipApiPlans,
@@ -41,11 +45,11 @@ export default function SignUpWorkoutPage() {
 
   const membershipPlan = getMembershipPlanById(membershipId, membershipPlans);
 
-  if (!club) {
+  if (!clubId) {
     return <Navigate to="/clubs" replace />;
   }
 
-  if (membershipsLoading || workoutPlansLoading) {
+  if (clubLoading || membershipsLoading || workoutPlansLoading) {
     return (
       <section className="signup-selection-page gm-dark-section-bg">
         <div className="gm-container signup-selection-page__container">
@@ -57,7 +61,7 @@ export default function SignUpWorkoutPage() {
     );
   }
 
-  if (membershipsError || workoutPlansError || !membershipPlan) {
+  if (clubError || membershipsError || workoutPlansError || !club || !membershipPlan) {
     return <Navigate to="/clubs" replace />;
   }
 

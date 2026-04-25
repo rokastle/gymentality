@@ -4,3 +4,4 @@ export { useBookings, useClassSchedule, useClassNotifications } from "./useBooki
 export { useMembership, useMembershipPlans } from "./useMembership";
 export { useNotifications } from "./useNotifications";
 export { useUserProfile, useUserProfileById } from "./useUserProfile";
+export { useClubs, useClubById } from "./useClubs";

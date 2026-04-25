@@ -1,7 +1,7 @@
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
 import SignUpTimeline from "../components/signup/SignUpTimeline";
-import { clubs } from "../data/clubsData";
+import { useClubById } from "../hooks/useClubs";
 import useAuth from "../hooks/useAuth";
 import IconImage from "../components/common/IconImage";
 import {
@@ -61,7 +61,11 @@ export default function SignUpDetailsPage() {
   const membershipId = searchParams.get("membership");
   const workoutId = searchParams.get("workout");
 
-  const club = clubs.find((item) => String(item.id) === String(clubId));
+  const {
+    club,
+    loading: clubLoading,
+    error: clubError,
+  } = useClubById(clubId);
 
   const {
     plans: membershipApiPlans,
@@ -132,11 +136,11 @@ export default function SignUpDetailsPage() {
     }
   }, [form.city, cityOptions]);
 
-  if (!club) {
+  if (!clubId) {
     return <Navigate to="/clubs" replace />;
   }
 
-  if (membershipsLoading || workoutPlansLoading) {
+  if (clubLoading || membershipsLoading || workoutPlansLoading) {
     return (
       <section className="signup-details-page gm-dark-section-bg">
         <div className="gm-container signup-details-page__container">
@@ -148,7 +152,14 @@ export default function SignUpDetailsPage() {
     );
   }
 
-  if (membershipsError || workoutPlansError || !membershipPlan || !workoutPlan) {
+  if (
+    clubError ||
+    membershipsError ||
+    workoutPlansError ||
+    !club ||
+    !membershipPlan ||
+    !workoutPlan
+  ) {
     return <Navigate to="/clubs" replace />;
   }
 
