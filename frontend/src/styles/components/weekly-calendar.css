@@ -7,7 +7,7 @@
   --wc-nav-fallback-hover-color: var(--gm-btn-hover-orange-start);
 
   --wc-day-text: var(--gm-text-secondary);
-  --wc-day-border: #666;
+  --wc-day-border: #666666;
 
   --wc-selectable-border: var(--gm-btn-start);
   --wc-selectable-text: var(--gm-btn-start);
@@ -19,10 +19,10 @@
   --wc-today-border: var(--gm-white);
   --wc-today-text: var(--gm-white);
   --wc-today-weekday-hover: var(--gm-white);
-  --wc-today-shadow: 0 6px 14px var(--gm-white-shadow, rgba(255, 255, 255, 0.16));
+  --wc-today-shadow: 0 6px 14px rgba(255, 255, 255, 0.16);
 
-  --wc-completed-bg: var(--gm-success-dark, #145214);
-  --wc-completed-border: var(--gm-success, #28c937);
+  --wc-completed-bg: #145214;
+  --wc-completed-border: #28c937;
   --wc-completed-text: var(--gm-white);
 
   --wc-hover-bg: linear-gradient(
@@ -35,7 +35,6 @@
   --wc-hover-weekday: var(--gm-white);
   --wc-hover-shadow: 0 6px 14px rgba(255, 184, 0, 0.22);
 
-  /* Seleccionado global = igual que hover */
   --wc-selected-bg: linear-gradient(
     180deg,
     var(--gm-btn-hover-yellow-start),
@@ -56,7 +55,6 @@
   --wc-completed-hover-weekday: var(--gm-white);
   --wc-completed-hover-shadow: 0 6px 14px rgba(255, 184, 0, 0.22);
 
-  /* Completado + seleccionado = igual que hover */
   --wc-selected-completed-bg: linear-gradient(
     180deg,
     var(--gm-btn-hover-yellow-start),
@@ -73,15 +71,20 @@
   background: var(--wc-bg);
 }
 
+.weekly-calendar,
+.weekly-calendar * {
+  box-sizing: border-box;
+}
+
 .weekly-calendar__month-title {
   padding: 8px 20px;
   background: var(--wc-month-title-bg);
   color: var(--wc-month-title-color);
   font-size: 1.3rem;
   font-weight: 700;
+  line-height: 1.1;
   text-align: center;
   text-transform: uppercase;
-  line-height: 1.1;
 }
 
 .weekly-calendar__body {
@@ -93,19 +96,33 @@
 }
 
 .weekly-calendar__nav {
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
   border: none;
   background: transparent;
   cursor: pointer;
-  padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.weekly-calendar__nav:hover:not(:disabled) {
+  transform: scale(1.06);
 }
 
 .weekly-calendar__nav:disabled {
   opacity: 0.25;
   cursor: not-allowed;
+}
+
+.weekly-calendar__nav:focus-visible,
+.weekly-calendar__day:focus-visible {
+  outline: 3px solid var(--gm-btn-start);
+  outline-offset: 4px;
 }
 
 .weekly-calendar__nav--placeholder {
@@ -118,7 +135,6 @@
   height: 2.2rem;
   object-fit: contain;
   display: block;
-  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .weekly-calendar__nav-icon--left {
@@ -133,31 +149,27 @@
   transition: color 0.2s ease;
 }
 
-.weekly-calendar__nav:not(:disabled):hover {
-  transform: scale(1.06);
-}
-
-.weekly-calendar__nav:not(:disabled):hover .weekly-calendar__nav-fallback {
+.weekly-calendar__nav:hover:not(:disabled) .weekly-calendar__nav-fallback {
   color: var(--wc-nav-fallback-hover-color);
 }
 
 .weekly-calendar__days {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 10px;
 }
 
 .weekly-calendar__day {
+  min-height: 116px;
+  padding: 0;
   border: none;
   background: transparent;
   color: var(--wc-day-text);
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
-  padding: 0;
-  min-height: 116px;
   overflow: visible;
 }
 
@@ -172,6 +184,7 @@
 }
 
 .weekly-calendar__weekday {
+  color: inherit;
   font-size: 0.82rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -190,18 +203,18 @@
 .weekly-calendar__number {
   width: 54px;
   height: 54px;
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
   border: 3px solid var(--wc-day-border);
-  font-size: 1.5rem;
-  font-weight: 700;
+  border-radius: 999px;
   background: transparent;
   color: inherit;
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+  font-weight: 700;
   transition:
+    background 0.2s ease,
     border-color 0.2s ease,
     color 0.2s ease,
-    background 0.2s ease,
     transform 0.2s ease,
     box-shadow 0.2s ease;
 }
@@ -210,14 +223,14 @@
   position: absolute;
   left: 50%;
   bottom: 0;
-  transform: translateX(-50%);
+  z-index: 2;
   width: 30px;
   height: 30px;
+  transform: translateX(-50%);
+  pointer-events: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
-  pointer-events: none;
 }
 
 .weekly-calendar__extra img {
@@ -226,6 +239,10 @@
   object-fit: contain;
   display: block;
 }
+
+/* =========================
+   DAY STATES
+   ========================= */
 
 .weekly-calendar__day.is-selectable .weekly-calendar__number,
 .weekly-calendar__day.is-future .weekly-calendar__number {
@@ -251,11 +268,17 @@
   color: var(--wc-today-text);
 }
 
-.weekly-calendar__day:not(:disabled):not(.is-disabled):not(.is-past):hover .weekly-calendar__weekday {
+/* =========================
+   HOVER STATES
+   ========================= */
+
+.weekly-calendar__day:not(:disabled):not(.is-disabled):not(.is-past):hover
+  .weekly-calendar__weekday {
   color: var(--wc-hover-weekday);
 }
 
-.weekly-calendar__day:not(:disabled):not(.is-disabled):not(.is-past):hover .weekly-calendar__number {
+.weekly-calendar__day:not(:disabled):not(.is-disabled):not(.is-past):hover
+  .weekly-calendar__number {
   background: var(--wc-hover-bg);
   border-color: var(--wc-hover-border);
   color: var(--wc-hover-text);
@@ -263,11 +286,13 @@
   box-shadow: var(--wc-hover-shadow);
 }
 
-.weekly-calendar__day.is-today:not(.is-selected):not(:disabled):hover .weekly-calendar__weekday {
+.weekly-calendar__day.is-today:not(.is-selected):not(:disabled):hover
+  .weekly-calendar__weekday {
   color: var(--wc-today-weekday-hover);
 }
 
-.weekly-calendar__day.is-today:not(.is-selected):not(:disabled):hover .weekly-calendar__number {
+.weekly-calendar__day.is-today:not(.is-selected):not(:disabled):hover
+  .weekly-calendar__number {
   background: var(--wc-today-bg);
   border-color: var(--wc-today-border);
   color: var(--wc-today-text);
@@ -275,11 +300,13 @@
   box-shadow: var(--wc-today-shadow);
 }
 
-.weekly-calendar__day.is-completed:not(.is-selected):not(:disabled):hover .weekly-calendar__weekday {
+.weekly-calendar__day.is-completed:not(.is-selected):not(:disabled):hover
+  .weekly-calendar__weekday {
   color: var(--wc-completed-hover-weekday);
 }
 
-.weekly-calendar__day.is-completed:not(.is-selected):not(:disabled):hover .weekly-calendar__number {
+.weekly-calendar__day.is-completed:not(.is-selected):not(:disabled):hover
+  .weekly-calendar__number {
   background: var(--wc-completed-hover-bg);
   border-color: var(--wc-completed-hover-border);
   color: var(--wc-completed-hover-text);
@@ -301,7 +328,10 @@
   box-shadow: none;
 }
 
-/* El seleccionado siempre gana */
+/* =========================
+   SELECTED STATES
+   ========================= */
+
 .weekly-calendar__day.is-selected .weekly-calendar__weekday,
 .weekly-calendar__day.is-selected:hover .weekly-calendar__weekday {
   color: var(--wc-selected-weekday);
@@ -330,9 +360,18 @@
   box-shadow: var(--wc-selected-completed-shadow);
 }
 
+/* =========================
+   RESPONSIVE
+   ========================= */
+
 @media (max-width: 1100px) {
   .weekly-calendar__body {
     grid-template-columns: 2.5rem 1fr 2.5rem;
+  }
+
+  .weekly-calendar__nav {
+    width: 2.5rem;
+    height: 2.5rem;
   }
 
   .weekly-calendar__days {
@@ -362,15 +401,19 @@
 }
 
 @media (max-width: 700px) {
-  .weekly-calendar__days {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
   .weekly-calendar__body {
     grid-template-columns: 1fr;
   }
 
   .weekly-calendar__nav {
     justify-self: center;
+  }
+
+  .weekly-calendar__nav--placeholder {
+    display: none;
+  }
+
+  .weekly-calendar__days {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

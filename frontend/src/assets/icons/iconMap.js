@@ -1,5 +1,5 @@
 import profile from "./icon_profile_180x180.png";
-import arrowRight from "./icon_arrowRight_180x180.png"; 
+import arrowRight from "./icon_arrowRight_180x180.png";
 import instagram from "./icon_instagram_180x180.png";
 import x from "./icon_x_180x180.png";
 import youtube from "./icon_youtube_180x180.png";
@@ -31,6 +31,14 @@ import swimmingPoolAreaFocus from "./focus_swimmingPoolArea_180x180.png";
 
 import showPasswordIcon from "./icon_showPassword_64x64.png";
 import hidePasswordIcon from "./icon_hidePassword_64x64.png";
+
+import check from "./icon_check_180x180.png";
+import membership from "./icon_membership_180x180.png";
+import creditCard from "./icon_creditcard_180x180.png";
+import calendar from "./icon_calendar_180x180.png";
+import paypal from "./icon_Paypal_180x180.png";
+import creditCardBlack from "./icon_creditcardBlack_180x180.png";
+import date from "./icon_date_180x180.png";
 
 export const icons = {
   profile,
@@ -66,6 +74,14 @@ export const icons = {
 
   showPasswordIcon,
   hidePasswordIcon,
+
+  check,
+  membership,
+  creditCard,
+  calendar,
+  paypal,
+  creditCardBlack,
+  date,
 };
 
 export default icons;

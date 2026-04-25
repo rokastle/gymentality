@@ -55,7 +55,8 @@ INSERT INTO users (
   'demo.user@gymentality.local',
   'Demo',
   'User',
-  '$2a$10$hCK4i0bR6j6U0NBN.qvt0O4lHy38sR5F7fylwbf2/d0AgAtsy9tJS',
+  -- Password: DemoUser123!
+  '$2a$10$8D7qK1yOwVHLykfBVsjjGuBsyaRFx1INsd9jrJtQrkj4gaj2KTIbG',  
   '+34 600000000',
   'USER',
   'other',

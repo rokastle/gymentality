@@ -174,7 +174,7 @@ export default function AuthDrawer({ open, onClose }) {
             </div>
 
             <nav className="auth-drawer__menu">
-              <Link to="/classes" className="auth-drawer__menu-item">
+              <Link to="/account/book-class" className="auth-drawer__menu-item">
                 BOOK A CLASS
               </Link>
               <Link to="/account/workout" className="auth-drawer__menu-item">

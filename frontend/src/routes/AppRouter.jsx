@@ -6,7 +6,6 @@ import MembershipPage from "../pages/MembershipPage";
 import WorkoutPage from "../pages/WorkoutPage";
 import FacilitiesPage from "../pages/FacilitiesPage";
 import ClassesPage from "../pages/ClassesPage";
-import RegisterPage from "../pages/RegisterPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ClubDetailPage from "../pages/ClubDetailPage";
 import SignUpMembershipPage from "../pages/SignUpMembershipPage";
@@ -17,8 +16,11 @@ import ScrollToTop from "./ScrollToTop";
 import PrivateRoute from "./PrivateRoute";
 import MyMembershipPage from "../pages/MyMembershipPage";
 import NotificationsPage from "../pages/NotificationsPage";
-import ProfilePage from "../pages/ProfilePage";
+import ProfilePage from "../pages/MyProfilePage";
 import MyWorkoutPlanPage from "../pages/MyWorkoutPlanPage";
+import ChangeMyMembershipPage from "../pages/ChangeMyMembershipPage";
+import ChangeMyWorkoutPlanPage from "../pages/ChangeMyWorkoutPlanPage";
+import BookClassPage from "../pages/BookClassPage";
 
 export default function AppRouter() {
   return (
@@ -33,19 +35,54 @@ export default function AppRouter() {
           <Route path="/workout" element={<WorkoutPage />} />
           <Route path="/facilities" element={<FacilitiesPage />} />
           <Route path="/classes" element={<ClassesPage />} />
-          <Route path="/facilities" element={<FacilitiesPage />} />
           <Route path="/facilities/:clubId" element={<ClubDetailPage />} />
+
           <Route path="/signup/membership" element={<SignUpMembershipPage />} />
           <Route path="/signup/workout" element={<SignUpWorkoutPage />} />
           <Route path="/signup/details" element={<SignUpDetailsPage />} />
           <Route path="/signup/complete" element={<SignUpCompletePage />} />
-          <Route path="/account/workout" element={<MyWorkoutPlanPage />} />
+
+          <Route
+            path="/account/book-class"
+            element={
+              <PrivateRoute>
+                <BookClassPage />
+              </PrivateRoute>
+            }
+          />
 
           <Route
             path="/account/membership"
             element={
               <PrivateRoute>
                 <MyMembershipPage />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/account/membership/change"
+            element={
+              <PrivateRoute>
+                <ChangeMyMembershipPage />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/account/workout"
+            element={
+              <PrivateRoute>
+                <MyWorkoutPlanPage />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/account/workout/change"
+            element={
+              <PrivateRoute>
+                <ChangeMyWorkoutPlanPage />
               </PrivateRoute>
             }
           />
@@ -69,9 +106,7 @@ export default function AppRouter() {
           />
         </Route>
 
-        <Route path="/register" element={<RegisterPage />} />
         <Route path="*" element={<NotFoundPage />} />
-
       </Routes>
     </BrowserRouter>
   );

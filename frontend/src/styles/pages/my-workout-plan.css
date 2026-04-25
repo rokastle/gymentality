@@ -10,7 +10,8 @@
   align-items: center;
 }
 
-.my-workout-page__basic {
+.my-workout-page__basic,
+.my-workout-page__personal {
   width: 100%;
   max-width: 1260px;
 }
@@ -50,9 +51,18 @@
   color: var(--gm-white);
 }
 
-.my-workout-page__panel--basic {
+.my-workout-page__panel--basic,
+.my-workout-page__panel--personal {
   border-radius: 0 0 24px 24px;
 }
+
+.my-workout-page__panel--personal {
+  padding-bottom: 34px;
+}
+
+/* =========================
+   BASIC PLAN TABS
+   ========================= */
 
 .my-workout-page__tabbar {
   width: 100%;
@@ -74,17 +84,42 @@
   font-weight: 700;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, filter 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    filter 0.2s ease;
 }
 
 .my-workout-page__tab:hover {
-  filter: brightness(1.04);
+  border-color: transparent;
+  border-bottom-color: var(--gm-btn-hover-yellow-end);
+  background: linear-gradient(
+    90deg,
+    var(--gm-btn-hover-yellow-start),
+    var(--gm-btn-hover-yellow-end)
+  );
+  color: var(--gm-black);
+  filter: none;
 }
 
 .my-workout-page__tab.is-active {
-  background: var(--gm-btn-start);
+  border-color: var(--gm-white);
+  border-bottom-color: var(--gm-white);
+  background: var(--gm-white);
   color: var(--gm-black);
 }
+
+.my-workout-page__tab:focus-visible,
+.my-workout-page__week-tab:focus-visible {
+  outline: 3px solid var(--gm-btn-start);
+  outline-offset: 4px;
+}
+
+/* =========================
+   BASIC PLAN CONTENT
+   ========================= */
 
 .my-workout-page__routine-header {
   padding: 22px 24px 10px;
@@ -120,11 +155,11 @@
 }
 
 .my-workout-page__metric {
+  position: relative;
+  min-height: 72px;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  min-height: 72px;
 }
 
 .my-workout-page__metric-main {
@@ -153,12 +188,184 @@
   transform: translateY(-50%);
 }
 
+/* =========================
+   PERSONAL / INTEGRAL HEADER
+   ========================= */
+
+.my-workout-page__personal-header {
+  padding: 18px 24px 10px;
+  text-align: center;
+}
+
+.my-workout-page__personal-week {
+  margin: 0 0 6px;
+  color: var(--gm-white);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.my-workout-page__personal-day-title {
+  margin: 0;
+  color: var(--gm-white);
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+.my-workout-page__personal-metrics {
+  margin: 18px auto 22px;
+  width: calc(100% - 72px);
+  max-width: 1100px;
+  min-height: 72px;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 16px;
+  background: rgba(44, 48, 51, 0.72);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+}
+
+.my-workout-page__personal-metrics--integral {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.my-workout-page__personal-metric {
+  position: relative;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.my-workout-page__personal-metric-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--gm-white);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.my-workout-page__personal-metric-label {
+  color: var(--gm-btn-start);
+}
+
+.my-workout-page__personal-metric-value {
+  color: var(--gm-white);
+}
+
+.my-workout-page__personal-metric-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.my-workout-page__personal-metric-divider {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.28);
+  transform: translateY(-50%);
+}
+
+/* =========================
+   WEEK TABS + WEEKLY CALENDAR
+   ========================= */
+
+.my-workout-page__week-tabs {
+  width: calc(100% - 72px);
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.my-workout-page__week-tab {
+  min-height: 58px;
+  border: 2px solid var(--gm-btn-start);
+  border-bottom: 4px solid var(--gm-btn-start);
+  border-radius: 18px 18px 0 0;
+  background: #2b2f34;
+  color: var(--gm-btn-start);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    filter 0.2s ease;
+}
+
+.my-workout-page__week-tab:hover {
+  border-color: transparent;
+  border-bottom-color: var(--gm-btn-hover-yellow-end);
+  background: linear-gradient(
+    90deg,
+    var(--gm-btn-hover-yellow-start),
+    var(--gm-btn-hover-yellow-end)
+  );
+  color: var(--gm-black);
+  filter: none;
+}
+
+.my-workout-page__week-tab small {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.my-workout-page__week-tab.is-active {
+  border-color: var(--gm-white);
+  border-bottom-color: var(--gm-white);
+  background: var(--gm-white);
+  color: var(--gm-black);
+}
+
+.my-workout-page__calendar-wrapper {
+  width: calc(100% - 72px);
+  max-width: 1100px;
+  margin: 0 auto 26px;
+}
+
+.my-workout-page__calendar-wrapper .weekly-calendar {
+  border-radius: 0 0 16px 16px;
+}
+
+.my-workout-page__calendar-wrapper .weekly-calendar {
+  --wc-completed-bg: #145214;
+  --wc-completed-border: #28c937;
+  --wc-completed-text: #28c937;
+
+  border-radius: 0 0 16px 16px;
+}
+
+.my-workout-page__calendar-check {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: block;
+}
+
+/* =========================
+   VIDEOS
+   ========================= */
+
 .my-workout-page__section-heading {
   margin-top: 10px;
 }
 
 .my-workout-page__section-heading--personal {
   margin-top: 26px;
+}
+
+.my-workout-page__day-section {
+  margin-top: 8px;
 }
 
 .my-workout-page__videos-grid {
@@ -169,6 +376,10 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 42px 56px;
+}
+
+.my-workout-page__videos-grid--personal {
+  gap: 40px 52px;
 }
 
 .my-workout-page__video-card {
@@ -210,291 +421,15 @@
   text-align: center;
 }
 
-.my-workout-page__personal {
-  width: 100%;
-  max-width: 1260px;
-}
-
-.my-workout-page__week-tabs {
-  width: 100%;
-  max-width: 1260px;
-  margin: 18px auto 0;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-}
-
-.my-workout-page__week-tab {
-  min-height: 58px;
-  border: 2px solid var(--gm-btn-start);
-  border-bottom: 4px solid var(--gm-btn-start);
-  border-radius: 18px 18px 0 0;
-  background: #2b2f34;
-  color: var(--gm-btn-start);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 2px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.my-workout-page__week-tab small {
-  font-size: 0.82rem;
-  font-weight: 700;
-}
-
-.my-workout-page__week-tab.is-active {
-  background: var(--gm-btn-start);
-  color: var(--gm-black);
-}
-
-.my-workout-page__panel--personal {
-  padding: 0 0 34px;
-  border-radius: 0 0 24px 24px;
-}
-
-.my-workout-page__personal-header {
-  padding: 18px 24px 10px;
-  text-align: center;
-}
-
-.my-workout-page__personal-week {
-  margin: 0 0 6px;
-  color: var(--gm-white);
-  font-size: 2rem;
-  font-weight: 700;
-}
-
-.my-workout-page__personal-day-title {
-  margin: 0;
-  color: var(--gm-white);
-  font-size: 1.7rem;
-  font-weight: 700;
-}
-
-.my-workout-page__personal-metrics {
-  margin: 18px auto 22px;
-  width: calc(100% - 72px);
-  max-width: 1100px;
-  min-height: 72px;
-  border: 1px solid rgba(255, 255, 255, 0.38);
-  border-radius: 16px;
-  background: rgba(44, 48, 51, 0.72);
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  align-items: center;
-}
-
-.my-workout-page__personal-metric {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  min-height: 72px;
-}
-
-.my-workout-page__personal-metric-main {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--gm-white);
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.my-workout-page__personal-metric-label {
-  color: var(--gm-btn-start);
-}
-
-.my-workout-page__personal-metric-value {
-  color: var(--gm-white);
-}
-
-.my-workout-page__personal-metric-icon {
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
-}
-
-.my-workout-page__personal-metric-divider {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  width: 1px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.28);
-  transform: translateY(-50%);
-}
-
-.my-workout-page__calendar-card {
-  width: calc(100% - 72px);
-  max-width: 1100px;
-  margin: 0 auto 26px;
-  overflow: hidden;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.my-workout-page__calendar-title {
-  padding: 16px 20px;
-  background: #f4f4f4;
-  color: #111111;
-  font-size: 2rem;
-  font-weight: 700;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.my-workout-page__calendar-days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  padding: 18px 20px 20px;
-  gap: 10px;
-}
-
-.my-workout-page__calendar-day {
-  border: none;
-  background: transparent;
-  color: var(--gm-white);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.my-workout-page__calendar-weekday {
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.my-workout-page__calendar-number {
-  width: 54px;
-  height: 54px;
-  border: 3px solid var(--gm-btn-start);
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  color: var(--gm-btn-start);
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.my-workout-page__calendar-day.is-selected .my-workout-page__calendar-number {
-  background: var(--gm-btn-start);
-  color: var(--gm-black);
-}
-
-.my-workout-page__calendar-day.is-completed .my-workout-page__calendar-number {
-  border-color: #2dd14f;
-  background: #2dd14f;
-  color: var(--gm-white);
-}
-
-.my-workout-page__day-section {
-  margin-top: 8px;
-}
-
-.my-workout-page__videos-grid--personal {
-  gap: 40px 52px;
-}
-
 .my-workout-page__download {
   margin-top: 28px;
   display: flex;
   justify-content: center;
 }
 
-.my-workout-page__calendar-card {
-  width: calc(100% - 72px);
-  max-width: 1100px;
-  margin: 0 auto 26px;
-  overflow: hidden;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.my-workout-page__calendar-title {
-  padding: 16px 20px;
-  background: #f4f4f4;
-  color: #111111;
-  font-size: 2rem;
-  font-weight: 700;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.my-workout-page__calendar-days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  padding: 18px 20px 20px;
-  gap: 10px;
-}
-
-.my-workout-page__calendar-day {
-  border: none;
-  background: transparent;
-  color: var(--gm-white);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  min-height: 96px;
-}
-
-.my-workout-page__calendar-day--empty {
-  min-height: 96px;
-}
-
-.my-workout-page__calendar-weekday {
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.my-workout-page__calendar-number {
-  width: 54px;
-  height: 54px;
-  border: 3px solid var(--gm-btn-start);
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  color: var(--gm-btn-start);
-  font-size: 1.5rem;
-  font-weight: 700;
-  background: transparent;
-}
-
-.my-workout-page__calendar-day.is-completed .my-workout-page__calendar-number {
-  border-color: #2dd14f;
-  background: #2dd14f;
-  color: var(--gm-white);
-}
-
-.my-workout-page__calendar-day.is-today .my-workout-page__calendar-number {
-  border-color: var(--gm-white);
-  background: var(--gm-white);
-  color: var(--gm-black);
-}
-
-.my-workout-page__calendar-day.is-future .my-workout-page__calendar-number {
-  border-color: var(--gm-btn-start);
-  background: transparent;
-  color: var(--gm-btn-start);
-}
-
-.my-workout-page__calendar-day.is-selected .my-workout-page__calendar-number {
-  border-color: var(--gm-btn-start);
-  background: var(--gm-btn-start);
-  color: var(--gm-black);
-}
-
-.my-workout-page__personal-metrics--integral {
-  grid-template-columns: repeat(4, 1fr);
-}
+/* =========================
+   NUTRITION
+   ========================= */
 
 .my-workout-page__nutrition-section {
   margin-top: 34px;
@@ -561,6 +496,16 @@
   align-items: center;
 }
 
+.my-workout-page__nutrition-summary-title {
+  width: 100%;
+  margin: 0 0 18px;
+  color: var(--gm-white);
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+
 .my-workout-page__nutrition-chart {
   width: 220px;
   height: 220px;
@@ -615,22 +560,100 @@
   border-radius: 50%;
 }
 
-.my-workout-page__nutrition-legend-label {
-  font-size: 0.92rem;
-  font-weight: 700;
-}
-
+.my-workout-page__nutrition-legend-label,
 .my-workout-page__nutrition-legend-value {
   font-size: 0.92rem;
   font-weight: 700;
 }
 
-.my-workout-page__nutrition-summary-title {
-  width: 100%;
-  margin: 0 0 18px;
-  color: var(--gm-white);
-  font-size: 1.4rem;
-  font-weight: 700;
-  text-align: center;
-  text-transform: uppercase;
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 1200px) {
+  .my-workout-page__metrics,
+  .my-workout-page__personal-metrics,
+  .my-workout-page__week-tabs,
+  .my-workout-page__calendar-wrapper,
+  .my-workout-page__nutrition-layout {
+    width: calc(100% - 40px);
+  }
+
+  .my-workout-page__personal-metrics--integral {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .my-workout-page__nutrition-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .my-workout-page__tabbar,
+  .my-workout-page__week-tabs {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .my-workout-page__tab,
+  .my-workout-page__week-tab {
+    border-radius: 18px;
+  }
+
+  .my-workout-page__metrics,
+  .my-workout-page__personal-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .my-workout-page__metric-divider,
+  .my-workout-page__personal-metric-divider {
+    display: none;
+  }
+
+  .my-workout-page__videos-grid,
+  .my-workout-page__videos-grid--personal {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 28px;
+  }
+
+  .my-workout-page__nutrition-meals {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .my-workout-page {
+    padding: 22px 0 54px;
+  }
+
+  .my-workout-page__title {
+    font-size: 2.35rem;
+  }
+
+  .my-workout-page__personal-week {
+    font-size: 1.55rem;
+  }
+
+  .my-workout-page__personal-day-title {
+    font-size: 1.35rem;
+  }
+
+  .my-workout-page__videos-grid,
+  .my-workout-page__videos-grid--personal {
+    grid-template-columns: 1fr;
+  }
+
+  .my-workout-page__personal-metrics--integral {
+    grid-template-columns: 1fr;
+  }
+
+  .my-workout-page__nutrition-chart {
+    width: 190px;
+    height: 190px;
+  }
+
+  .my-workout-page__nutrition-chart-inner {
+    width: 120px;
+    height: 120px;
+  }
 }
