@@ -1,16 +1,50 @@
 import { Link, Navigate, useSearchParams } from "react-router-dom";
+import { useMemo } from "react";
 import SignUpTimeline from "../components/signup/SignUpTimeline";
 import { clubs } from "../data/clubsData";
-import { membershipSignUpPlans } from "../data/signupPlansData";
+import { mapMembershipPlanFromApi } from "../data/signupPlansData";
+import { useMembershipPlans } from "../hooks/useMembership";
 
 export default function SignUpMembershipPage() {
   const [searchParams] = useSearchParams();
   const clubId = searchParams.get("clubId");
 
   const club = clubs.find((item) => String(item.id) === String(clubId));
+  const { plans, loading, error } = useMembershipPlans();
+
+  const membershipPlans = useMemo(
+    () => plans.map(mapMembershipPlanFromApi),
+    [plans]
+  );
 
   if (!club) {
     return <Navigate to="/clubs" replace />;
+  }
+
+  if (loading) {
+    return (
+      <section className="signup-selection-page gm-dark-section-bg">
+        <div className="gm-container signup-selection-page__container">
+          <SignUpTimeline completedSteps={1} />
+          <h1 className="signup-selection-page__title">MEMBERSHIP</h1>
+          <p className="text-center text-white">Loading memberships...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="signup-selection-page gm-dark-section-bg">
+        <div className="gm-container signup-selection-page__container">
+          <SignUpTimeline completedSteps={1} />
+          <h1 className="signup-selection-page__title">MEMBERSHIP</h1>
+          <p className="text-center text-white">
+            No se pudieron cargar las membresías.
+          </p>
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -21,7 +55,7 @@ export default function SignUpMembershipPage() {
         <h1 className="signup-selection-page__title">MEMBERSHIP</h1>
 
         <div className="signup-selection-page__grid">
-          {membershipSignUpPlans.map((plan) => (
+          {membershipPlans.map((plan) => (
             <article
               key={plan.id}
               className="signup-plan-card signup-plan-card--membership gm-surface-card"

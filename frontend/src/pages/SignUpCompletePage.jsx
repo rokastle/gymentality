@@ -1,11 +1,16 @@
 import { Link, Navigate, useSearchParams } from "react-router-dom";
+import { useMemo } from "react";
 import SignUpTimeline from "../components/signup/SignUpTimeline";
 import { clubs } from "../data/clubsData";
 import {
   formatEuro,
   getMembershipPlanById,
   getWorkoutPlanById,
+  mapMembershipPlanFromApi,
+  mapWorkoutPlanFromApi,
 } from "../data/signupPlansData";
+import { useMembershipPlans } from "../hooks/useMembership";
+import { useWorkoutPlans } from "../hooks/useWorkoutPlans";
 
 export default function SignUpCompletePage() {
   const [searchParams] = useSearchParams();
@@ -16,15 +21,56 @@ export default function SignUpCompletePage() {
   const amount = Number(searchParams.get("amount") || 0);
 
   const club = clubs.find((item) => String(item.id) === String(clubId));
-  const membershipPlan = getMembershipPlanById(membershipId);
-  const workoutPlan = getWorkoutPlanById(workoutId);
 
-  if (!club || !membershipPlan || !workoutPlan) {
+  const {
+    plans: membershipApiPlans,
+    loading: membershipsLoading,
+    error: membershipsError,
+  } = useMembershipPlans();
+
+  const {
+    plans: workoutApiPlans,
+    loading: workoutPlansLoading,
+    error: workoutPlansError,
+  } = useWorkoutPlans();
+
+  const membershipPlans = useMemo(
+    () => membershipApiPlans.map(mapMembershipPlanFromApi),
+    [membershipApiPlans]
+  );
+
+  const workoutPlans = useMemo(
+    () => workoutApiPlans.map(mapWorkoutPlanFromApi),
+    [workoutApiPlans]
+  );
+
+  const membershipPlan = getMembershipPlanById(membershipId, membershipPlans);
+  const workoutPlan = getWorkoutPlanById(workoutId, workoutPlans);
+
+  if (!club) {
     return <Navigate to="/clubs" replace />;
   }
 
-  const registrationId = `349${club.id}6414${membershipPlan.id.length}`;
-  const invoiceNumber = `74${club.id}${workoutPlan.id.length}67`;
+  if (membershipsLoading || workoutPlansLoading) {
+    return (
+      <section className="signup-complete-page gm-dark-section-bg">
+        <div className="gm-container signup-complete-page__container">
+          <SignUpTimeline completedSteps={4} />
+
+          <h1 className="signup-complete-page__title">
+            Loading registration summary...
+          </h1>
+        </div>
+      </section>
+    );
+  }
+
+  if (membershipsError || workoutPlansError || !membershipPlan || !workoutPlan) {
+    return <Navigate to="/clubs" replace />;
+  }
+
+  const registrationId = `349${club.id}6414${String(membershipPlan.id).length}`;
+  const invoiceNumber = `74${club.id}${String(workoutPlan.id).length}67`;
 
   return (
     <section className="signup-complete-page gm-dark-section-bg">

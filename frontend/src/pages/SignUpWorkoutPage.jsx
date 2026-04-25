@@ -1,10 +1,14 @@
 import { Link, Navigate, useSearchParams } from "react-router-dom";
+import { useMemo } from "react";
 import SignUpTimeline from "../components/signup/SignUpTimeline";
 import { clubs } from "../data/clubsData";
 import {
   getMembershipPlanById,
-  workoutSignUpPlans,
+  mapMembershipPlanFromApi,
+  mapWorkoutPlanFromApi,
 } from "../data/signupPlansData";
+import { useMembershipPlans } from "../hooks/useMembership";
+import { useWorkoutPlans } from "../hooks/useWorkoutPlans";
 
 export default function SignUpWorkoutPage() {
   const [searchParams] = useSearchParams();
@@ -12,9 +16,48 @@ export default function SignUpWorkoutPage() {
   const membershipId = searchParams.get("membership");
 
   const club = clubs.find((item) => String(item.id) === String(clubId));
-  const membershipPlan = getMembershipPlanById(membershipId);
 
-  if (!club || !membershipPlan) {
+  const {
+    plans: membershipApiPlans,
+    loading: membershipsLoading,
+    error: membershipsError,
+  } = useMembershipPlans();
+
+  const {
+    plans: workoutApiPlans,
+    loading: workoutPlansLoading,
+    error: workoutPlansError,
+  } = useWorkoutPlans();
+
+  const membershipPlans = useMemo(
+    () => membershipApiPlans.map(mapMembershipPlanFromApi),
+    [membershipApiPlans]
+  );
+
+  const workoutPlans = useMemo(
+    () => workoutApiPlans.map(mapWorkoutPlanFromApi),
+    [workoutApiPlans]
+  );
+
+  const membershipPlan = getMembershipPlanById(membershipId, membershipPlans);
+
+  if (!club) {
+    return <Navigate to="/clubs" replace />;
+  }
+
+  if (membershipsLoading || workoutPlansLoading) {
+    return (
+      <section className="signup-selection-page gm-dark-section-bg">
+        <div className="gm-container signup-selection-page__container">
+          <SignUpTimeline completedSteps={2} />
+          <h1 className="signup-selection-page__title">WORKOUT</h1>
+          <p className="text-center text-white">Loading workout plans...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (membershipsError || workoutPlansError || !membershipPlan) {
     return <Navigate to="/clubs" replace />;
   }
 
@@ -26,7 +69,7 @@ export default function SignUpWorkoutPage() {
         <h1 className="signup-selection-page__title">WORKOUT</h1>
 
         <div className="signup-selection-page__grid">
-          {workoutSignUpPlans.map((plan) => (
+          {workoutPlans.map((plan) => (
             <article
               key={plan.id}
               className="signup-plan-card signup-plan-card--workout gm-surface-card"

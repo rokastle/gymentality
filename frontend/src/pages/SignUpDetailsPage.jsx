@@ -10,6 +10,8 @@ import {
   getMembershipPlanById,
   getSignupTotals,
   getWorkoutPlanById,
+  mapMembershipPlanFromApi,
+  mapWorkoutPlanFromApi,
 } from "../data/signupPlansData";
 import {
   cityOptionsByRegion,
@@ -20,6 +22,8 @@ import {
   signUpFieldOrder,
   validateSignUpForm,
 } from "../utils/signupValidation";
+import { useMembershipPlans } from "../hooks/useMembership";
+import { useWorkoutPlans } from "../hooks/useWorkoutPlans";
 
 const initialForm = {
   firstName: "",
@@ -58,8 +62,31 @@ export default function SignUpDetailsPage() {
   const workoutId = searchParams.get("workout");
 
   const club = clubs.find((item) => String(item.id) === String(clubId));
-  const membershipPlan = getMembershipPlanById(membershipId);
-  const workoutPlan = getWorkoutPlanById(workoutId);
+
+  const {
+    plans: membershipApiPlans,
+    loading: membershipsLoading,
+    error: membershipsError,
+  } = useMembershipPlans();
+
+  const {
+    plans: workoutApiPlans,
+    loading: workoutPlansLoading,
+    error: workoutPlansError,
+  } = useWorkoutPlans();
+
+  const membershipPlans = useMemo(
+    () => membershipApiPlans.map(mapMembershipPlanFromApi),
+    [membershipApiPlans]
+  );
+
+  const workoutPlans = useMemo(
+    () => workoutApiPlans.map(mapWorkoutPlanFromApi),
+    [workoutApiPlans]
+  );
+
+  const membershipPlan = getMembershipPlanById(membershipId, membershipPlans);
+  const workoutPlan = getWorkoutPlanById(workoutId, workoutPlans);
 
   const cityCatalog = useMemo(() => {
     return Object.entries(cityOptionsByRegion).flatMap(([region, cities]) =>
@@ -105,7 +132,23 @@ export default function SignUpDetailsPage() {
     }
   }, [form.city, cityOptions]);
 
-  if (!club || !membershipPlan || !workoutPlan) {
+  if (!club) {
+    return <Navigate to="/clubs" replace />;
+  }
+
+  if (membershipsLoading || workoutPlansLoading) {
+    return (
+      <section className="signup-details-page gm-dark-section-bg">
+        <div className="gm-container signup-details-page__container">
+          <SignUpTimeline completedSteps={3} />
+          <h1 className="signup-details-page__title">RESUME</h1>
+          <p className="text-center text-white">Loading selected plans...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (membershipsError || workoutPlansError || !membershipPlan || !workoutPlan) {
     return <Navigate to="/clubs" replace />;
   }
 
@@ -391,7 +434,7 @@ export default function SignUpDetailsPage() {
                     required
                     aria-invalid={Boolean(
                       (touched.dateOfBirth || submitAttempted) &&
-                        errors.dateOfBirth
+                      errors.dateOfBirth
                     )}
                     aria-describedby="dateOfBirth-error"
                   />
@@ -510,7 +553,7 @@ export default function SignUpDetailsPage() {
                       autoComplete="new-password"
                       aria-invalid={Boolean(
                         (touched.confirmPassword || submitAttempted) &&
-                          errors.confirmPassword
+                        errors.confirmPassword
                       )}
                       aria-describedby="confirmPassword-error"
                     />
@@ -592,7 +635,7 @@ export default function SignUpDetailsPage() {
                     placeholder="29001"
                     aria-invalid={Boolean(
                       (touched.postalCode || submitAttempted) &&
-                        errors.postalCode
+                      errors.postalCode
                     )}
                     aria-describedby="postalCode-error"
                   />

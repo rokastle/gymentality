@@ -21,7 +21,7 @@ export const membershipSignUpPlans = [
   {
     id: "quarterly",
     backendId: 2,
-    title: "QUATERLY PLAN",
+    title: "QUARTERLY PLAN",
     priceText: "104,97 €",
     subtitleLines: ["every 3 Month"],
     secondaryLines: ["34.99 €/Month", "Save 12%"],
@@ -61,13 +61,10 @@ export const membershipSignUpPlans = [
 export const workoutSignUpPlans = [
   {
     id: "basic",
-    backendId: 4,
+    backendId: 1,
     title: "BASIC PLAN",
     priceText: "FREE",
-    descriptionLines: [
-      "Perfect for experienced or",
-      "self-motivated members.",
-    ],
+    descriptionLines: ["Perfect for experienced or", "self-motivated members."],
     includesLabel: "What’s included:",
     features: [
       "Access to all training areas during opening hours.",
@@ -79,7 +76,7 @@ export const workoutSignUpPlans = [
   },
   {
     id: "personal",
-    backendId: 5,
+    backendId: 2,
     title: "PERSONAL PLAN",
     priceText: "30 €/ Month",
     descriptionLines: [
@@ -99,7 +96,7 @@ export const workoutSignUpPlans = [
   },
   {
     id: "integral",
-    backendId: 6,
+    backendId: 3,
     title: "INTEGRAL PLAN",
     priceText: "50 €/ Month",
     descriptionLines: [
@@ -118,20 +115,12 @@ export const workoutSignUpPlans = [
   },
 ];
 
-export function getMembershipPlanById(planId) {
-  return membershipSignUpPlans.find((plan) => plan.id === planId);
-}
-
-export function getWorkoutPlanById(planId) {
-  return workoutSignUpPlans.find((plan) => plan.id === planId);
-}
-
 export function formatEuro(value) {
-  return `${value.toFixed(2).replace(".", ",")}€`;
+  return `${Number(value).toFixed(2).replace(".", ",")}€`;
 }
 
 export function formatEuroMonth(value) {
-  return `${value.toFixed(2).replace(".", ",")} €/ Month`;
+  return `${Number(value).toFixed(2).replace(".", ",")} €/ Month`;
 }
 
 export function getRenewalDate(daysToAdd) {
@@ -157,4 +146,80 @@ export function getSignupTotals(membershipPlan, workoutPlan) {
     totalFirstPayment,
     renewalDate: getRenewalDate(membershipPlan.renewalDays),
   };
+}
+
+export function mapMembershipPlanFromApi(apiPlan) {
+  const uiPlan = membershipSignUpPlans.find(
+    (plan) => Number(plan.backendId) === Number(apiPlan.id)
+  );
+
+  if (!uiPlan) {
+    return {
+      id: String(apiPlan.id),
+      backendId: apiPlan.id,
+      title: apiPlan.name.toUpperCase(),
+      priceText: formatEuroMonth(apiPlan.price),
+      subtitleLines: [],
+      secondaryLines: [],
+      features: apiPlan.description ? [apiPlan.description] : [],
+      summaryName: apiPlan.name,
+      monthlyEquivalent: Number(apiPlan.price),
+      upfrontPrice: Number(apiPlan.price),
+      renewalDays: apiPlan.durationInDays,
+    };
+  }
+
+  return {
+    ...uiPlan,
+    backendId: apiPlan.id,
+    apiName: apiPlan.name,
+    apiDescription: apiPlan.description,
+    apiPrice: Number(apiPlan.price),
+    apiDurationInDays: apiPlan.durationInDays,
+  };
+}
+
+export function mapWorkoutPlanFromApi(apiPlan) {
+  const uiPlan = workoutSignUpPlans.find(
+    (plan) => Number(plan.backendId) === Number(apiPlan.id)
+  );
+
+  if (!uiPlan) {
+    return {
+      id: String(apiPlan.id),
+      backendId: apiPlan.id,
+      title: apiPlan.name.toUpperCase(),
+      priceText: Number(apiPlan.price) === 0 ? "FREE" : formatEuroMonth(apiPlan.price),
+      descriptionLines: apiPlan.description ? [apiPlan.description] : [],
+      includesLabel: "What’s included:",
+      features: apiPlan.description ? [apiPlan.description] : [],
+      summaryName: apiPlan.name,
+      monthlyPrice: Number(apiPlan.price),
+    };
+  }
+
+  return {
+    ...uiPlan,
+    backendId: apiPlan.id,
+    apiName: apiPlan.name,
+    apiDescription: apiPlan.description,
+    apiPrice: Number(apiPlan.price),
+    apiDurationInDays: apiPlan.durationInDays,
+  };
+}
+
+export function getMembershipPlanById(planId, plans = membershipSignUpPlans) {
+  return plans.find(
+    (plan) =>
+      String(plan.id) === String(planId) ||
+      String(plan.backendId) === String(planId)
+  );
+}
+
+export function getWorkoutPlanById(planId, plans = workoutSignUpPlans) {
+  return plans.find(
+    (plan) =>
+      String(plan.id) === String(planId) ||
+      String(plan.backendId) === String(planId)
+  );
 }
