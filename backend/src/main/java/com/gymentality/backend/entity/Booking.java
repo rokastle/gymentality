@@ -7,12 +7,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-    name = "bookings",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"user_id", "gym_class_id", "class_date"})
-    }
-)
+@Table(name = "bookings", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "user_id", "club_class_id", "class_date" })
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -51,6 +48,6 @@ public class Booking {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "gym_class_id", nullable = false)
+    @JoinColumn(name = "club_class_id", nullable = false)
     private ClubClass clubClass;
 }

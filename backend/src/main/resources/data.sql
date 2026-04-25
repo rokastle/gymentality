@@ -1,7 +1,8 @@
 -- Limpiar datos previos para evitar errores al reiniciar
+DELETE FROM class_notification_requests;
 DELETE FROM bookings;
 DELETE FROM facilities;
-DELETE FROM gym_classes;
+DELETE FROM club_classes;
 DELETE FROM users;
 DELETE FROM memberships;
 DELETE FROM clubs;
@@ -105,8 +106,8 @@ INSERT INTO facilities (id, name, description, club_id) VALUES
 (28, 'Parking', 'Aparcamiento disponible para socios.', 3),
 (29, 'Swimming Pool', 'Piscina para nado, aquafitness y actividades acuáticas.', 3);
 
--- GYM CLASSES
-INSERT INTO gym_classes (id, name, description, schedule, capacity, category, club_id) VALUES
+-- CLUB CLASSES
+INSERT INTO club_classes (id, name, description, schedule, capacity, category, club_id) VALUES
 
 -- =========================================
 -- CLUB 1: GYMENTALITY TEATINOS
