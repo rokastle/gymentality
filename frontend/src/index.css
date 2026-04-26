@@ -3,6 +3,8 @@
 @import "./styles/base/global.css";
 @import "./styles/base/utilities.css";
 
+@import "./styles/components/buttons.css";
+
 @import "./styles/layout/navbar.css";
 @import "./styles/layout/footer.css";
 

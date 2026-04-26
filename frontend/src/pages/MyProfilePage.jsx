@@ -2,26 +2,22 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import useLocationFields from "../hooks/useLocationFields";
 import useAuth from "../hooks/useAuth";
+import useProfileLoginSettings from "../hooks/useProfileLoginSettings";
+import useProfilePaymentMethod from "../hooks/useProfilePaymentMethod";
 import ProfilePersonalDetailsSection from "../components/profile/ProfilePersonalDetailsSection";
 import ProfileLoginSection from "../components/profile/ProfileLoginSection";
 import ProfilePaymentMethodSection from "../components/profile/ProfilePaymentMethodSection";
-import { buildTouchedFields } from "../utils/formStateUtils";
-import useProfilePaymentMethod from "../hooks/useProfilePaymentMethod";
 import { AddressFields } from "../components/forms";
+import { buildTouchedFields } from "../utils/formStateUtils";
 import {
   hasValidationErrors,
   normalizePostalCode,
-  profileEmailFieldOrder,
   profileFieldOrder,
-  profilePasswordFieldOrder,
-  validateProfileEmailForm,
   validateProfileForm,
-  validateProfilePasswordForm,
 } from "../utils/accountValidation";
 import {
   getErrorMessage,
   getInitialProfileForm,
-  initialPasswordForm,
 } from "../utils/profilePageUtils";
 
 export default function MyProfilePage() {
@@ -38,14 +34,6 @@ export default function MyProfilePage() {
   } = useAuth();
 
   const [form, setForm] = useState(() => getInitialProfileForm(user));
-  const [passwordForm, setPasswordForm] = useState(initialPasswordForm);
-
-  const [isEmailChangeEnabled, setIsEmailChangeEnabled] = useState(false);
-  const [isPasswordChangeEnabled, setIsPasswordChangeEnabled] = useState(false);
-
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [feedbackType, setFeedbackType] = useState("success");
@@ -54,46 +42,54 @@ export default function MyProfilePage() {
   const [profileTouched, setProfileTouched] = useState({});
   const [profileSubmitAttempted, setProfileSubmitAttempted] = useState(false);
 
-  const [emailTouched, setEmailTouched] = useState({});
-  const [emailSubmitAttempted, setEmailSubmitAttempted] = useState(false);
-
-  const [passwordTouched, setPasswordTouched] = useState({});
-  const [passwordSubmitAttempted, setPasswordSubmitAttempted] = useState(false);
-  const [passwordBackendErrors, setPasswordBackendErrors] = useState({});
-
   const profileErrors = useMemo(() => validateProfileForm(form), [form]);
 
-  const emailErrors = useMemo(
-    () =>
-      validateProfileEmailForm({
-        email: form.email,
-        newEmail: form.newEmail,
-      }),
-    [form.email, form.newEmail]
-  );
+  const {
+    passwordForm,
+    isEmailChangeEnabled,
+    isPasswordChangeEnabled,
+    showCurrentPassword,
+    showNewPassword,
+    showConfirmPassword,
+    handleEmailBlur,
+    handlePasswordChange,
+    handlePasswordBlur,
+    handleEmailToggleChange,
+    handlePasswordToggleChange,
+    getEmailFieldProps,
+    getPasswordFieldProps,
+    validateEnabledEmailChange,
+    validateEnabledPasswordChange,
+    registerPasswordBackendError,
+    resetEmailState,
+    resetPasswordState,
+    resetLoginState,
+    toggleCurrentPassword,
+    toggleNewPassword,
+    toggleConfirmPassword,
+  } = useProfileLoginSettings({
+    form,
+    setForm,
+  });
 
-  const passwordErrors = useMemo(
-    () => validateProfilePasswordForm(passwordForm),
-    [passwordForm]
-  );
-
-  const mergedPasswordErrors = useMemo(() => {
-    const activeBackendErrors = Object.entries(passwordBackendErrors).reduce(
-      (accumulator, [fieldName, errorMessage]) => {
-        if (errorMessage) {
-          accumulator[fieldName] = errorMessage;
-        }
-
-        return accumulator;
-      },
-      {}
-    );
-
-    return {
-      ...passwordErrors,
-      ...activeBackendErrors,
-    };
-  }, [passwordErrors, passwordBackendErrors]);
+  const {
+    storedCard,
+    isPaymentEditOpen,
+    cardForm,
+    paymentTouched,
+    paymentSubmitAttempted,
+    paymentErrors,
+    hasPaymentErrors,
+    handleCardFormChange,
+    handleCardBlur,
+    handleOpenPaymentEdit,
+    handleCancelPaymentEdit,
+    markAllPaymentFieldsAsTouched,
+    savePaymentMethod,
+  } = useProfilePaymentMethod({
+    user,
+    updatePaymentMethod,
+  });
 
   const { regionOptions, cityOptions, applyLocationChange } = useLocationFields({
     country: form.country,
@@ -106,14 +102,7 @@ export default function MyProfilePage() {
     setForm(getInitialProfileForm(user));
     setProfileTouched({});
     setProfileSubmitAttempted(false);
-    setEmailTouched({});
-    setEmailSubmitAttempted(false);
-    setPasswordTouched({});
-    setPasswordSubmitAttempted(false);
-    setPasswordBackendErrors({});
-    setPasswordForm(initialPasswordForm);
-    setIsEmailChangeEnabled(false);
-    setIsPasswordChangeEnabled(false);
+    resetLoginState();
   }, [user?.id]);
 
   if (!isAuthenticated || !user) {
@@ -167,70 +156,6 @@ export default function MyProfilePage() {
     }));
   };
 
-  const handleEmailBlur = (event) => {
-    const { name } = event.target;
-
-    setEmailTouched((current) => ({
-      ...current,
-      [name]: true,
-    }));
-  };
-
-  const handlePasswordChange = (event) => {
-    const { name, value } = event.target;
-
-    setPasswordForm((current) => ({
-      ...current,
-      [name]: value,
-    }));
-
-    setPasswordTouched((current) => ({
-      ...current,
-      [name]: true,
-    }));
-
-    setPasswordBackendErrors((current) => {
-      const nextErrors = { ...current };
-      delete nextErrors[name];
-      return nextErrors;
-    });
-  };
-
-  const handlePasswordBlur = (event) => {
-    const { name } = event.target;
-
-    setPasswordTouched((current) => ({
-      ...current,
-      [name]: true,
-    }));
-  };
-
-  const handleEmailToggleChange = (event) => {
-    const enabled = event.target.checked;
-
-    setIsEmailChangeEnabled(enabled);
-    setEmailTouched({});
-    setEmailSubmitAttempted(false);
-
-    setForm((current) => ({
-      ...current,
-      newEmail: "",
-    }));
-  };
-
-  const handlePasswordToggleChange = (event) => {
-    const enabled = event.target.checked;
-
-    setIsPasswordChangeEnabled(enabled);
-    setPasswordTouched({});
-    setPasswordSubmitAttempted(false);
-    setPasswordBackendErrors({});
-    setPasswordForm(initialPasswordForm);
-    setShowCurrentPassword(false);
-    setShowNewPassword(false);
-    setShowConfirmPassword(false);
-  };
-
   const getProfileFieldProps = (fieldName) => ({
     error: profileErrors[fieldName],
     touched: profileTouched[fieldName],
@@ -241,41 +166,8 @@ export default function MyProfilePage() {
     errorId: `${fieldName}-profile-error`,
   });
 
-  const getEmailFieldProps = (fieldName) => ({
-    error: isEmailChangeEnabled ? emailErrors[fieldName] : "",
-    touched: isEmailChangeEnabled ? emailTouched[fieldName] : false,
-    submitAttempted: isEmailChangeEnabled ? emailSubmitAttempted : false,
-    className: "my-profile-page__field",
-    controlClassName: `my-profile-page__input ${isEmailChangeEnabled ? "" : "my-profile-page__input--muted"
-      }`,
-    errorClassName: "my-profile-page__error",
-    errorId: `${fieldName}-profile-error`,
-  });
-
-  const getPasswordFieldProps = (fieldName) => ({
-    error: mergedPasswordErrors[fieldName],
-    touched: passwordTouched[fieldName],
-    submitAttempted: passwordSubmitAttempted,
-    className: "my-profile-page__field",
-    wrapperClassName: "my-profile-page__password-wrapper",
-    controlClassName: "my-profile-page__input",
-    toggleClassName: "my-profile-page__password-toggle",
-    iconClassName: "my-profile-page__password-toggle-icon",
-    errorClassName: "my-profile-page__error",
-    errorId: `${fieldName}-profile-error`,
-    showLabel: false,
-  });
-
   const markAllProfileFieldsAsTouched = () => {
     setProfileTouched(buildTouchedFields(profileFieldOrder));
-  };
-
-  const markAllEmailFieldsAsTouched = () => {
-    setEmailTouched(buildTouchedFields(profileEmailFieldOrder));
-  };
-
-  const markAllPasswordFieldsAsTouched = () => {
-    setPasswordTouched(buildTouchedFields(profilePasswordFieldOrder));
   };
 
   const handleSubmit = async (event) => {
@@ -289,44 +181,15 @@ export default function MyProfilePage() {
       return;
     }
 
-    if (isEmailChangeEnabled) {
-      setEmailSubmitAttempted(true);
-      markAllEmailFieldsAsTouched();
-
-      if (hasValidationErrors(emailErrors)) {
-        showErrorFeedback("Please review your email details before saving.");
-        return;
-      }
+    if (isEmailChangeEnabled && !validateEnabledEmailChange()) {
+      showErrorFeedback("Please review your email details before saving.");
+      return;
     }
 
-    if (isPasswordChangeEnabled) {
-      setPasswordSubmitAttempted(true);
-      markAllPasswordFieldsAsTouched();
-
-      if (hasValidationErrors(mergedPasswordErrors)) {
-        showErrorFeedback("Please review your password details before saving.");
-        return;
-      }
+    if (isPasswordChangeEnabled && !validateEnabledPasswordChange()) {
+      showErrorFeedback("Please review your password details before saving.");
+      return;
     }
-
-    const {
-      storedCard,
-      isPaymentEditOpen,
-      cardForm,
-      paymentTouched,
-      paymentSubmitAttempted,
-      paymentErrors,
-      hasPaymentErrors,
-      handleCardFormChange,
-      handleCardBlur,
-      handleOpenPaymentEdit,
-      handleCancelPaymentEdit,
-      markAllPaymentFieldsAsTouched,
-      savePaymentMethod,
-    } = useProfilePaymentMethod({
-      user,
-      updatePaymentMethod,
-    });
 
     if (isPaymentEditOpen) {
       markAllPaymentFieldsAsTouched();
@@ -365,9 +228,7 @@ export default function MyProfilePage() {
           newEmail: "",
         }));
 
-        setEmailTouched({});
-        setEmailSubmitAttempted(false);
-        setIsEmailChangeEnabled(false);
+        resetEmailState();
       }
 
       if (isPasswordChangeEnabled) {
@@ -377,14 +238,7 @@ export default function MyProfilePage() {
           confirmPassword: passwordForm.confirmPassword,
         });
 
-        setPasswordForm(initialPasswordForm);
-        setPasswordTouched({});
-        setPasswordSubmitAttempted(false);
-        setPasswordBackendErrors({});
-        setIsPasswordChangeEnabled(false);
-        setShowCurrentPassword(false);
-        setShowNewPassword(false);
-        setShowConfirmPassword(false);
+        resetPasswordState();
       }
 
       if (isPaymentEditOpen) {
@@ -409,16 +263,7 @@ export default function MyProfilePage() {
           message.toLowerCase().includes("password is incorrect") ||
           message.toLowerCase().includes("incorrect"))
       ) {
-        setPasswordTouched((current) => ({
-          ...current,
-          currentPassword: true,
-        }));
-
-        setPasswordSubmitAttempted(true);
-
-        setPasswordBackendErrors({
-          currentPassword: message,
-        });
+        registerPasswordBackendError(message);
       }
 
       setFeedbackMessage(message);
@@ -492,13 +337,9 @@ export default function MyProfilePage() {
             onEmailBlur={handleEmailBlur}
             onPasswordChange={handlePasswordChange}
             onPasswordBlur={handlePasswordBlur}
-            onToggleCurrentPassword={() =>
-              setShowCurrentPassword((current) => !current)
-            }
-            onToggleNewPassword={() => setShowNewPassword((current) => !current)}
-            onToggleConfirmPassword={() =>
-              setShowConfirmPassword((current) => !current)
-            }
+            onToggleCurrentPassword={toggleCurrentPassword}
+            onToggleNewPassword={toggleNewPassword}
+            onToggleConfirmPassword={toggleConfirmPassword}
             getEmailFieldProps={getEmailFieldProps}
             getPasswordFieldProps={getPasswordFieldProps}
           />

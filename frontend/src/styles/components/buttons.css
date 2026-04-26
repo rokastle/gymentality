@@ -1,0 +1,154 @@
+/* ============================================
+   GYMENTALITY BUTTON SYSTEM
+   Sistema unificado de botones del proyecto
+   ============================================ */
+
+/* --- Base Button --- */
+.gm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-align: center;
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.gm-btn:hover:not(:disabled):not(.gm-btn--locked) {
+  transform: translateY(-1px);
+}
+
+.gm-btn:disabled {
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+
+/* --- Button Variants --- */
+
+/* Pill shape - rounded ends */
+.gm-btn--pill {
+  min-width: 180px;
+  height: 42px;
+  padding: 0 20px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+}
+
+/* Solid Yellow - primary CTA */
+.gm-btn--solid-yellow,
+.gm-btn--yellow {
+  color: var(--gm-black);
+  background: linear-gradient(90deg, var(--gm-btn-start), var(--gm-btn-end));
+}
+
+.gm-btn--solid-yellow:hover:not(:disabled):not(.gm-btn--locked),
+.gm-btn--yellow:hover:not(:disabled):not(.gm-btn--locked) {
+  background: linear-gradient(
+    90deg,
+    var(--gm-btn-hover-orange-start),
+    var(--gm-btn-hover-orange-end)
+  );
+  color: var(--gm-black);
+}
+
+/* Outline Yellow - secondary button */
+.gm-btn--outline-yellow {
+  color: var(--gm-btn-start);
+  background: transparent;
+  border: 3px solid var(--gm-btn-start);
+}
+
+.gm-btn--outline-yellow:hover:not(:disabled):not(.gm-btn--locked) {
+  color: var(--gm-black);
+  border-color: transparent;
+  background: linear-gradient(
+    90deg,
+    var(--gm-btn-hover-yellow-start),
+    var(--gm-btn-hover-yellow-end)
+  );
+}
+
+/* Outline Danger - destructive action */
+.gm-btn--outline-danger {
+  color: var(--gm-danger);
+  background: transparent;
+  border: 3px solid var(--gm-danger);
+}
+
+.gm-btn--outline-danger:hover:not(:disabled):not(.gm-btn--locked) {
+  color: var(--gm-black);
+  border-color: transparent;
+  background: linear-gradient(
+    90deg,
+    var(--gm-btn-hover-danger-start),
+    var(--gm-btn-hover-danger-end)
+  );
+}
+
+/* Locked - disabled state */
+.gm-btn--locked {
+  color: var(--gm-btn-locked-text);
+  background: var(--gm-btn-locked-bg);
+  border: 3px solid var(--gm-btn-locked-border);
+  opacity: 0.95;
+  cursor: default;
+}
+
+.gm-btn--locked:hover,
+.gm-btn--locked:focus,
+.gm-btn--locked:active {
+  transform: none;
+  filter: none;
+  background: var(--gm-btn-locked-bg);
+  border-color: var(--gm-btn-locked-border);
+  color: var(--gm-btn-locked-text);
+}
+
+/* Full width */
+.gm-btn--full {
+  width: 100%;
+}
+
+/* Compact - smaller button */
+.gm-btn--compact {
+  min-width: 160px;
+  height: 48px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+/* Large - prominent CTA */
+.gm-btn--large {
+  min-width: 220px;
+  height: 54px;
+  padding: 0 28px;
+  border-radius: 18px;
+  font-size: 1rem;
+  box-shadow: 0 10px 24px rgba(255, 195, 0, 0.16);
+}
+
+/* --- Button Icon --- */
+.gm-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.gm-btn__icon img {
+  display: block;
+  object-fit: contain;
+}
