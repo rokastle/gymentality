@@ -9,6 +9,7 @@ import { AddressFields } from "../components/forms";
 import { useClubById } from "../hooks/useClubs";
 import { useMembershipPlans } from "../hooks/useMembership";
 import { useWorkoutPlans } from "../hooks/useWorkoutPlans";
+import { buildTouchedFields } from "../utils/formStateUtils";
 import useAuth from "../hooks/useAuth";
 import {
   getMembershipPlanById,
@@ -190,12 +191,8 @@ export default function SignUpDetailsPage() {
 
     setSubmitAttempted(true);
 
-    const allTouched = signUpFieldOrder.reduce((accumulator, fieldName) => {
-      accumulator[fieldName] = true;
-      return accumulator;
-    }, {});
-
-    setTouched(allTouched);
+    setTouched(buildTouchedFields(signUpFieldOrder));
+    
     setApiError("");
 
     if (hasValidationErrors(errors)) {

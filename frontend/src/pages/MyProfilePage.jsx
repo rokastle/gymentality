@@ -5,6 +5,7 @@ import useAuth from "../hooks/useAuth";
 import ProfilePersonalDetailsSection from "../components/profile/ProfilePersonalDetailsSection";
 import ProfileLoginSection from "../components/profile/ProfileLoginSection";
 import ProfilePaymentMethodSection from "../components/profile/ProfilePaymentMethodSection";
+import { buildTouchedFields } from "../utils/formStateUtils";
 import { AddressFields } from "../components/forms";
 import {
   hasValidationErrors,
@@ -337,45 +338,19 @@ export default function MyProfilePage() {
   });
 
   const markAllProfileFieldsAsTouched = () => {
-    const allTouched = profileFieldOrder.reduce((accumulator, fieldName) => {
-      accumulator[fieldName] = true;
-      return accumulator;
-    }, {});
-
-    setProfileTouched(allTouched);
+    setProfileTouched(buildTouchedFields(profileFieldOrder));
   };
 
   const markAllEmailFieldsAsTouched = () => {
-    const allTouched = profileEmailFieldOrder.reduce((accumulator, fieldName) => {
-      accumulator[fieldName] = true;
-      return accumulator;
-    }, {});
-
-    setEmailTouched(allTouched);
+    setEmailTouched(buildTouchedFields(profileEmailFieldOrder));
   };
 
   const markAllPasswordFieldsAsTouched = () => {
-    const allTouched = profilePasswordFieldOrder.reduce(
-      (accumulator, fieldName) => {
-        accumulator[fieldName] = true;
-        return accumulator;
-      },
-      {}
-    );
-
-    setPasswordTouched(allTouched);
+    setPasswordTouched(buildTouchedFields(profilePasswordFieldOrder));
   };
 
   const markAllPaymentFieldsAsTouched = () => {
-    const allPaymentTouched = paymentFieldNames.reduce(
-      (accumulator, fieldName) => {
-        accumulator[fieldName] = true;
-        return accumulator;
-      },
-      {}
-    );
-
-    setPaymentTouched(allPaymentTouched);
+    setPaymentTouched(buildTouchedFields(paymentFieldNames));
   };
 
   const handleSubmit = async (event) => {
