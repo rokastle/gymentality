@@ -339,10 +339,7 @@ export default function SignUpDetailsPage() {
       city: form.city,
       country: form.country,
       region: form.region,
-
-      // Temporal para compatibilidad si el backend todavía espera iban.
-      iban: "CARD_PAYMENT",
-
+      
       paymentMethod: "card",
       cardLast4: cleanCardNumber.slice(-4),
       cardExpiryMonth: form.expiryMonth,
