@@ -4,7 +4,13 @@ import SignUpTimeline from "../components/signup/SignUpTimeline";
 import { useClubById } from "../hooks/useClubs";
 import useAuth from "../hooks/useAuth";
 import CreditCardPaymentForm from "../components/payment/CreditCardPaymentForm";
-import { FormField, FormSelect, PasswordField } from "../components/forms";
+import {
+  FormCheckbox,
+  FormField,
+  FormRadioGroup,
+  FormSelect,
+  PasswordField,
+} from "../components/forms";
 import {
   formatEuro,
   formatEuroMonth,
@@ -404,42 +410,24 @@ export default function SignUpDetailsPage() {
               </div>
 
               <div className="signup-details-page__grid signup-details-page__grid--two signup-details-page__gender-row">
-                <div className="signup-details-page__field">
-                  <span>Gender*</span>
-
-                  <div className="signup-details-page__options">
-                    <label>
-                      <input
-                        ref={(element) => {
-                          if (element) {
-                            fieldRefs.current.gender = element;
-                          }
-                        }}
-                        type="radio"
-                        name="gender"
-                        value="female"
-                        checked={form.gender === "female"}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      />
-                      <span>Female</span>
-                    </label>
-
-                    <label>
-                      <input
-                        type="radio"
-                        name="gender"
-                        value="male"
-                        checked={form.gender === "male"}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      />
-                      <span>Male</span>
-                    </label>
-                  </div>
-
-                  {renderError("gender")}
-                </div>
+                <FormRadioGroup
+                  ref={(element) => {
+                    fieldRefs.current.gender = element;
+                  }}
+                  label="Gender*"
+                  name="gender"
+                  value={form.gender}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  options={[
+                    { value: "female", label: "Female" },
+                    { value: "male", label: "Male" },
+                  ]}
+                  error={errors.gender}
+                  touched={touched.gender}
+                  submitAttempted={submitAttempted}
+                  className="signup-details-page__field"
+                />
 
                 <FormField
                   ref={(element) => {
@@ -657,20 +645,22 @@ export default function SignUpDetailsPage() {
                 />
               </div>
 
-              <label className="signup-details-page__checkbox">
-                <input
-                  ref={(element) => {
-                    fieldRefs.current.acceptedTerms = element;
-                  }}
-                  type="checkbox"
-                  name="acceptedTerms"
-                  checked={form.acceptedTerms}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  required
-                />
-                <span>I accept the terms and privacy policy</span>
-              </label>
+              <FormCheckbox
+                ref={(element) => {
+                  fieldRefs.current.acceptedTerms = element;
+                }}
+                label="I accept the terms and privacy policy"
+                name="acceptedTerms"
+                checked={form.acceptedTerms}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                required
+                error={errors.acceptedTerms}
+                touched={touched.acceptedTerms}
+                submitAttempted={submitAttempted}
+                className="signup-details-page__checkbox"
+                errorClassName="signup-details-page__error"
+              />
 
               {renderError("acceptedTerms")}
             </section>
@@ -764,6 +754,6 @@ export default function SignUpDetailsPage() {
           </aside>
         </div>
       </div>
-    </section>
+    </section >
   );
 }
