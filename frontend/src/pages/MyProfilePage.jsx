@@ -6,6 +6,7 @@ import ProfilePersonalDetailsSection from "../components/profile/ProfilePersonal
 import ProfileLoginSection from "../components/profile/ProfileLoginSection";
 import ProfilePaymentMethodSection from "../components/profile/ProfilePaymentMethodSection";
 import { buildTouchedFields } from "../utils/formStateUtils";
+import useProfilePaymentMethod from "../hooks/useProfilePaymentMethod";
 import { AddressFields } from "../components/forms";
 import {
   hasValidationErrors,
@@ -18,17 +19,8 @@ import {
   validateProfilePasswordForm,
 } from "../utils/accountValidation";
 import {
-  hasPaymentValidationErrors,
-  normalizeCardNumber,
-  paymentFieldNames,
-  validatePaymentForm,
-} from "../utils/paymentValidation";
-import {
-  emptyCardForm,
-  getCardBrand,
   getErrorMessage,
   getInitialProfileForm,
-  getInitialStoredCard,
   initialPasswordForm,
 } from "../utils/profilePageUtils";
 
@@ -69,12 +61,6 @@ export default function MyProfilePage() {
   const [passwordSubmitAttempted, setPasswordSubmitAttempted] = useState(false);
   const [passwordBackendErrors, setPasswordBackendErrors] = useState({});
 
-  const [storedCard, setStoredCard] = useState(() => getInitialStoredCard(user));
-  const [isPaymentEditOpen, setIsPaymentEditOpen] = useState(false);
-  const [cardForm, setCardForm] = useState(emptyCardForm);
-  const [paymentTouched, setPaymentTouched] = useState({});
-  const [paymentSubmitAttempted, setPaymentSubmitAttempted] = useState(false);
-
   const profileErrors = useMemo(() => validateProfileForm(form), [form]);
 
   const emailErrors = useMemo(
@@ -109,8 +95,6 @@ export default function MyProfilePage() {
     };
   }, [passwordErrors, passwordBackendErrors]);
 
-  const paymentErrors = useMemo(() => validatePaymentForm(cardForm), [cardForm]);
-
   const { regionOptions, cityOptions, applyLocationChange } = useLocationFields({
     country: form.country,
     region: form.region,
@@ -131,16 +115,6 @@ export default function MyProfilePage() {
     setIsEmailChangeEnabled(false);
     setIsPasswordChangeEnabled(false);
   }, [user?.id]);
-
-  useEffect(() => {
-    setStoredCard(getInitialStoredCard(user));
-  }, [
-    user?.paymentMethod,
-    user?.cardLast4,
-    user?.cardExpiryMonth,
-    user?.cardExpiryYear,
-    user?.saveCardForFuture,
-  ]);
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/" replace />;
@@ -257,51 +231,6 @@ export default function MyProfilePage() {
     setShowConfirmPassword(false);
   };
 
-  const handleCardFormChange = (event) => {
-    const { name, type, value, checked } = event.target;
-
-    setCardForm((current) => ({
-      ...current,
-      [name]:
-        type === "checkbox"
-          ? checked
-          : name === "cardNumber" || name === "cvv"
-            ? value.replace(/\D/g, "")
-            : value,
-    }));
-  };
-
-  const handleCardBlur = (event) => {
-    const { name } = event.target;
-
-    setPaymentTouched((current) => ({
-      ...current,
-      [name]: true,
-    }));
-  };
-
-  const handleOpenPaymentEdit = () => {
-    setCardForm({
-      cardholder: "",
-      cardNumber: "",
-      expiryMonth: storedCard.expiryMonth || "",
-      expiryYear: storedCard.expiryYear || "",
-      cvv: "",
-      saveForFuture: storedCard.saveCardForFuture ?? true,
-    });
-
-    setPaymentTouched({});
-    setPaymentSubmitAttempted(false);
-    setIsPaymentEditOpen(true);
-  };
-
-  const handleCancelPaymentEdit = () => {
-    setCardForm(emptyCardForm);
-    setPaymentTouched({});
-    setPaymentSubmitAttempted(false);
-    setIsPaymentEditOpen(false);
-  };
-
   const getProfileFieldProps = (fieldName) => ({
     error: profileErrors[fieldName],
     touched: profileTouched[fieldName],
@@ -349,10 +278,6 @@ export default function MyProfilePage() {
     setPasswordTouched(buildTouchedFields(profilePasswordFieldOrder));
   };
 
-  const markAllPaymentFieldsAsTouched = () => {
-    setPaymentTouched(buildTouchedFields(paymentFieldNames));
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -384,11 +309,29 @@ export default function MyProfilePage() {
       }
     }
 
+    const {
+      storedCard,
+      isPaymentEditOpen,
+      cardForm,
+      paymentTouched,
+      paymentSubmitAttempted,
+      paymentErrors,
+      hasPaymentErrors,
+      handleCardFormChange,
+      handleCardBlur,
+      handleOpenPaymentEdit,
+      handleCancelPaymentEdit,
+      markAllPaymentFieldsAsTouched,
+      savePaymentMethod,
+    } = useProfilePaymentMethod({
+      user,
+      updatePaymentMethod,
+    });
+
     if (isPaymentEditOpen) {
-      setPaymentSubmitAttempted(true);
       markAllPaymentFieldsAsTouched();
 
-      if (hasPaymentValidationErrors(paymentErrors)) {
+      if (hasPaymentErrors) {
         showErrorFeedback("Please review your card details before saving.");
         return;
       }
@@ -445,30 +388,7 @@ export default function MyProfilePage() {
       }
 
       if (isPaymentEditOpen) {
-        const cleanCardNumber = normalizeCardNumber(cardForm.cardNumber);
-        const last4 = cleanCardNumber.slice(-4);
-
-        await updatePaymentMethod({
-          paymentMethod: "card",
-          cardLast4: last4,
-          cardExpiryMonth: cardForm.expiryMonth,
-          cardExpiryYear: cardForm.expiryYear,
-          saveCardForFuture: cardForm.saveForFuture,
-        });
-
-        setStoredCard({
-          brand: getCardBrand(cleanCardNumber),
-          last4,
-          expiryMonth: cardForm.expiryMonth,
-          expiryYear: cardForm.expiryYear,
-          saveCardForFuture: cardForm.saveForFuture,
-          hasStoredCard: true,
-        });
-
-        setCardForm(emptyCardForm);
-        setPaymentTouched({});
-        setPaymentSubmitAttempted(false);
-        setIsPaymentEditOpen(false);
+        await savePaymentMethod();
       }
 
       setProfileTouched({});
