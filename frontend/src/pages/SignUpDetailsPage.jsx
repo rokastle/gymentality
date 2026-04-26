@@ -4,6 +4,7 @@ import SignUpTimeline from "../components/signup/SignUpTimeline";
 import { useClubById } from "../hooks/useClubs";
 import useAuth from "../hooks/useAuth";
 import IconImage from "../components/common/IconImage";
+import CreditCardPaymentForm from "../components/payment/CreditCardPaymentForm";
 import {
   formatEuro,
   formatEuroMonth,
@@ -17,6 +18,7 @@ import {
   cityOptionsByRegion,
   countryOptions,
   hasValidationErrors,
+  normalizeCardNumber,
   normalizePostalCode,
   regionOptionsByCountry,
   signUpFieldOrder,
@@ -39,9 +41,22 @@ const initialForm = {
   country: "España",
   region: "",
   city: "",
-  iban: "",
+  cardholder: "",
+  cardNumber: "",
+  expiryMonth: "",
+  expiryYear: "",
+  cvv: "",
+  saveCardForFuture: true,
   acceptedTerms: false,
 };
+
+const paymentFieldNames = [
+  "cardholder",
+  "cardNumber",
+  "expiryMonth",
+  "expiryYear",
+  "cvv",
+];
 
 export default function SignUpDetailsPage() {
   const navigate = useNavigate();
@@ -203,6 +218,20 @@ export default function SignUpDetailsPage() {
     });
   };
 
+  const handleCreditCardChange = (event) => {
+    const { name, type, value, checked } = event.target;
+    const mappedName = name === "saveForFuture" ? "saveCardForFuture" : name;
+
+    handleChange({
+      target: {
+        name: mappedName,
+        type,
+        value,
+        checked,
+      },
+    });
+  };
+
   const handleBlur = (event) => {
     const { name } = event.target;
 
@@ -228,10 +257,10 @@ export default function SignUpDetailsPage() {
 
   const focusFirstInvalidField = (validationErrors) => {
     const firstInvalidField = signUpFieldOrder.find(
-      (fieldName) => validationErrors[fieldName]
+      (fieldName) => validationErrors[fieldName] && fieldRefs.current[fieldName]
     );
 
-    if (firstInvalidField && fieldRefs.current[firstInvalidField]) {
+    if (firstInvalidField) {
       fieldRefs.current[firstInvalidField].focus();
     }
   };
@@ -249,6 +278,27 @@ export default function SignUpDetailsPage() {
       >
         {showError ? errors[fieldName] : "\u00A0"}
       </small>
+    );
+  };
+
+  const renderPaymentErrors = () => {
+    const visiblePaymentErrors = paymentFieldNames.filter(
+      (fieldName) =>
+        (touched[fieldName] || submitAttempted) && errors[fieldName]
+    );
+
+    if (!visiblePaymentErrors.length) {
+      return null;
+    }
+
+    return (
+      <div className="signup-details-page__payment-errors">
+        {visiblePaymentErrors.map((fieldName) => (
+          <small key={fieldName} className="signup-details-page__error">
+            {errors[fieldName]}
+          </small>
+        ))}
+      </div>
     );
   };
 
@@ -274,6 +324,8 @@ export default function SignUpDetailsPage() {
       return;
     }
 
+    const cleanCardNumber = normalizeCardNumber(form.cardNumber);
+
     const payload = {
       firstName: form.firstName.trim(),
       lastName: form.lastName.trim(),
@@ -287,7 +339,16 @@ export default function SignUpDetailsPage() {
       city: form.city,
       country: form.country,
       region: form.region,
-      iban: form.iban.trim(),
+
+      // Temporal para compatibilidad si el backend todavía espera iban.
+      iban: "CARD_PAYMENT",
+
+      paymentMethod: "card",
+      cardLast4: cleanCardNumber.slice(-4),
+      cardExpiryMonth: form.expiryMonth,
+      cardExpiryYear: form.expiryYear,
+      saveCardForFuture: form.saveCardForFuture,
+
       clubId: club.id,
       membershipPlanId: membershipPlan.backendId,
       workoutPlanId: workoutPlan.backendId,
@@ -357,7 +418,9 @@ export default function SignUpDetailsPage() {
                     ref={(element) => {
                       fieldRefs.current.firstName = element;
                     }}
-                    className={`signup-details-page__control ${getControlStateClass("firstName")}`}
+                    className={`signup-details-page__control ${getControlStateClass(
+                      "firstName"
+                    )}`}
                     name="firstName"
                     value={form.firstName}
                     onChange={handleChange}
@@ -378,7 +441,9 @@ export default function SignUpDetailsPage() {
                     ref={(element) => {
                       fieldRefs.current.lastName = element;
                     }}
-                    className={`signup-details-page__control ${getControlStateClass("lastName")}`}
+                    className={`signup-details-page__control ${getControlStateClass(
+                      "lastName"
+                    )}`}
                     name="lastName"
                     value={form.lastName}
                     onChange={handleChange}
@@ -436,7 +501,9 @@ export default function SignUpDetailsPage() {
                     ref={(element) => {
                       fieldRefs.current.dateOfBirth = element;
                     }}
-                    className={`signup-details-page__control ${getControlStateClass("dateOfBirth")}`}
+                    className={`signup-details-page__control ${getControlStateClass(
+                      "dateOfBirth"
+                    )}`}
                     type="date"
                     name="dateOfBirth"
                     value={form.dateOfBirth}
@@ -445,7 +512,7 @@ export default function SignUpDetailsPage() {
                     required
                     aria-invalid={Boolean(
                       (touched.dateOfBirth || submitAttempted) &&
-                      errors.dateOfBirth
+                        errors.dateOfBirth
                     )}
                     aria-describedby="dateOfBirth-error"
                   />
@@ -460,7 +527,9 @@ export default function SignUpDetailsPage() {
                     ref={(element) => {
                       fieldRefs.current.email = element;
                     }}
-                    className={`signup-details-page__control ${getControlStateClass("email")}`}
+                    className={`signup-details-page__control ${getControlStateClass(
+                      "email"
+                    )}`}
                     type="email"
                     name="email"
                     value={form.email}
@@ -483,7 +552,9 @@ export default function SignUpDetailsPage() {
                     ref={(element) => {
                       fieldRefs.current.phone = element;
                     }}
-                    className={`signup-details-page__control ${getControlStateClass("phone")}`}
+                    className={`signup-details-page__control ${getControlStateClass(
+                      "phone"
+                    )}`}
                     type="tel"
                     name="phone"
                     value={form.phone}
@@ -511,7 +582,9 @@ export default function SignUpDetailsPage() {
                       ref={(element) => {
                         fieldRefs.current.password = element;
                       }}
-                      className={`signup-details-page__control ${getControlStateClass("password")}`}
+                      className={`signup-details-page__control ${getControlStateClass(
+                        "password"
+                      )}`}
                       type={showPassword ? "text" : "password"}
                       name="password"
                       value={form.password}
@@ -535,7 +608,9 @@ export default function SignUpDetailsPage() {
                       aria-pressed={showPassword}
                     >
                       <IconImage
-                        name={showPassword ? "hidePasswordIcon" : "showPasswordIcon"}
+                        name={
+                          showPassword ? "hidePasswordIcon" : "showPasswordIcon"
+                        }
                         className="signup-details-page__password-toggle-icon"
                         decorative
                         size={20}
@@ -554,7 +629,9 @@ export default function SignUpDetailsPage() {
                       ref={(element) => {
                         fieldRefs.current.confirmPassword = element;
                       }}
-                      className={`signup-details-page__control ${getControlStateClass("confirmPassword")}`}
+                      className={`signup-details-page__control ${getControlStateClass(
+                        "confirmPassword"
+                      )}`}
                       type={showConfirmPassword ? "text" : "password"}
                       name="confirmPassword"
                       value={form.confirmPassword}
@@ -564,7 +641,7 @@ export default function SignUpDetailsPage() {
                       autoComplete="new-password"
                       aria-invalid={Boolean(
                         (touched.confirmPassword || submitAttempted) &&
-                        errors.confirmPassword
+                          errors.confirmPassword
                       )}
                       aria-describedby="confirmPassword-error"
                     />
@@ -599,9 +676,7 @@ export default function SignUpDetailsPage() {
             </section>
 
             <section className="signup-details-page__section">
-              <h2 className="signup-details-page__section-title">
-                Billing details
-              </h2>
+              <h2 className="signup-details-page__section-title">Address</h2>
 
               <div className="signup-details-page__grid signup-details-page__grid--one">
                 <label className="signup-details-page__field">
@@ -610,7 +685,9 @@ export default function SignUpDetailsPage() {
                     ref={(element) => {
                       fieldRefs.current.address = element;
                     }}
-                    className={`signup-details-page__control ${getControlStateClass("address")}`}
+                    className={`signup-details-page__control ${getControlStateClass(
+                      "address"
+                    )}`}
                     name="address"
                     value={form.address}
                     onChange={handleChange}
@@ -633,7 +710,9 @@ export default function SignUpDetailsPage() {
                     ref={(element) => {
                       fieldRefs.current.postalCode = element;
                     }}
-                    className={`signup-details-page__control ${getControlStateClass("postalCode")}`}
+                    className={`signup-details-page__control ${getControlStateClass(
+                      "postalCode"
+                    )}`}
                     type="text"
                     name="postalCode"
                     value={form.postalCode}
@@ -646,7 +725,7 @@ export default function SignUpDetailsPage() {
                     placeholder="29001"
                     aria-invalid={Boolean(
                       (touched.postalCode || submitAttempted) &&
-                      errors.postalCode
+                        errors.postalCode
                     )}
                     aria-describedby="postalCode-error"
                   />
@@ -659,7 +738,9 @@ export default function SignUpDetailsPage() {
                     ref={(element) => {
                       fieldRefs.current.city = element;
                     }}
-                    className={`signup-details-page__control ${getControlStateClass("city")}`}
+                    className={`signup-details-page__control ${getControlStateClass(
+                      "city"
+                    )}`}
                     name="city"
                     value={form.city}
                     onChange={handleChange}
@@ -691,7 +772,9 @@ export default function SignUpDetailsPage() {
                     ref={(element) => {
                       fieldRefs.current.country = element;
                     }}
-                    className={`signup-details-page__control ${getControlStateClass("country")}`}
+                    className={`signup-details-page__control ${getControlStateClass(
+                      "country"
+                    )}`}
                     name="country"
                     value={form.country}
                     onChange={handleChange}
@@ -718,7 +801,9 @@ export default function SignUpDetailsPage() {
                     ref={(element) => {
                       fieldRefs.current.region = element;
                     }}
-                    className={`signup-details-page__control ${getControlStateClass("region")}`}
+                    className={`signup-details-page__control ${getControlStateClass(
+                      "region"
+                    )}`}
                     name="region"
                     value={form.region}
                     onChange={handleChange}
@@ -739,29 +824,41 @@ export default function SignUpDetailsPage() {
                   {renderError("region")}
                 </label>
               </div>
+            </section>
 
-              <div className="signup-details-page__grid signup-details-page__grid--one">
-                <label className="signup-details-page__field">
-                  <span>IBAN*</span>
-                  <input
-                    ref={(element) => {
-                      fieldRefs.current.iban = element;
-                    }}
-                    className={`signup-details-page__control ${getControlStateClass("iban")}`}
-                    name="iban"
-                    value={form.iban}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    autoComplete="off"
-                    placeholder="ES12 1234 1234 12 1234567890"
-                    aria-invalid={Boolean(
-                      (touched.iban || submitAttempted) && errors.iban
-                    )}
-                    aria-describedby="iban-error"
-                  />
-                  {renderError("iban")}
-                </label>
+            <section className="signup-details-page__section">
+              <h2 className="signup-details-page__section-title">
+                Payment details
+              </h2>
+
+              <div className="signup-details-page__payment-box">
+                <div className="signup-details-page__payment-option">
+                  <div>
+                    <strong>Pay by card</strong>
+                    <span>Secure payment with Visa and Mastercard</span>
+                  </div>
+
+                  <div className="signup-details-page__payment-brands">
+                    <span className="signup-details-page__payment-brand-dot signup-details-page__payment-brand-dot--red" />
+                    <span className="signup-details-page__payment-brand-dot signup-details-page__payment-brand-dot--orange" />
+                    <strong>VISA</strong>
+                  </div>
+                </div>
+
+                <CreditCardPaymentForm
+                  cardForm={{
+                    cardholder: form.cardholder,
+                    cardNumber: form.cardNumber,
+                    expiryMonth: form.expiryMonth,
+                    expiryYear: form.expiryYear,
+                    cvv: form.cvv,
+                    saveForFuture: form.saveCardForFuture,
+                  }}
+                  onChange={handleCreditCardChange}
+                  compact
+                />
+
+                {renderPaymentErrors()}
               </div>
 
               <label className="signup-details-page__checkbox">
@@ -794,7 +891,9 @@ export default function SignUpDetailsPage() {
 
           <aside className="signup-details-page__sidebar">
             <div className="signup-details-page__summary-card gm-surface-card">
-              <p className="signup-details-page__summary-label">Billing details</p>
+              <p className="signup-details-page__summary-label">
+                Billing details
+              </p>
 
               <h2 className="signup-details-page__summary-title">
                 {club.name}

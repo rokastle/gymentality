@@ -3,6 +3,7 @@ export const regex = {
   password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/,
   phone: /^\+34 \d{3}-\d{3}-\d{3}$/,
   postalCode: /^\d{5}$/,
+  cvv: /^\d{3,4}$/,
 };
 
 export const countryOptions = ["España"];
@@ -37,7 +38,11 @@ export const signUpFieldOrder = [
   "country",
   "region",
   "city",
-  "iban",
+  "cardholder",
+  "cardNumber",
+  "expiryMonth",
+  "expiryYear",
+  "cvv",
   "acceptedTerms",
 ];
 
@@ -51,69 +56,79 @@ export function normalizePostalCode(value) {
     .slice(0, 5);
 }
 
-function normalizeIban(value) {
-  return String(value ?? "")
-    .toUpperCase()
-    .replace(/\s+/g, "");
+export function normalizeCardNumber(value) {
+  return String(value ?? "").replace(/\D/g, "");
 }
 
-function getIbanExpectedLength(countryCode) {
-  const ibanLengths = {
-    ES: 24,
-    DE: 22,
-    FR: 27,
-    NO: 15,
-  };
-
-  return ibanLengths[countryCode] ?? null;
+function hasValidCardLength(cardNumber) {
+  return cardNumber.length >= 13 && cardNumber.length <= 19;
 }
 
-function ibanToNumericString(iban) {
-  const rearranged = `${iban.slice(4)}${iban.slice(0, 4)}`;
+function hasValidLuhnChecksum(cardNumber) {
+  let sum = 0;
+  let shouldDouble = false;
 
-  return rearranged
-    .split("")
-    .map((char) => {
-      const code = char.charCodeAt(0);
+  for (let index = cardNumber.length - 1; index >= 0; index -= 1) {
+    let digit = Number(cardNumber[index]);
 
-      if (code >= 65 && code <= 90) {
-        return String(code - 55);
+    if (shouldDouble) {
+      digit *= 2;
+
+      if (digit > 9) {
+        digit -= 9;
       }
+    }
 
-      return char;
-    })
-    .join("");
+    sum += digit;
+    shouldDouble = !shouldDouble;
+  }
+
+  return sum % 10 === 0;
 }
 
-function hasValidIbanChecksum(iban) {
-  const numericIban = ibanToNumericString(iban);
-  let remainder = 0;
+export function isValidCardNumber(value) {
+  const cardNumber = normalizeCardNumber(value);
 
-  for (const digit of numericIban) {
-    remainder = (remainder * 10 + Number(digit)) % 97;
+  if (!/^\d+$/.test(cardNumber)) {
+    return false;
   }
 
-  return remainder === 1;
+  if (!hasValidCardLength(cardNumber)) {
+    return false;
+  }
+
+  return hasValidLuhnChecksum(cardNumber);
 }
 
-export function isValidIban(value) {
-  const iban = normalizeIban(value);
+function isExpiryDateValid(month, year) {
+  const normalizedMonth = normalizeText(month);
+  const normalizedYear = normalizeText(year);
 
-  if (!/^[A-Z]{2}\d{2}[A-Z0-9]+$/.test(iban)) {
+  if (!normalizedMonth || !normalizedYear) {
     return false;
   }
 
-  const expectedLength = getIbanExpectedLength(iban.slice(0, 2));
+  const monthNumber = Number(normalizedMonth);
+  const yearNumber = Number(normalizedYear);
 
-  if (!expectedLength || iban.length !== expectedLength) {
+  if (
+    Number.isNaN(monthNumber) ||
+    Number.isNaN(yearNumber) ||
+    monthNumber < 1 ||
+    monthNumber > 12
+  ) {
     return false;
   }
 
-  if (iban.startsWith("ES") && !/^ES\d{22}$/.test(iban)) {
-    return false;
+  const today = new Date();
+  const currentMonth = today.getMonth() + 1;
+  const currentYear = today.getFullYear();
+
+  if (yearNumber > currentYear) {
+    return true;
   }
 
-  return hasValidIbanChecksum(iban);
+  return yearNumber === currentYear && monthNumber >= currentMonth;
 }
 
 export function validateSignUpField(name, value, form) {
@@ -134,6 +149,7 @@ export function validateSignUpField(name, value, form) {
       if (!textValue) {
         return "Required field";
       }
+
       return regex.email.test(textValue)
         ? ""
         : "Invalid email (e.g., user@mail.com)";
@@ -142,6 +158,7 @@ export function validateSignUpField(name, value, form) {
       if (!textValue) {
         return "Required field";
       }
+
       return regex.phone.test(textValue)
         ? ""
         : "Format: +34 600-123-456";
@@ -150,6 +167,7 @@ export function validateSignUpField(name, value, form) {
       if (!textValue) {
         return "Required field";
       }
+
       return regex.password.test(textValue)
         ? ""
         : "Min 8 characters, uppercase, lowercase, number, symbol (@$!%*?&)";
@@ -158,6 +176,7 @@ export function validateSignUpField(name, value, form) {
       if (!textValue) {
         return "Required field";
       }
+
       return textValue === form.password ? "" : "Passwords do not match";
 
     case "address":
@@ -167,6 +186,7 @@ export function validateSignUpField(name, value, form) {
       if (!textValue) {
         return "Required field";
       }
+
       return regex.postalCode.test(textValue)
         ? ""
         : "The postal code must have 5 digits";
@@ -180,13 +200,42 @@ export function validateSignUpField(name, value, form) {
     case "city":
       return textValue ? "" : "Select a city";
 
-    case "iban":
+    case "cardholder":
+      return textValue ? "" : "Required field";
+
+    case "cardNumber":
       if (!textValue) {
         return "Required field";
       }
-      return isValidIban(textValue)
+
+      return isValidCardNumber(textValue)
         ? ""
-        : "Invalid IBAN (e.g., ES12 1234 1234 12 1234567890)";
+        : "Invalid card number";
+
+    case "expiryMonth":
+      if (!textValue) {
+        return "Select expiry month";
+      }
+
+      return isExpiryDateValid(form.expiryMonth, form.expiryYear)
+        ? ""
+        : "Invalid expiry date";
+
+    case "expiryYear":
+      if (!textValue) {
+        return "Select expiry year";
+      }
+
+      return isExpiryDateValid(form.expiryMonth, form.expiryYear)
+        ? ""
+        : "Invalid expiry date";
+
+    case "cvv":
+      if (!textValue) {
+        return "Required field";
+      }
+
+      return regex.cvv.test(textValue) ? "" : "CVV must have 3 or 4 digits";
 
     case "acceptedTerms":
       return value ? "" : "You must accept the terms and privacy policy";
@@ -203,6 +252,7 @@ export function validateSignUpForm(form) {
       form[fieldName],
       form
     );
+
     return accumulator;
   }, {});
 }
