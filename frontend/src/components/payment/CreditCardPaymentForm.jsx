@@ -1,33 +1,18 @@
+import { FormField, FormSelect } from "../forms";
+
 function buildClassName(parts) {
   return parts.filter(Boolean).join(" ");
 }
 
-function shouldShowError(fieldName, errors, touched, submitAttempted) {
-  return Boolean((touched[fieldName] || submitAttempted) && errors[fieldName]);
-}
+const expiryMonthOptions = Array.from({ length: 12 }, (_, index) =>
+  String(index + 1).padStart(2, "0")
+);
 
-function getFieldStateClass(fieldName, errors, touched, submitAttempted) {
-  const shouldShowState = touched[fieldName] || submitAttempted;
+function getExpiryYearOptions() {
+  const currentYear = new Date().getFullYear();
 
-  if (!shouldShowState) {
-    return "";
-  }
-
-  return errors[fieldName] ? "is-invalid" : "is-valid";
-}
-
-function renderError(fieldName, errors, touched, submitAttempted) {
-  const visible = shouldShowError(fieldName, errors, touched, submitAttempted);
-
-  return (
-    <small
-      id={`${fieldName}-payment-error`}
-      className="credit-card-payment-form__error"
-      role={visible ? "alert" : undefined}
-      aria-live="polite"
-    >
-      {visible ? errors[fieldName] : "\u00A0"}
-    </small>
+  return Array.from({ length: 12 }, (_, index) =>
+    String(currentYear + index)
   );
 }
 
@@ -49,11 +34,16 @@ export default function CreditCardPaymentForm({
     }
   };
 
-  const getInputClassName = (fieldName) =>
-    buildClassName([
-      "credit-card-payment-form__input",
-      getFieldStateClass(fieldName, errors, touched, submitAttempted),
-    ]);
+  const getPaymentFieldProps = (fieldName) => ({
+    error: errors[fieldName],
+    touched: touched[fieldName],
+    submitAttempted,
+    className: "credit-card-payment-form__field",
+    controlClassName: "credit-card-payment-form__input",
+    errorClassName: "credit-card-payment-form__error",
+    errorId: `${fieldName}-payment-error`,
+    showLabel: false,
+  });
 
   return (
     <div
@@ -69,132 +59,69 @@ export default function CreditCardPaymentForm({
         </h3>
       )}
 
-      <label className="credit-card-payment-form__field">
-        <input
-          ref={setInputRef("cardholder")}
-          type="text"
-          name="cardholder"
-          value={cardForm.cardholder}
-          onChange={onChange}
-          onBlur={onBlur}
-          placeholder="Cardholder name"
-          className={getInputClassName("cardholder")}
-          autoComplete="cc-name"
-          aria-invalid={shouldShowError(
-            "cardholder",
-            errors,
-            touched,
-            submitAttempted
-          )}
-          aria-describedby="cardholder-payment-error"
-        />
-        {renderError("cardholder", errors, touched, submitAttempted)}
-      </label>
+      <FormField
+        ref={setInputRef("cardholder")}
+        type="text"
+        name="cardholder"
+        value={cardForm.cardholder}
+        onChange={onChange}
+        onBlur={onBlur}
+        placeholder="Cardholder name"
+        autoComplete="cc-name"
+        {...getPaymentFieldProps("cardholder")}
+      />
 
-      <label className="credit-card-payment-form__field">
-        <input
-          ref={setInputRef("cardNumber")}
-          type="text"
-          name="cardNumber"
-          value={cardForm.cardNumber}
-          onChange={onChange}
-          onBlur={onBlur}
-          placeholder="Card number"
-          inputMode="numeric"
-          className={getInputClassName("cardNumber")}
-          autoComplete="cc-number"
-          aria-invalid={shouldShowError(
-            "cardNumber",
-            errors,
-            touched,
-            submitAttempted
-          )}
-          aria-describedby="cardNumber-payment-error"
-        />
-        {renderError("cardNumber", errors, touched, submitAttempted)}
-      </label>
+      <FormField
+        ref={setInputRef("cardNumber")}
+        type="text"
+        name="cardNumber"
+        value={cardForm.cardNumber}
+        onChange={onChange}
+        onBlur={onBlur}
+        placeholder="Card number"
+        inputMode="numeric"
+        autoComplete="cc-number"
+        {...getPaymentFieldProps("cardNumber")}
+      />
 
       <div className="credit-card-payment-form__grid">
-        <label className="credit-card-payment-form__field">
-          <select
-            ref={setInputRef("expiryMonth")}
-            name="expiryMonth"
-            value={cardForm.expiryMonth}
-            onChange={onChange}
-            onBlur={onBlur}
-            className={getInputClassName("expiryMonth")}
-            autoComplete="cc-exp-month"
-            aria-invalid={shouldShowError(
-              "expiryMonth",
-              errors,
-              touched,
-              submitAttempted
-            )}
-            aria-describedby="expiryMonth-payment-error"
-          >
-            <option value="">Expiry month</option>
-            {Array.from({ length: 12 }, (_, index) => {
-              const month = String(index + 1).padStart(2, "0");
+        <FormSelect
+          ref={setInputRef("expiryMonth")}
+          name="expiryMonth"
+          value={cardForm.expiryMonth}
+          onChange={onChange}
+          onBlur={onBlur}
+          placeholder="Expiry month"
+          options={expiryMonthOptions}
+          autoComplete="cc-exp-month"
+          {...getPaymentFieldProps("expiryMonth")}
+        />
 
-              return (
-                <option key={month} value={month}>
-                  {month}
-                </option>
-              );
-            })}
-          </select>
-          {renderError("expiryMonth", errors, touched, submitAttempted)}
-        </label>
+        <FormSelect
+          ref={setInputRef("expiryYear")}
+          name="expiryYear"
+          value={cardForm.expiryYear}
+          onChange={onChange}
+          onBlur={onBlur}
+          placeholder="Expiry year"
+          options={getExpiryYearOptions()}
+          autoComplete="cc-exp-year"
+          {...getPaymentFieldProps("expiryYear")}
+        />
 
-        <label className="credit-card-payment-form__field">
-          <select
-            ref={setInputRef("expiryYear")}
-            name="expiryYear"
-            value={cardForm.expiryYear}
-            onChange={onChange}
-            onBlur={onBlur}
-            className={getInputClassName("expiryYear")}
-            autoComplete="cc-exp-year"
-            aria-invalid={shouldShowError(
-              "expiryYear",
-              errors,
-              touched,
-              submitAttempted
-            )}
-            aria-describedby="expiryYear-payment-error"
-          >
-            <option value="">Expiry year</option>
-            {Array.from({ length: 12 }, (_, index) => {
-              const year = String(new Date().getFullYear() + index);
-
-              return (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              );
-            })}
-          </select>
-          {renderError("expiryYear", errors, touched, submitAttempted)}
-        </label>
-
-        <label className="credit-card-payment-form__field">
-          <input
-            ref={setInputRef("cvv")}
-            type="text"
-            name="cvv"
-            value={cardForm.cvv}
-            onChange={onChange}
-            onBlur={onBlur}
-            placeholder="CVV"
-            inputMode="numeric"
-            maxLength={4}
-            className={getInputClassName("cvv")}
-            autoComplete="cc-csc"
-            aria-invalid={shouldShowError("cvv", errors, touched, submitAttempted)}
-            aria-describedby="cvv-payment-error"
-          />
-          {renderError("cvv", errors, touched, submitAttempted)}
-        </label>
+        <FormField
+          ref={setInputRef("cvv")}
+          type="text"
+          name="cvv"
+          value={cardForm.cvv}
+          onChange={onChange}
+          onBlur={onBlur}
+          placeholder="CVV"
+          inputMode="numeric"
+          maxLength={4}
+          autoComplete="cc-csc"
+          {...getPaymentFieldProps("cvv")}
+        />
       </div>
 
       <label className="credit-card-payment-form__save-row">

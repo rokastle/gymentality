@@ -25,6 +25,7 @@ const FormSelect = forwardRef(function FormSelect(
     submitAttempted = false,
     required = false,
     disabled = false,
+    autoComplete,
     placeholder = "Select an option",
     options = [],
     getOptionValue = (option) => option,
@@ -59,6 +60,7 @@ const FormSelect = forwardRef(function FormSelect(
         onBlur={onBlur}
         required={required}
         disabled={disabled}
+        autoComplete={autoComplete}
         className={buildClassName([
           "gm-form-control",
           "gm-form-control--select",

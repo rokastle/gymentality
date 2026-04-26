@@ -131,6 +131,34 @@ function getNextRenewalDate(memberSinceDate, cycleInMonths) {
   return nextDate;
 }
 
+function getPaymentBrand(user) {
+  const paymentMethod = normalizeValue(user?.paymentMethod);
+
+  if (paymentMethod === "card") {
+    return "VISA";
+  }
+
+  return "CARD";
+}
+
+function getPaymentExpiryLabel(user) {
+  if (!user?.cardExpiryMonth || !user?.cardExpiryYear) {
+    return "No expiration date";
+  }
+
+  const month = String(user.cardExpiryMonth).padStart(2, "0");
+
+  return `Expires ${user.cardExpiryYear}/${month}`;
+}
+
+function getPaymentMethodLabel(user) {
+  if (!user?.cardLast4) {
+    return "No payment method";
+  }
+
+  return `${getPaymentBrand(user)} ending in ${user.cardLast4}`;
+}
+
 export default function MyMembershipPage() {
   const { user, isAuthenticated } = useAuth();
 
@@ -160,6 +188,10 @@ export default function MyMembershipPage() {
   const membershipPlanName = user?.membershipPlanName || "Monthly Plan";
   const workoutPlanName = user?.workoutPlanName || "Workout Basic Plan";
   const clubName = user?.clubName || "GYM Central Málaga";
+
+  const paymentMethodLabel = getPaymentMethodLabel(user);
+  const paymentExpiryLabel = getPaymentExpiryLabel(user);
+  const hasPaymentMethod = Boolean(user?.cardLast4);
 
   const membershipPlanKey = getMembershipPlanKey(membershipPlanName);
   const workoutPlanKey = getWorkoutPlanKey(workoutPlanName);
@@ -225,10 +257,10 @@ export default function MyMembershipPage() {
 
   const filteredDateOptions = normalizedSelectedDate
     ? paymentHistory.filter((payment) =>
-        normalizeValue(
-          `${payment.date} ${payment.dateISO} ${payment.invoice}`
-        ).includes(normalizedSelectedDate)
-      )
+      normalizeValue(
+        `${payment.date} ${payment.dateISO} ${payment.invoice}`
+      ).includes(normalizedSelectedDate)
+    )
     : paymentHistory;
 
   const filteredHistory = selectedDate ? filteredDateOptions : paymentHistory;
@@ -447,7 +479,7 @@ export default function MyMembershipPage() {
                   Payment method
                 </span>
                 <strong className="my-membership-page__detail-value">
-                  VISA ending in 0962
+                  {paymentMethodLabel}
                 </strong>
               </div>
 
@@ -479,11 +511,10 @@ export default function MyMembershipPage() {
 
             <button
               type="button"
-              className={`gm-btn gm-btn--pill my-membership-page__action-btn ${
-                isCancellationScheduled
-                  ? "gm-btn--locked"
-                  : "my-membership-page__action-btn--danger"
-              }`}
+              className={`gm-btn gm-btn--pill my-membership-page__action-btn ${isCancellationScheduled
+                ? "gm-btn--locked"
+                : "my-membership-page__action-btn--danger"
+                }`}
               onClick={handleCancelMembershipClick}
               disabled={isCancellationScheduled}
             >
@@ -660,9 +691,8 @@ export default function MyMembershipPage() {
                       <button
                         key={pageNumber}
                         type="button"
-                        className={`my-membership-page__pagination-page ${
-                          pageNumber === safePaymentPage ? "is-active" : ""
-                        }`}
+                        className={`my-membership-page__pagination-page ${pageNumber === safePaymentPage ? "is-active" : ""
+                          }`}
                         onClick={() => setCurrentPaymentPage(pageNumber)}
                       >
                         {pageNumber}
@@ -704,8 +734,8 @@ export default function MyMembershipPage() {
                 </div>
 
                 <div className="my-membership-page__stored-payment-info">
-                  <strong>VISA ending in 0962</strong>
-                  <span>Expires 2031/06</span>
+                  <strong>{paymentMethodLabel}</strong>
+                  <span>{hasPaymentMethod ? paymentExpiryLabel : "Add a card in your profile"}</span>
                 </div>
               </div>
 
