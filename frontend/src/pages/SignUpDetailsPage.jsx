@@ -19,34 +19,16 @@ import {
 } from "../data/signupPlansData";
 import {
   hasValidationErrors,
-  normalizeCardNumber,
   normalizePostalCode,
   signUpFieldOrder,
   validateSignUpForm,
 } from "../utils/accountValidation";
-
-const initialForm = {
-  firstName: "",
-  lastName: "",
-  gender: "",
-  dateOfBirth: "",
-  email: "",
-  phone: "",
-  password: "",
-  confirmPassword: "",
-  address: "",
-  postalCode: "",
-  country: "España",
-  region: "",
-  city: "",
-  cardholder: "",
-  cardNumber: "",
-  expiryMonth: "",
-  expiryYear: "",
-  cvv: "",
-  saveCardForFuture: true,
-  acceptedTerms: false,
-};
+import {
+  buildSignUpCompleteParams,
+  buildSignUpRegistrationPayload,
+  getSignUpApiErrorMessage,
+  initialSignUpDetailsForm,
+} from "../utils/signupDetailsPageUtils";
 
 export default function SignUpDetailsPage() {
   const navigate = useNavigate();
@@ -54,7 +36,7 @@ export default function SignUpDetailsPage() {
   const fieldRefs = useRef({});
   const { register } = useAuth();
 
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState(initialSignUpDetailsForm);
   const [touched, setTouched] = useState({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [apiError, setApiError] = useState("");
@@ -221,60 +203,30 @@ export default function SignUpDetailsPage() {
       return;
     }
 
-    const cleanCardNumber = normalizeCardNumber(form.cardNumber);
-
-    const payload = {
-      firstName: form.firstName.trim(),
-      lastName: form.lastName.trim(),
-      gender: form.gender,
-      dateOfBirth: form.dateOfBirth,
-      email: form.email.trim(),
-      phone: form.phone.trim(),
-      password: form.password,
-      address: form.address.trim(),
-      postalCode: form.postalCode.trim(),
-      city: form.city,
-      country: form.country,
-      region: form.region,
-
-      paymentMethod: "card",
-      cardLast4: cleanCardNumber.slice(-4),
-      cardExpiryMonth: form.expiryMonth,
-      cardExpiryYear: form.expiryYear,
-      saveCardForFuture: form.saveCardForFuture,
-
-      clubId: club.id,
-      membershipPlanId: membershipPlan.backendId,
-      workoutPlanId: workoutPlan.backendId,
-      acceptedTerms: form.acceptedTerms,
-    };
+    const payload = buildSignUpRegistrationPayload({
+      form,
+      club,
+      membershipPlan,
+      workoutPlan,
+    });
 
     try {
       setIsSubmitting(true);
 
       const result = await register(payload);
 
-      const nextParams = new URLSearchParams({
-        clubId: String(club.id),
-        membership: membershipPlan.id,
-        workout: workoutPlan.id,
-        amount: totals.totalFirstPayment.toFixed(2),
-        userId: String(result.user.id),
-        email: result.user.email,
+      const nextParams = buildSignUpCompleteParams({
+        club,
+        membershipPlan,
+        workoutPlan,
+        totals,
+        result,
       });
 
-      navigate(`/signup/complete?${nextParams.toString()}`);
-    } catch (error) {
-      const backendMessage =
-        error?.response?.data?.message ||
-        error?.response?.data ||
-        "No se pudo completar el registro. Inténtalo de nuevo.";
+      navigate(`/signup/complete?${nextParams}`);
 
-      setApiError(
-        typeof backendMessage === "string"
-          ? backendMessage
-          : "No se pudo completar el registro. Inténtalo de nuevo."
-      );
+    } catch (error) {
+      setApiError(getSignUpApiErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }
