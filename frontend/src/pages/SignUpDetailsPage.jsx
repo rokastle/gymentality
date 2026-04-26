@@ -1,5 +1,6 @@
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import useLocationFields from "../hooks/useLocationFields";
 import SignUpTimeline from "../components/signup/SignUpTimeline";
 import { useClubById } from "../hooks/useClubs";
 import useAuth from "../hooks/useAuth";
@@ -21,12 +22,10 @@ import {
   mapWorkoutPlanFromApi,
 } from "../data/signupPlansData";
 import {
-  cityOptionsByRegion,
   countryOptions,
   hasValidationErrors,
   normalizeCardNumber,
   normalizePostalCode,
-  regionOptionsByCountry,
   signUpFieldOrder,
   validateSignUpForm,
 } from "../utils/accountValidation";
@@ -105,49 +104,16 @@ export default function SignUpDetailsPage() {
   const membershipPlan = getMembershipPlanById(membershipId, membershipPlans);
   const workoutPlan = getWorkoutPlanById(workoutId, workoutPlans);
 
-  const cityCatalog = useMemo(() => {
-    return Object.entries(cityOptionsByRegion).flatMap(([region, cities]) =>
-      cities.map((city) => ({
-        city,
-        region,
-        country: "España",
-      }))
-    );
-  }, []);
-
-  const regionOptions = useMemo(() => {
-    return regionOptionsByCountry[form.country] ?? [];
-  }, [form.country]);
-
-  const cityOptions = useMemo(() => {
-    return cityCatalog.filter((item) => {
-      const matchesCountry = !form.country || item.country === form.country;
-      const matchesRegion = !form.region || item.region === form.region;
-
-      return matchesCountry && matchesRegion;
-    });
-  }, [form.country, form.region, cityCatalog]);
+  const { regionOptions, cityOptions, applyLocationChange } = useLocationFields({
+    country: form.country,
+    region: form.region,
+    city: form.city,
+    setForm,
+  });
 
   const errors = useMemo(() => validateSignUpForm(form), [form]);
 
-  useEffect(() => {
-    if (form.region && !regionOptions.includes(form.region)) {
-      setForm((current) => ({
-        ...current,
-        region: "",
-        city: "",
-      }));
-    }
-  }, [form.region, regionOptions]);
 
-  useEffect(() => {
-    if (form.city && !cityOptions.some((item) => item.city === form.city)) {
-      setForm((current) => ({
-        ...current,
-        city: "",
-      }));
-    }
-  }, [form.city, cityOptions]);
 
   if (!clubId) {
     return <Navigate to="/clubs" replace />;
@@ -193,26 +159,11 @@ export default function SignUpDetailsPage() {
         [name]: nextValue,
       };
 
-      if (name === "country") {
-        nextForm.region = "";
-        nextForm.city = "";
-      }
-
-      if (name === "region") {
-        nextForm.city = "";
-      }
-
-      if (name === "city") {
-        const selectedCity = cityCatalog.find((item) => item.city === nextValue);
-
-        if (selectedCity) {
-          nextForm.city = selectedCity.city;
-          nextForm.region = selectedCity.region;
-          nextForm.country = selectedCity.country;
-        }
-      }
-
-      return nextForm;
+      return applyLocationChange({
+        name,
+        value: nextValue,
+        nextForm,
+      });
     });
   };
 
@@ -247,22 +198,6 @@ export default function SignUpDetailsPage() {
     if (firstInvalidField) {
       fieldRefs.current[firstInvalidField].focus();
     }
-  };
-
-  const renderError = (fieldName) => {
-    const showError =
-      (touched[fieldName] || submitAttempted) && errors[fieldName];
-
-    return (
-      <small
-        id={`${fieldName}-error`}
-        className="signup-details-page__error"
-        role={showError ? "alert" : undefined}
-        aria-live="polite"
-      >
-        {showError ? errors[fieldName] : "\u00A0"}
-      </small>
-    );
   };
 
   const getSignUpFieldProps = (fieldName) => ({
@@ -661,8 +596,6 @@ export default function SignUpDetailsPage() {
                 className="signup-details-page__checkbox"
                 errorClassName="signup-details-page__error"
               />
-
-              {renderError("acceptedTerms")}
             </section>
 
             <div className="signup-details-page__submit">

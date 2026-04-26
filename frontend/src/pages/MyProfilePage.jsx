@@ -1,18 +1,17 @@
 import { Navigate, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
+import useLocationFields from "../hooks/useLocationFields";
 import useAuth from "../hooks/useAuth";
 import IconImage from "../components/common/IconImage";
 import CreditCardPaymentForm from "../components/payment/CreditCardPaymentForm";
 import { FormField, FormSelect, PasswordField } from "../components/forms";
 import {
-  cityOptionsByRegion,
   countryOptions,
   hasValidationErrors,
   normalizePostalCode,
   profileEmailFieldOrder,
   profileFieldOrder,
   profilePasswordFieldOrder,
-  regionOptionsByCountry,
   validateProfileEmailForm,
   validateProfileForm,
   validateProfilePasswordForm,
@@ -189,28 +188,12 @@ export default function MyProfilePage() {
 
   const paymentErrors = useMemo(() => validatePaymentForm(cardForm), [cardForm]);
 
-  const cityCatalog = useMemo(() => {
-    return Object.entries(cityOptionsByRegion).flatMap(([region, cities]) =>
-      cities.map((city) => ({
-        city,
-        region,
-        country: "España",
-      }))
-    );
-  }, []);
-
-  const regionOptions = useMemo(() => {
-    return regionOptionsByCountry[form.country] ?? [];
-  }, [form.country]);
-
-  const cityOptions = useMemo(() => {
-    return cityCatalog.filter((item) => {
-      const matchesCountry = !form.country || item.country === form.country;
-      const matchesRegion = !form.region || item.region === form.region;
-
-      return matchesCountry && matchesRegion;
-    });
-  }, [form.country, form.region, cityCatalog]);
+  const { regionOptions, cityOptions, applyLocationChange } = useLocationFields({
+    country: form.country,
+    region: form.region,
+    city: form.city,
+    setForm,
+  });
 
   useEffect(() => {
     setForm(getInitialProfileForm(user));
@@ -235,25 +218,6 @@ export default function MyProfilePage() {
     user?.cardExpiryYear,
     user?.saveCardForFuture,
   ]);
-
-  useEffect(() => {
-    if (form.region && !regionOptions.includes(form.region)) {
-      setForm((current) => ({
-        ...current,
-        region: "",
-        city: "",
-      }));
-    }
-  }, [form.region, regionOptions]);
-
-  useEffect(() => {
-    if (form.city && !cityOptions.some((item) => item.city === form.city)) {
-      setForm((current) => ({
-        ...current,
-        city: "",
-      }));
-    }
-  }, [form.city, cityOptions]);
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/" replace />;
@@ -289,26 +253,11 @@ export default function MyProfilePage() {
         [name]: nextValue,
       };
 
-      if (name === "country") {
-        nextForm.region = "";
-        nextForm.city = "";
-      }
-
-      if (name === "region") {
-        nextForm.city = "";
-      }
-
-      if (name === "city") {
-        const selectedCity = cityCatalog.find((item) => item.city === nextValue);
-
-        if (selectedCity) {
-          nextForm.city = selectedCity.city;
-          nextForm.region = selectedCity.region;
-          nextForm.country = selectedCity.country;
-        }
-      }
-
-      return nextForm;
+      return applyLocationChange({
+        name,
+        value: nextValue,
+        nextForm,
+      });
     });
   };
 
