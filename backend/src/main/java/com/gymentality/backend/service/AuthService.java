@@ -73,8 +73,7 @@ public class AuthService {
                 paymentMethod,
                 cardLast4,
                 cardExpiryMonth,
-                cardExpiryYear
-        );
+                cardExpiryYear);
 
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new ResourceNotFoundException("Club not found"));
@@ -131,6 +130,55 @@ public class AuthService {
         return mapUser(user);
     }
 
+    public AuthUserResponse updateCurrentUserProfile(String email, UpdateProfileRequest request) {
+        User user = userRepository.findByEmail(email.toLowerCase())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        user
+                .setFirstName(request.getFirstName().trim())
+                .setLastName(request.getLastName().trim())
+                .setDateOfBirth(request.getDateOfBirth())
+                .setPhone(request.getPhone().trim())
+                .setAddress(request.getAddress().trim())
+                .setPostalCode(request.getPostalCode().trim())
+                .setCity(request.getCity().trim())
+                .setCountry(request.getCountry().trim())
+                .setRegion(request.getRegion().trim());
+
+        User savedUser = userRepository.save(user);
+
+        return mapUser(savedUser);
+    }
+
+    public AuthUserResponse updateCurrentUserPaymentMethod(
+            String email,
+            UpdatePaymentMethodRequest request) {
+        User user = userRepository.findByEmail(email.toLowerCase())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        String paymentMethod = normalizePaymentMethod(request.getPaymentMethod());
+        String cardLast4 = normalizeCardLast4(request.getCardLast4());
+        String cardExpiryMonth = normalizeCardExpiryMonth(request.getCardExpiryMonth());
+        String cardExpiryYear = normalizeCardExpiryYear(request.getCardExpiryYear());
+
+        validatePaymentDetails(
+                paymentMethod,
+                cardLast4,
+                cardExpiryMonth,
+                cardExpiryYear);
+
+        user
+                .setPaymentMethod(paymentMethod)
+                .setCardLast4(cardLast4)
+                .setCardExpiryMonth(cardExpiryMonth)
+                .setCardExpiryYear(cardExpiryYear)
+                .setSaveCardForFuture(Boolean.TRUE.equals(request.getSaveCardForFuture()));
+
+        User savedUser = userRepository.save(user);
+
+        return mapUser(savedUser);
+    }
+
     private AuthResponse buildAuthResponse(User user) {
         org.springframework.security.core.userdetails.UserDetails userDetails = userDetailsService
                 .loadUserByUsername(user.getEmail());
@@ -162,8 +210,7 @@ public class AuthService {
                 user.getCardLast4(),
                 user.getCardExpiryMonth(),
                 user.getCardExpiryYear(),
-                user.getSaveCardForFuture()
-        );
+                user.getSaveCardForFuture());
     }
 
     private String normalizePaymentMethod(String paymentMethod) {
@@ -186,8 +233,7 @@ public class AuthService {
             String paymentMethod,
             String cardLast4,
             String cardExpiryMonth,
-            String cardExpiryYear
-    ) {
+            String cardExpiryYear) {
         if (!"CARD".equals(paymentMethod)) {
             throw new BadRequestException("Payment method must be card");
         }
