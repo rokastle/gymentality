@@ -1,7 +1,8 @@
 import { Navigate, useNavigate } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import IconImage from "../components/common/IconImage";
+import CreditCardPaymentForm from "../components/payment/CreditCardPaymentForm";
 
 const initialPasswordForm = {
   currentPassword: "",
@@ -39,11 +40,39 @@ function getInitialProfileForm(user) {
   };
 }
 
+function getInitialStoredCard(user) {
+  const hasStoredCard = Boolean(user?.cardLast4);
+
+  return {
+    brand: user?.paymentMethod?.toUpperCase() === "CARD" ? "VISA" : "VISA",
+    last4: user?.cardLast4 || "----",
+    expiryMonth: user?.cardExpiryMonth || "",
+    expiryYear: user?.cardExpiryYear || "",
+    saveCardForFuture: user?.saveCardForFuture ?? true,
+    hasStoredCard,
+  };
+}
+
+function getCardBrand(cardNumber) {
+  const cleanNumber = cardNumber.replace(/\D/g, "");
+
+  if (cleanNumber.startsWith("4")) {
+    return "VISA";
+  }
+
+  if (/^5[1-5]/.test(cleanNumber) || /^2[2-7]/.test(cleanNumber)) {
+    return "MASTERCARD";
+  }
+
+  return "CARD";
+}
+
 export default function MyProfilePage() {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
 
   const initialForm = useMemo(() => getInitialProfileForm(user), [user]);
+  const initialStoredCard = useMemo(() => getInitialStoredCard(user), [user]);
 
   const [form, setForm] = useState(initialForm);
   const [passwordForm, setPasswordForm] = useState(initialPasswordForm);
@@ -52,13 +81,7 @@ export default function MyProfilePage() {
   const [feedbackMessage, setFeedbackMessage] = useState("");
 
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-
-  const [storedCard, setStoredCard] = useState({
-    brand: "VISA",
-    last4: "0962",
-    expiryMonth: "06",
-    expiryYear: "2031",
-  });
+  const [storedCard, setStoredCard] = useState(initialStoredCard);
 
   const [cardForm, setCardForm] = useState({
     cardholder: "",
@@ -68,6 +91,11 @@ export default function MyProfilePage() {
     cvv: "",
     saveForFuture: true,
   });
+
+  useEffect(() => {
+    setForm(initialForm);
+    setStoredCard(initialStoredCard);
+  }, [initialForm, initialStoredCard]);
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/" replace />;
@@ -104,10 +132,10 @@ export default function MyProfilePage() {
     setCardForm({
       cardholder: "",
       cardNumber: "",
-      expiryMonth: storedCard.expiryMonth,
-      expiryYear: storedCard.expiryYear,
+      expiryMonth: storedCard.expiryMonth || "",
+      expiryYear: storedCard.expiryYear || "",
       cvv: "",
-      saveForFuture: true,
+      saveForFuture: storedCard.saveCardForFuture ?? true,
     });
 
     setIsPaymentModalOpen(true);
@@ -135,13 +163,17 @@ export default function MyProfilePage() {
     }
 
     setStoredCard({
-      brand: "VISA",
+      brand: getCardBrand(cleanNumber),
       last4: last4 || "0000",
       expiryMonth: cardForm.expiryMonth,
       expiryYear: cardForm.expiryYear,
+      saveCardForFuture: cardForm.saveForFuture,
+      hasStoredCard: true,
     });
 
-    setFeedbackMessage("Payment method updated successfully.");
+    setFeedbackMessage(
+      "Payment method updated locally. Backend profile update will be connected in the next integration step."
+    );
     setIsPaymentModalOpen(false);
   };
 
@@ -427,12 +459,23 @@ export default function MyProfilePage() {
               </div>
 
               <div className="my-profile-page__payment-info">
-                <strong>{storedCard.brand}</strong>
-                <span>Card number: XXXX-XXXX-XXXX-{storedCard.last4}</span>
-                <span>
-                  Expiration date: {storedCard.expiryYear}/
-                  {storedCard.expiryMonth}
-                </span>
+                <strong>
+                  {storedCard.hasStoredCard
+                    ? storedCard.brand
+                    : "No payment method"}
+                </strong>
+
+                {storedCard.hasStoredCard ? (
+                  <>
+                    <span>Card number: XXXX-XXXX-XXXX-{storedCard.last4}</span>
+                    <span>
+                      Expiration date: {storedCard.expiryYear}/
+                      {storedCard.expiryMonth}
+                    </span>
+                  </>
+                ) : (
+                  <span>No saved card yet.</span>
+                )}
               </div>
 
               <button
@@ -440,12 +483,16 @@ export default function MyProfilePage() {
                 className="my-profile-page__payment-action"
                 onClick={handleOpenPaymentModal}
               >
-                Edit
+                {storedCard.hasStoredCard ? "Edit" : "Add"}
               </button>
             </div>
 
             <label className="my-profile-page__checkbox-row">
-              <input type="checkbox" defaultChecked />
+              <input
+                type="checkbox"
+                checked={storedCard.saveCardForFuture ?? true}
+                readOnly
+              />
               <span>Save card for future payments</span>
             </label>
 
@@ -501,88 +548,14 @@ export default function MyProfilePage() {
                 </div>
               </div>
 
-              <form className="my-profile-page__card-form" onSubmit={handleSaveCard}>
-                <h3 className="my-profile-page__card-form-title">
-                  Enter your card details:
-                </h3>
-
-                <input
-                  type="text"
-                  name="cardholder"
-                  value={cardForm.cardholder}
+              <form
+                className="my-profile-page__card-form"
+                onSubmit={handleSaveCard}
+              >
+                <CreditCardPaymentForm
+                  cardForm={cardForm}
                   onChange={handleCardFormChange}
-                  placeholder="Cardholder name"
-                  className="my-profile-page__payment-input"
                 />
-
-                <input
-                  type="text"
-                  name="cardNumber"
-                  value={cardForm.cardNumber}
-                  onChange={handleCardFormChange}
-                  placeholder="Card number"
-                  inputMode="numeric"
-                  className="my-profile-page__payment-input"
-                />
-
-                <div className="my-profile-page__payment-form-grid">
-                  <select
-                    name="expiryMonth"
-                    value={cardForm.expiryMonth}
-                    onChange={handleCardFormChange}
-                    className="my-profile-page__payment-input"
-                  >
-                    <option value="">Expiry month</option>
-                    {Array.from({ length: 12 }, (_, index) => {
-                      const month = String(index + 1).padStart(2, "0");
-
-                      return (
-                        <option key={month} value={month}>
-                          {month}
-                        </option>
-                      );
-                    })}
-                  </select>
-
-                  <select
-                    name="expiryYear"
-                    value={cardForm.expiryYear}
-                    onChange={handleCardFormChange}
-                    className="my-profile-page__payment-input"
-                  >
-                    <option value="">Expiry year</option>
-                    {Array.from({ length: 12 }, (_, index) => {
-                      const year = String(new Date().getFullYear() + index);
-
-                      return (
-                        <option key={year} value={year}>
-                          {year}
-                        </option>
-                      );
-                    })}
-                  </select>
-
-                  <input
-                    type="text"
-                    name="cvv"
-                    value={cardForm.cvv}
-                    onChange={handleCardFormChange}
-                    placeholder="CVV"
-                    inputMode="numeric"
-                    maxLength={4}
-                    className="my-profile-page__payment-input"
-                  />
-                </div>
-
-                <label className="my-profile-page__payment-save-row">
-                  <input
-                    type="checkbox"
-                    name="saveForFuture"
-                    checked={cardForm.saveForFuture}
-                    onChange={handleCardFormChange}
-                  />
-                  <span>Save card for future purchases</span>
-                </label>
 
                 <div className="my-profile-page__payment-modal-actions">
                   <button
