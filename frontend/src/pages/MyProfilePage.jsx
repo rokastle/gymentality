@@ -4,6 +4,7 @@ import useLocationFields from "../hooks/useLocationFields";
 import useAuth from "../hooks/useAuth";
 import IconImage from "../components/common/IconImage";
 import CreditCardPaymentForm from "../components/payment/CreditCardPaymentForm";
+import ProfilePersonalDetailsSection from "../components/profile/ProfilePersonalDetailsSection";
 import { AddressFields, FormField, PasswordField } from "../components/forms";
 import {
   hasValidationErrors,
@@ -641,58 +642,12 @@ export default function MyProfilePage() {
             </p>
           )}
 
-          <section className="my-profile-page__section">
-            <h2 className="my-profile-page__section-title">PERSONAL DETAIL</h2>
-
-            <div className="my-profile-page__section-divider" />
-
-            <div className="my-profile-page__grid my-profile-page__grid--one">
-              <FormField
-                label="First name*"
-                name="firstName"
-                value={form.firstName}
-                onChange={handleChange}
-                onBlur={handleProfileBlur}
-                autoComplete="given-name"
-                {...getProfileFieldProps("firstName")}
-              />
-
-              <FormField
-                label="Last name*"
-                name="lastName"
-                value={form.lastName}
-                onChange={handleChange}
-                onBlur={handleProfileBlur}
-                autoComplete="family-name"
-                {...getProfileFieldProps("lastName")}
-              />
-            </div>
-
-            <div className="my-profile-page__grid my-profile-page__grid--two">
-              <FormField
-                label="Date of birth*"
-                type="date"
-                name="dateOfBirth"
-                value={form.dateOfBirth}
-                onChange={handleChange}
-                onBlur={handleProfileBlur}
-                {...getProfileFieldProps("dateOfBirth")}
-              />
-
-              <FormField
-                label="Phone number*"
-                type="tel"
-                name="phone"
-                value={form.phone}
-                onChange={handleChange}
-                onBlur={handleProfileBlur}
-                placeholder="+34 600-123-456"
-                autoComplete="tel"
-                inputMode="tel"
-                {...getProfileFieldProps("phone")}
-              />
-            </div>
-          </section>
+          <ProfilePersonalDetailsSection
+            form={form}
+            onChange={handleChange}
+            onBlur={handleProfileBlur}
+            getFieldProps={getProfileFieldProps}
+          />
 
           <AddressFields
             title="ADDRESS"
