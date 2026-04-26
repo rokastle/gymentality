@@ -179,6 +179,50 @@ public class AuthService {
         return mapUser(savedUser);
     }
 
+    public AuthResponse updateEmail(String currentEmail, UpdateEmailRequest request) {
+        User user = userRepository.findByEmail(currentEmail.toLowerCase())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        String newEmail = request.getNewEmail().trim().toLowerCase();
+
+        if (newEmail.equals(user.getEmail())) {
+            throw new BadRequestException("New email must be different from current email");
+        }
+
+        if (userRepository.existsByEmail(newEmail)) {
+            throw new EmailAlreadyExistsException("Email already exists");
+        }
+
+        user.setEmail(newEmail);
+
+        User savedUser = userRepository.save(user);
+
+        return buildAuthResponse(savedUser);
+    }
+
+    public AuthUserResponse updatePassword(String currentEmail, UpdatePasswordRequest request) {
+        User user = userRepository.findByEmail(currentEmail.toLowerCase())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new UnauthorizedException("Current password is incorrect");
+        }
+
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new BadRequestException("Passwords do not match");
+        }
+
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+            throw new BadRequestException("New password must be different from current password");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+        User savedUser = userRepository.save(user);
+
+        return mapUser(savedUser);
+    }
+
     private AuthResponse buildAuthResponse(User user) {
         org.springframework.security.core.userdetails.UserDetails userDetails = userDetailsService
                 .loadUserByUsername(user.getEmail());

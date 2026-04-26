@@ -3,8 +3,10 @@ import {
   getMe,
   loginUser,
   registerUser,
-  updateProfileUser,
-  updateUserPaymentMethod,
+  updateEmail as updateEmailRequest,
+  updatePassword as updatePasswordRequest,
+  updatePaymentMethod as updatePaymentMethodRequest,
+  updateProfile as updateProfileRequest,
 } from "../services/authService";
 
 export const AuthContext = createContext(null);
@@ -28,16 +30,16 @@ export function AuthProvider({ children }) {
     Boolean(localStorage.getItem(TOKEN_KEY))
   );
 
-  const persistUser = (currentUser) => {
-    localStorage.setItem(USER_KEY, JSON.stringify(currentUser));
-    setUser(currentUser);
-  };
-
   const persistAuth = (authData) => {
     localStorage.setItem(TOKEN_KEY, authData.token);
     localStorage.setItem(USER_KEY, JSON.stringify(authData.user));
     setToken(authData.token);
     setUser(authData.user);
+  };
+
+  const persistUser = (currentUser) => {
+    localStorage.setItem(USER_KEY, JSON.stringify(currentUser));
+    setUser(currentUser);
   };
 
   const clearAuth = () => {
@@ -59,26 +61,32 @@ export function AuthProvider({ children }) {
     return authData;
   };
 
-  const refreshUser = async () => {
-    const currentUser = await getMe();
+  const logout = () => {
+    clearAuth();
+  };
+
+  const updateProfile = async (payload) => {
+    const currentUser = await updateProfileRequest(payload);
     persistUser(currentUser);
     return currentUser;
   };
 
-  const updateProfile = async (payload) => {
-    const updatedUser = await updateProfileUser(payload);
-    persistUser(updatedUser);
-    return updatedUser;
-  };
-
   const updatePaymentMethod = async (payload) => {
-    const updatedUser = await updateUserPaymentMethod(payload);
-    persistUser(updatedUser);
-    return updatedUser;
+    const currentUser = await updatePaymentMethodRequest(payload);
+    persistUser(currentUser);
+    return currentUser;
   };
 
-  const logout = () => {
-    clearAuth();
+  const updateEmail = async (payload) => {
+    const authData = await updateEmailRequest(payload);
+    persistAuth(authData);
+    return authData;
+  };
+
+  const updatePassword = async (payload) => {
+    const currentUser = await updatePasswordRequest(payload);
+    persistUser(currentUser);
+    return currentUser;
   };
 
   useEffect(() => {
@@ -109,10 +117,11 @@ export function AuthProvider({ children }) {
       isInitializing,
       login,
       register,
-      refreshUser,
+      logout,
       updateProfile,
       updatePaymentMethod,
-      logout,
+      updateEmail,
+      updatePassword,
     }),
     [token, user, isInitializing]
   );

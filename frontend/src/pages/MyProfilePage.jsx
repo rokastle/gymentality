@@ -118,6 +118,8 @@ export default function MyProfilePage() {
     logout,
     updateProfile,
     updatePaymentMethod,
+    updateEmail,
+    updatePassword,
   } = useAuth();
 
   const [form, setForm] = useState(() => getInitialProfileForm(user));
@@ -131,6 +133,7 @@ export default function MyProfilePage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [feedbackType, setFeedbackType] = useState("success");
   const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   const [profileTouched, setProfileTouched] = useState({});
@@ -141,6 +144,7 @@ export default function MyProfilePage() {
 
   const [passwordTouched, setPasswordTouched] = useState({});
   const [passwordSubmitAttempted, setPasswordSubmitAttempted] = useState(false);
+  const [passwordBackendErrors, setPasswordBackendErrors] = useState({});
 
   const [storedCard, setStoredCard] = useState(() => getInitialStoredCard(user));
   const [isPaymentEditOpen, setIsPaymentEditOpen] = useState(false);
@@ -163,6 +167,24 @@ export default function MyProfilePage() {
     () => validateProfilePasswordForm(passwordForm),
     [passwordForm]
   );
+
+  const mergedPasswordErrors = useMemo(() => {
+    const activeBackendErrors = Object.entries(passwordBackendErrors).reduce(
+      (accumulator, [fieldName, errorMessage]) => {
+        if (errorMessage) {
+          accumulator[fieldName] = errorMessage;
+        }
+
+        return accumulator;
+      },
+      {}
+    );
+
+    return {
+      ...passwordErrors,
+      ...activeBackendErrors,
+    };
+  }, [passwordErrors, passwordBackendErrors]);
 
   const paymentErrors = useMemo(() => validatePaymentForm(cardForm), [cardForm]);
 
@@ -197,6 +219,7 @@ export default function MyProfilePage() {
     setEmailSubmitAttempted(false);
     setPasswordTouched({});
     setPasswordSubmitAttempted(false);
+    setPasswordBackendErrors({});
     setPasswordForm(initialPasswordForm);
     setIsEmailChangeEnabled(false);
     setIsPasswordChangeEnabled(false);
@@ -242,6 +265,12 @@ export default function MyProfilePage() {
         behavior: "smooth",
       });
     });
+  };
+
+  const showErrorFeedback = (message) => {
+    setFeedbackType("error");
+    setFeedbackMessage(message);
+    scrollToPageTop();
   };
 
   const handleChange = (event) => {
@@ -307,8 +336,18 @@ export default function MyProfilePage() {
       ...current,
       [name]: value,
     }));
-  };
 
+    setPasswordTouched((current) => ({
+      ...current,
+      [name]: true,
+    }));
+
+    setPasswordBackendErrors((current) => {
+      const nextErrors = { ...current };
+      delete nextErrors[name];
+      return nextErrors;
+    });
+  };
   const handlePasswordBlur = (event) => {
     const { name } = event.target;
 
@@ -337,6 +376,7 @@ export default function MyProfilePage() {
     setIsPasswordChangeEnabled(enabled);
     setPasswordTouched({});
     setPasswordSubmitAttempted(false);
+    setPasswordBackendErrors({});
     setPasswordForm(initialPasswordForm);
     setShowCurrentPassword(false);
     setShowNewPassword(false);
@@ -424,7 +464,7 @@ export default function MyProfilePage() {
       return "";
     }
 
-    return passwordErrors[fieldName] ? "is-invalid" : "is-valid";
+    return mergedPasswordErrors[fieldName] ? "is-invalid" : "is-valid";
   };
 
   const renderProfileError = (fieldName) => {
@@ -466,7 +506,7 @@ export default function MyProfilePage() {
     const showError =
       isPasswordChangeEnabled &&
       (passwordTouched[fieldName] || passwordSubmitAttempted) &&
-      passwordErrors[fieldName];
+      mergedPasswordErrors[fieldName];
 
     return (
       <small
@@ -475,7 +515,7 @@ export default function MyProfilePage() {
         role={showError ? "alert" : undefined}
         aria-live="polite"
       >
-        {showError ? passwordErrors[fieldName] : "\u00A0"}
+        {showError ? mergedPasswordErrors[fieldName] : "\u00A0"}
       </small>
     );
   };
@@ -529,8 +569,7 @@ export default function MyProfilePage() {
     markAllProfileFieldsAsTouched();
 
     if (hasValidationErrors(profileErrors)) {
-      setFeedbackMessage("Please review your personal details before saving.");
-      scrollToPageTop();
+      showErrorFeedback("Please review your personal details before saving.");
       return;
     }
 
@@ -539,8 +578,7 @@ export default function MyProfilePage() {
       markAllEmailFieldsAsTouched();
 
       if (hasValidationErrors(emailErrors)) {
-        setFeedbackMessage("Please review your email details before saving.");
-        scrollToPageTop();
+        showErrorFeedback("Please review your email details before saving.");
         return;
       }
     }
@@ -549,9 +587,8 @@ export default function MyProfilePage() {
       setPasswordSubmitAttempted(true);
       markAllPasswordFieldsAsTouched();
 
-      if (hasValidationErrors(passwordErrors)) {
-        setFeedbackMessage("Please review your password details before saving.");
-        scrollToPageTop();
+      if (hasValidationErrors(mergedPasswordErrors)) {
+        showErrorFeedback("Please review your password details before saving.");
         return;
       }
     }
@@ -561,8 +598,7 @@ export default function MyProfilePage() {
       markAllPaymentFieldsAsTouched();
 
       if (hasPaymentValidationErrors(paymentErrors)) {
-        setFeedbackMessage("Please review your card details before saving.");
-        scrollToPageTop();
+        showErrorFeedback("Please review your card details before saving.");
         return;
       }
     }
@@ -570,6 +606,7 @@ export default function MyProfilePage() {
     try {
       setIsSavingProfile(true);
       setFeedbackMessage("");
+      setFeedbackType("success");
 
       await updateProfile({
         firstName: form.firstName.trim(),
@@ -582,6 +619,39 @@ export default function MyProfilePage() {
         country: form.country.trim(),
         region: form.region.trim(),
       });
+
+      if (isEmailChangeEnabled) {
+        await updateEmail({
+          newEmail: form.newEmail.trim(),
+        });
+
+        setForm((current) => ({
+          ...current,
+          email: form.newEmail.trim().toLowerCase(),
+          newEmail: "",
+        }));
+
+        setEmailTouched({});
+        setEmailSubmitAttempted(false);
+        setIsEmailChangeEnabled(false);
+      }
+
+      if (isPasswordChangeEnabled) {
+        await updatePassword({
+          currentPassword: passwordForm.currentPassword,
+          newPassword: passwordForm.newPassword,
+          confirmPassword: passwordForm.confirmPassword,
+        });
+
+        setPasswordForm(initialPasswordForm);
+        setPasswordTouched({});
+        setPasswordSubmitAttempted(false);
+        setPasswordBackendErrors({});
+        setIsPasswordChangeEnabled(false);
+        setShowCurrentPassword(false);
+        setShowNewPassword(false);
+        setShowConfirmPassword(false);
+      }
 
       if (isPaymentEditOpen) {
         const cleanCardNumber = normalizeCardNumber(cardForm.cardNumber);
@@ -612,18 +682,35 @@ export default function MyProfilePage() {
 
       setProfileTouched({});
       setProfileSubmitAttempted(false);
-
-      setFeedbackMessage(
-        isEmailChangeEnabled || isPasswordChangeEnabled
-          ? "Profile changes saved successfully. Email/password changes are validated, but backend update still needs to be connected."
-          : "Profile changes saved successfully."
-      );
-
+      setFeedbackType("success");
+      setFeedbackMessage("Profile changes saved successfully.");
       scrollToPageTop();
     } catch (error) {
-      setFeedbackMessage(
-        getErrorMessage(error, "We could not update your profile.")
-      );
+      const message = getErrorMessage(error, "We could not update your profile.");
+      const status = error?.response?.status;
+
+      setFeedbackType("error");
+
+      if (
+        isPasswordChangeEnabled &&
+        (status === 401 ||
+          message.toLowerCase().includes("current password") ||
+          message.toLowerCase().includes("password is incorrect") ||
+          message.toLowerCase().includes("incorrect"))
+      ) {
+        setPasswordTouched((current) => ({
+          ...current,
+          currentPassword: true,
+        }));
+
+        setPasswordSubmitAttempted(true);
+
+        setPasswordBackendErrors({
+          currentPassword: message,
+        });
+      }
+
+      setFeedbackMessage(message);
       scrollToPageTop();
     } finally {
       setIsSavingProfile(false);
@@ -653,7 +740,10 @@ export default function MyProfilePage() {
           noValidate
         >
           {feedbackMessage && (
-            <p className="my-profile-page__feedback" role="status">
+            <p
+              className={`my-profile-page__feedback my-profile-page__feedback--${feedbackType}`}
+              role={feedbackType === "error" ? "alert" : "status"}
+            >
               {feedbackMessage}
             </p>
           )}
@@ -677,7 +767,7 @@ export default function MyProfilePage() {
                   )}`}
                   aria-invalid={Boolean(
                     (profileTouched.firstName || profileSubmitAttempted) &&
-                      profileErrors.firstName
+                    profileErrors.firstName
                   )}
                   aria-describedby="firstName-profile-error"
                 />
@@ -697,7 +787,7 @@ export default function MyProfilePage() {
                   )}`}
                   aria-invalid={Boolean(
                     (profileTouched.lastName || profileSubmitAttempted) &&
-                      profileErrors.lastName
+                    profileErrors.lastName
                   )}
                   aria-describedby="lastName-profile-error"
                 />
@@ -719,7 +809,7 @@ export default function MyProfilePage() {
                   )}`}
                   aria-invalid={Boolean(
                     (profileTouched.dateOfBirth || profileSubmitAttempted) &&
-                      profileErrors.dateOfBirth
+                    profileErrors.dateOfBirth
                   )}
                   aria-describedby="dateOfBirth-profile-error"
                 />
@@ -740,7 +830,7 @@ export default function MyProfilePage() {
                   )}`}
                   aria-invalid={Boolean(
                     (profileTouched.phone || profileSubmitAttempted) &&
-                      profileErrors.phone
+                    profileErrors.phone
                   )}
                   aria-describedby="phone-profile-error"
                 />
@@ -768,7 +858,7 @@ export default function MyProfilePage() {
                   )}`}
                   aria-invalid={Boolean(
                     (profileTouched.address || profileSubmitAttempted) &&
-                      profileErrors.address
+                    profileErrors.address
                   )}
                   aria-describedby="address-profile-error"
                 />
@@ -793,7 +883,7 @@ export default function MyProfilePage() {
                   )}`}
                   aria-invalid={Boolean(
                     (profileTouched.postalCode || profileSubmitAttempted) &&
-                      profileErrors.postalCode
+                    profileErrors.postalCode
                   )}
                   aria-describedby="postalCode-profile-error"
                 />
@@ -812,7 +902,7 @@ export default function MyProfilePage() {
                   )}`}
                   aria-invalid={Boolean(
                     (profileTouched.city || profileSubmitAttempted) &&
-                      profileErrors.city
+                    profileErrors.city
                   )}
                   aria-describedby="city-profile-error"
                 >
@@ -840,7 +930,7 @@ export default function MyProfilePage() {
                   )}`}
                   aria-invalid={Boolean(
                     (profileTouched.country || profileSubmitAttempted) &&
-                      profileErrors.country
+                    profileErrors.country
                   )}
                   aria-describedby="country-profile-error"
                 >
@@ -866,7 +956,7 @@ export default function MyProfilePage() {
                   )}`}
                   aria-invalid={Boolean(
                     (profileTouched.region || profileSubmitAttempted) &&
-                      profileErrors.region
+                    profileErrors.region
                   )}
                   aria-describedby="region-profile-error"
                 >
@@ -920,15 +1010,14 @@ export default function MyProfilePage() {
                 onBlur={handleEmailBlur}
                 disabled={!isEmailChangeEnabled}
                 placeholder="Update my email address"
-                className={`my-profile-page__input ${
-                  isEmailChangeEnabled
-                    ? getEmailControlStateClass("newEmail")
-                    : "my-profile-page__input--muted"
-                }`}
+                className={`my-profile-page__input ${isEmailChangeEnabled
+                  ? getEmailControlStateClass("newEmail")
+                  : "my-profile-page__input--muted"
+                  }`}
                 aria-invalid={Boolean(
                   isEmailChangeEnabled &&
-                    (emailTouched.newEmail || emailSubmitAttempted) &&
-                    emailErrors.newEmail
+                  (emailTouched.newEmail || emailSubmitAttempted) &&
+                  emailErrors.newEmail
                 )}
                 aria-describedby="newEmail-profile-error"
               />
@@ -978,7 +1067,7 @@ export default function MyProfilePage() {
                       aria-invalid={Boolean(
                         (passwordTouched.currentPassword ||
                           passwordSubmitAttempted) &&
-                          passwordErrors.currentPassword
+                        mergedPasswordErrors.currentPassword
                       )}
                       aria-describedby="currentPassword-profile-error"
                     />
@@ -1026,7 +1115,7 @@ export default function MyProfilePage() {
                       aria-invalid={Boolean(
                         (passwordTouched.newPassword ||
                           passwordSubmitAttempted) &&
-                          passwordErrors.newPassword
+                        mergedPasswordErrors.newPassword
                       )}
                       aria-describedby="newPassword-profile-error"
                     />
@@ -1072,7 +1161,7 @@ export default function MyProfilePage() {
                       aria-invalid={Boolean(
                         (passwordTouched.confirmPassword ||
                           passwordSubmitAttempted) &&
-                          passwordErrors.confirmPassword
+                        mergedPasswordErrors.confirmPassword
                       )}
                       aria-describedby="confirmPassword-profile-error"
                     />

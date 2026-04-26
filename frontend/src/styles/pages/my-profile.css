@@ -44,13 +44,22 @@
 .my-profile-page__feedback {
   margin: 0 0 22px;
   padding: 14px 18px;
-  border: 1px solid rgba(40, 201, 55, 0.5);
   border-radius: 14px;
-  background: rgba(40, 201, 55, 0.12);
-  color: #28c937;
   font-size: 0.95rem;
   font-weight: 700;
   text-align: center;
+}
+
+.my-profile-page__feedback--success {
+  border: 1px solid rgba(40, 201, 55, 0.5);
+  background: rgba(40, 201, 55, 0.12);
+  color: #28c937;
+}
+
+.my-profile-page__feedback--error {
+  border: 1px solid rgba(255, 107, 107, 0.55);
+  background: rgba(255, 107, 107, 0.14);
+  color: #ff8f8f;
 }
 
 .my-profile-page__section {

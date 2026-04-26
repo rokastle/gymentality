@@ -35,20 +35,30 @@ public class AuthController {
     @PutMapping("/me/profile")
     public ResponseEntity<AuthUserResponse> updateProfile(
             Authentication authentication,
-            @Valid @RequestBody UpdateProfileRequest request
-    ) {
+            @Valid @RequestBody UpdateProfileRequest request) {
         return ResponseEntity.ok(
-                authService.updateCurrentUserProfile(authentication.getName(), request)
-        );
+                authService.updateCurrentUserProfile(authentication.getName(), request));
     }
 
     @PutMapping("/me/payment-method")
     public ResponseEntity<AuthUserResponse> updatePaymentMethod(
             Authentication authentication,
-            @Valid @RequestBody UpdatePaymentMethodRequest request
-    ) {
+            @Valid @RequestBody UpdatePaymentMethodRequest request) {
         return ResponseEntity.ok(
-                authService.updateCurrentUserPaymentMethod(authentication.getName(), request)
-        );
+                authService.updateCurrentUserPaymentMethod(authentication.getName(), request));
+    }
+
+    @PutMapping("/me/email")
+    public ResponseEntity<AuthResponse> updateEmail(
+            Authentication authentication,
+            @Valid @RequestBody UpdateEmailRequest request) {
+        return ResponseEntity.ok(authService.updateEmail(authentication.getName(), request));
+    }
+
+    @PutMapping("/me/password")
+    public ResponseEntity<AuthUserResponse> updatePassword(
+            Authentication authentication,
+            @Valid @RequestBody UpdatePasswordRequest request) {
+        return ResponseEntity.ok(authService.updatePassword(authentication.getName(), request));
     }
 }

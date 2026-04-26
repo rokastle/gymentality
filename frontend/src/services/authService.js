@@ -15,12 +15,22 @@ export async function getMe() {
   return response.data;
 }
 
-export async function updateProfileUser(payload) {
+export async function updateProfile(payload) {
   const response = await axiosClient.put("/auth/me/profile", payload);
   return response.data;
 }
 
-export async function updateUserPaymentMethod(payload) {
+export async function updatePaymentMethod(payload) {
   const response = await axiosClient.put("/auth/me/payment-method", payload);
+  return response.data;
+}
+
+export async function updateEmail(payload) {
+  const response = await axiosClient.put("/auth/me/email", payload);
+  return response.data;
+}
+
+export async function updatePassword(payload) {
+  const response = await axiosClient.put("/auth/me/password", payload);
   return response.data;
 }
