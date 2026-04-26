@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import IconImage from "../components/common/IconImage";
 import CreditCardPaymentForm from "../components/payment/CreditCardPaymentForm";
+import { FormField, FormSelect, PasswordField } from "../components/forms";
 import {
   cityOptionsByRegion,
   countryOptions,
@@ -348,6 +349,7 @@ export default function MyProfilePage() {
       return nextErrors;
     });
   };
+
   const handlePasswordBlur = (event) => {
     const { name } = event.target;
 
@@ -428,97 +430,40 @@ export default function MyProfilePage() {
     setIsPaymentEditOpen(false);
   };
 
-  const getProfileControlStateClass = (fieldName) => {
-    const shouldShowState = profileTouched[fieldName] || profileSubmitAttempted;
+  const getProfileFieldProps = (fieldName) => ({
+    error: profileErrors[fieldName],
+    touched: profileTouched[fieldName],
+    submitAttempted: profileSubmitAttempted,
+    className: "my-profile-page__field",
+    controlClassName: "my-profile-page__input",
+    errorClassName: "my-profile-page__error",
+    errorId: `${fieldName}-profile-error`,
+  });
 
-    if (!shouldShowState) {
-      return "";
-    }
+  const getEmailFieldProps = (fieldName) => ({
+    error: isEmailChangeEnabled ? emailErrors[fieldName] : "",
+    touched: isEmailChangeEnabled ? emailTouched[fieldName] : false,
+    submitAttempted: isEmailChangeEnabled ? emailSubmitAttempted : false,
+    className: "my-profile-page__field",
+    controlClassName: `my-profile-page__input ${isEmailChangeEnabled ? "" : "my-profile-page__input--muted"
+      }`,
+    errorClassName: "my-profile-page__error",
+    errorId: `${fieldName}-profile-error`,
+  });
 
-    return profileErrors[fieldName] ? "is-invalid" : "is-valid";
-  };
-
-  const getEmailControlStateClass = (fieldName) => {
-    if (!isEmailChangeEnabled) {
-      return "";
-    }
-
-    const shouldShowState = emailTouched[fieldName] || emailSubmitAttempted;
-
-    if (!shouldShowState) {
-      return "";
-    }
-
-    return emailErrors[fieldName] ? "is-invalid" : "is-valid";
-  };
-
-  const getPasswordControlStateClass = (fieldName) => {
-    if (!isPasswordChangeEnabled) {
-      return "";
-    }
-
-    const shouldShowState =
-      passwordTouched[fieldName] || passwordSubmitAttempted;
-
-    if (!shouldShowState) {
-      return "";
-    }
-
-    return mergedPasswordErrors[fieldName] ? "is-invalid" : "is-valid";
-  };
-
-  const renderProfileError = (fieldName) => {
-    const showError =
-      (profileTouched[fieldName] || profileSubmitAttempted) &&
-      profileErrors[fieldName];
-
-    return (
-      <small
-        id={`${fieldName}-profile-error`}
-        className="my-profile-page__error"
-        role={showError ? "alert" : undefined}
-        aria-live="polite"
-      >
-        {showError ? profileErrors[fieldName] : "\u00A0"}
-      </small>
-    );
-  };
-
-  const renderEmailError = (fieldName) => {
-    const showError =
-      isEmailChangeEnabled &&
-      (emailTouched[fieldName] || emailSubmitAttempted) &&
-      emailErrors[fieldName];
-
-    return (
-      <small
-        id={`${fieldName}-profile-error`}
-        className="my-profile-page__error"
-        role={showError ? "alert" : undefined}
-        aria-live="polite"
-      >
-        {showError ? emailErrors[fieldName] : "\u00A0"}
-      </small>
-    );
-  };
-
-  const renderPasswordError = (fieldName) => {
-    const showError =
-      isPasswordChangeEnabled &&
-      (passwordTouched[fieldName] || passwordSubmitAttempted) &&
-      mergedPasswordErrors[fieldName];
-
-    return (
-      <small
-        id={`${fieldName}-profile-error`}
-        className="my-profile-page__error"
-        role={showError ? "alert" : undefined}
-        aria-live="polite"
-      >
-        {showError ? mergedPasswordErrors[fieldName] : "\u00A0"}
-      </small>
-    );
-  };
+  const getPasswordFieldProps = (fieldName) => ({
+    error: mergedPasswordErrors[fieldName],
+    touched: passwordTouched[fieldName],
+    submitAttempted: passwordSubmitAttempted,
+    className: "my-profile-page__field",
+    wrapperClassName: "my-profile-page__password-wrapper",
+    controlClassName: "my-profile-page__input",
+    toggleClassName: "my-profile-page__password-toggle",
+    iconClassName: "my-profile-page__password-toggle-icon",
+    errorClassName: "my-profile-page__error",
+    errorId: `${fieldName}-profile-error`,
+    showLabel: false,
+  });
 
   const markAllProfileFieldsAsTouched = () => {
     const allTouched = profileFieldOrder.reduce((accumulator, fieldName) => {
@@ -754,88 +699,50 @@ export default function MyProfilePage() {
             <div className="my-profile-page__section-divider" />
 
             <div className="my-profile-page__grid my-profile-page__grid--one">
-              <label className="my-profile-page__field">
-                <span>First name*</span>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={form.firstName}
-                  onChange={handleChange}
-                  onBlur={handleProfileBlur}
-                  className={`my-profile-page__input ${getProfileControlStateClass(
-                    "firstName"
-                  )}`}
-                  aria-invalid={Boolean(
-                    (profileTouched.firstName || profileSubmitAttempted) &&
-                    profileErrors.firstName
-                  )}
-                  aria-describedby="firstName-profile-error"
-                />
-                {renderProfileError("firstName")}
-              </label>
+              <FormField
+                label="First name*"
+                name="firstName"
+                value={form.firstName}
+                onChange={handleChange}
+                onBlur={handleProfileBlur}
+                autoComplete="given-name"
+                {...getProfileFieldProps("firstName")}
+              />
 
-              <label className="my-profile-page__field">
-                <span>Last name*</span>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={form.lastName}
-                  onChange={handleChange}
-                  onBlur={handleProfileBlur}
-                  className={`my-profile-page__input ${getProfileControlStateClass(
-                    "lastName"
-                  )}`}
-                  aria-invalid={Boolean(
-                    (profileTouched.lastName || profileSubmitAttempted) &&
-                    profileErrors.lastName
-                  )}
-                  aria-describedby="lastName-profile-error"
-                />
-                {renderProfileError("lastName")}
-              </label>
+              <FormField
+                label="Last name*"
+                name="lastName"
+                value={form.lastName}
+                onChange={handleChange}
+                onBlur={handleProfileBlur}
+                autoComplete="family-name"
+                {...getProfileFieldProps("lastName")}
+              />
             </div>
 
             <div className="my-profile-page__grid my-profile-page__grid--two">
-              <label className="my-profile-page__field">
-                <span>Date of birth*</span>
-                <input
-                  type="date"
-                  name="dateOfBirth"
-                  value={form.dateOfBirth}
-                  onChange={handleChange}
-                  onBlur={handleProfileBlur}
-                  className={`my-profile-page__input ${getProfileControlStateClass(
-                    "dateOfBirth"
-                  )}`}
-                  aria-invalid={Boolean(
-                    (profileTouched.dateOfBirth || profileSubmitAttempted) &&
-                    profileErrors.dateOfBirth
-                  )}
-                  aria-describedby="dateOfBirth-profile-error"
-                />
-                {renderProfileError("dateOfBirth")}
-              </label>
+              <FormField
+                label="Date of birth*"
+                type="date"
+                name="dateOfBirth"
+                value={form.dateOfBirth}
+                onChange={handleChange}
+                onBlur={handleProfileBlur}
+                {...getProfileFieldProps("dateOfBirth")}
+              />
 
-              <label className="my-profile-page__field">
-                <span>Phone number*</span>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={form.phone}
-                  onChange={handleChange}
-                  onBlur={handleProfileBlur}
-                  placeholder="+34 600-123-456"
-                  className={`my-profile-page__input ${getProfileControlStateClass(
-                    "phone"
-                  )}`}
-                  aria-invalid={Boolean(
-                    (profileTouched.phone || profileSubmitAttempted) &&
-                    profileErrors.phone
-                  )}
-                  aria-describedby="phone-profile-error"
-                />
-                {renderProfileError("phone")}
-              </label>
+              <FormField
+                label="Phone number*"
+                type="tel"
+                name="phone"
+                value={form.phone}
+                onChange={handleChange}
+                onBlur={handleProfileBlur}
+                placeholder="+34 600-123-456"
+                autoComplete="tel"
+                inputMode="tel"
+                {...getProfileFieldProps("phone")}
+              />
             </div>
           </section>
 
@@ -845,130 +752,69 @@ export default function MyProfilePage() {
             <div className="my-profile-page__section-divider" />
 
             <div className="my-profile-page__grid my-profile-page__grid--one">
-              <label className="my-profile-page__field">
-                <span>Address*</span>
-                <input
-                  type="text"
-                  name="address"
-                  value={form.address}
-                  onChange={handleChange}
-                  onBlur={handleProfileBlur}
-                  className={`my-profile-page__input ${getProfileControlStateClass(
-                    "address"
-                  )}`}
-                  aria-invalid={Boolean(
-                    (profileTouched.address || profileSubmitAttempted) &&
-                    profileErrors.address
-                  )}
-                  aria-describedby="address-profile-error"
-                />
-                {renderProfileError("address")}
-              </label>
+              <FormField
+                label="Address*"
+                name="address"
+                value={form.address}
+                onChange={handleChange}
+                onBlur={handleProfileBlur}
+                autoComplete="street-address"
+                {...getProfileFieldProps("address")}
+              />
             </div>
 
             <div className="my-profile-page__grid my-profile-page__grid--two">
-              <label className="my-profile-page__field">
-                <span>Postal code*</span>
-                <input
-                  type="text"
-                  name="postalCode"
-                  value={form.postalCode}
-                  onChange={handleChange}
-                  onBlur={handleProfileBlur}
-                  inputMode="numeric"
-                  maxLength={5}
-                  placeholder="29001"
-                  className={`my-profile-page__input ${getProfileControlStateClass(
-                    "postalCode"
-                  )}`}
-                  aria-invalid={Boolean(
-                    (profileTouched.postalCode || profileSubmitAttempted) &&
-                    profileErrors.postalCode
-                  )}
-                  aria-describedby="postalCode-profile-error"
-                />
-                {renderProfileError("postalCode")}
-              </label>
+              <FormField
+                label="Postal code*"
+                type="text"
+                name="postalCode"
+                value={form.postalCode}
+                onChange={handleChange}
+                onBlur={handleProfileBlur}
+                inputMode="numeric"
+                maxLength={5}
+                pattern="\d{5}"
+                placeholder="29001"
+                {...getProfileFieldProps("postalCode")}
+              />
 
-              <label className="my-profile-page__field">
-                <span>City*</span>
-                <select
-                  name="city"
-                  value={form.city}
-                  onChange={handleChange}
-                  onBlur={handleProfileBlur}
-                  className={`my-profile-page__input ${getProfileControlStateClass(
-                    "city"
-                  )}`}
-                  aria-invalid={Boolean(
-                    (profileTouched.city || profileSubmitAttempted) &&
-                    profileErrors.city
-                  )}
-                  aria-describedby="city-profile-error"
-                >
-                  <option value="">Select a city</option>
-                  {cityOptions.map((item) => (
-                    <option key={`${item.city}-${item.region}`} value={item.city}>
-                      {item.city} ({item.region})
-                    </option>
-                  ))}
-                </select>
-                {renderProfileError("city")}
-              </label>
+              <FormSelect
+                label="City*"
+                name="city"
+                value={form.city}
+                onChange={handleChange}
+                onBlur={handleProfileBlur}
+                placeholder="Select a city"
+                options={cityOptions}
+                getOptionKey={(item) => `${item.city}-${item.region}`}
+                getOptionValue={(item) => item.city}
+                getOptionLabel={(item) => `${item.city} (${item.region})`}
+                {...getProfileFieldProps("city")}
+              />
             </div>
 
             <div className="my-profile-page__grid my-profile-page__grid--two">
-              <label className="my-profile-page__field">
-                <span>Country*</span>
-                <select
-                  name="country"
-                  value={form.country}
-                  onChange={handleChange}
-                  onBlur={handleProfileBlur}
-                  className={`my-profile-page__input ${getProfileControlStateClass(
-                    "country"
-                  )}`}
-                  aria-invalid={Boolean(
-                    (profileTouched.country || profileSubmitAttempted) &&
-                    profileErrors.country
-                  )}
-                  aria-describedby="country-profile-error"
-                >
-                  <option value="">Select a country</option>
-                  {countryOptions.map((country) => (
-                    <option key={country} value={country}>
-                      {country}
-                    </option>
-                  ))}
-                </select>
-                {renderProfileError("country")}
-              </label>
+              <FormSelect
+                label="Country*"
+                name="country"
+                value={form.country}
+                onChange={handleChange}
+                onBlur={handleProfileBlur}
+                placeholder="Select a country"
+                options={countryOptions}
+                {...getProfileFieldProps("country")}
+              />
 
-              <label className="my-profile-page__field">
-                <span>State / Province / Region*</span>
-                <select
-                  name="region"
-                  value={form.region}
-                  onChange={handleChange}
-                  onBlur={handleProfileBlur}
-                  className={`my-profile-page__input ${getProfileControlStateClass(
-                    "region"
-                  )}`}
-                  aria-invalid={Boolean(
-                    (profileTouched.region || profileSubmitAttempted) &&
-                    profileErrors.region
-                  )}
-                  aria-describedby="region-profile-error"
-                >
-                  <option value="">Select a region</option>
-                  {regionOptions.map((region) => (
-                    <option key={region} value={region}>
-                      {region}
-                    </option>
-                  ))}
-                </select>
-                {renderProfileError("region")}
-              </label>
+              <FormSelect
+                label="State / Province / Region*"
+                name="region"
+                value={form.region}
+                onChange={handleChange}
+                onBlur={handleProfileBlur}
+                placeholder="Select a region"
+                options={regionOptions}
+                {...getProfileFieldProps("region")}
+              />
             </div>
           </section>
 
@@ -1001,28 +847,17 @@ export default function MyProfilePage() {
               </label>
             </div>
 
-            <label className="my-profile-page__field">
-              <input
-                type="email"
-                name="newEmail"
-                value={form.newEmail}
-                onChange={handleChange}
-                onBlur={handleEmailBlur}
-                disabled={!isEmailChangeEnabled}
-                placeholder="Update my email address"
-                className={`my-profile-page__input ${isEmailChangeEnabled
-                  ? getEmailControlStateClass("newEmail")
-                  : "my-profile-page__input--muted"
-                  }`}
-                aria-invalid={Boolean(
-                  isEmailChangeEnabled &&
-                  (emailTouched.newEmail || emailSubmitAttempted) &&
-                  emailErrors.newEmail
-                )}
-                aria-describedby="newEmail-profile-error"
-              />
-              {isEmailChangeEnabled && renderEmailError("newEmail")}
-            </label>
+            <FormField
+              type="email"
+              name="newEmail"
+              value={form.newEmail}
+              onChange={handleChange}
+              onBlur={handleEmailBlur}
+              disabled={!isEmailChangeEnabled}
+              placeholder="Update my email address"
+              showLabel={false}
+              {...getEmailFieldProps("newEmail")}
+            />
 
             <div className="my-profile-page__login-block my-profile-page__login-block--spaced">
               <div>
@@ -1052,147 +887,51 @@ export default function MyProfilePage() {
               />
             ) : (
               <div className="my-profile-page__password-grid">
-                <label className="my-profile-page__field">
-                  <div className="my-profile-page__password-wrapper">
-                    <input
-                      type={showCurrentPassword ? "text" : "password"}
-                      name="currentPassword"
-                      value={passwordForm.currentPassword}
-                      onChange={handlePasswordChange}
-                      onBlur={handlePasswordBlur}
-                      placeholder="Current password"
-                      className={`my-profile-page__input ${getPasswordControlStateClass(
-                        "currentPassword"
-                      )}`}
-                      aria-invalid={Boolean(
-                        (passwordTouched.currentPassword ||
-                          passwordSubmitAttempted) &&
-                        mergedPasswordErrors.currentPassword
-                      )}
-                      aria-describedby="currentPassword-profile-error"
-                    />
+                <PasswordField
+                  name="currentPassword"
+                  value={passwordForm.currentPassword}
+                  onChange={handlePasswordChange}
+                  onBlur={handlePasswordBlur}
+                  placeholder="Current password"
+                  showPassword={showCurrentPassword}
+                  onTogglePassword={() =>
+                    setShowCurrentPassword((current) => !current)
+                  }
+                  showLabelText="Mostrar contraseña actual"
+                  hideLabelText="Ocultar contraseña actual"
+                  autoComplete="current-password"
+                  {...getPasswordFieldProps("currentPassword")}
+                />
 
-                    <button
-                      type="button"
-                      className="my-profile-page__password-toggle"
-                      onClick={() =>
-                        setShowCurrentPassword((current) => !current)
-                      }
-                      aria-label={
-                        showCurrentPassword
-                          ? "Ocultar contraseña actual"
-                          : "Mostrar contraseña actual"
-                      }
-                      aria-pressed={showCurrentPassword}
-                    >
-                      <IconImage
-                        name={
-                          showCurrentPassword
-                            ? "hidePasswordIcon"
-                            : "showPasswordIcon"
-                        }
-                        className="my-profile-page__password-toggle-icon"
-                        decorative
-                        size={20}
-                      />
-                    </button>
-                  </div>
-                  {renderPasswordError("currentPassword")}
-                </label>
+                <PasswordField
+                  name="newPassword"
+                  value={passwordForm.newPassword}
+                  onChange={handlePasswordChange}
+                  onBlur={handlePasswordBlur}
+                  placeholder="New password"
+                  showPassword={showNewPassword}
+                  onTogglePassword={() => setShowNewPassword((current) => !current)}
+                  showLabelText="Mostrar nueva contraseña"
+                  hideLabelText="Ocultar nueva contraseña"
+                  autoComplete="new-password"
+                  {...getPasswordFieldProps("newPassword")}
+                />
 
-                <label className="my-profile-page__field">
-                  <div className="my-profile-page__password-wrapper">
-                    <input
-                      type={showNewPassword ? "text" : "password"}
-                      name="newPassword"
-                      value={passwordForm.newPassword}
-                      onChange={handlePasswordChange}
-                      onBlur={handlePasswordBlur}
-                      placeholder="New password"
-                      className={`my-profile-page__input ${getPasswordControlStateClass(
-                        "newPassword"
-                      )}`}
-                      aria-invalid={Boolean(
-                        (passwordTouched.newPassword ||
-                          passwordSubmitAttempted) &&
-                        mergedPasswordErrors.newPassword
-                      )}
-                      aria-describedby="newPassword-profile-error"
-                    />
-
-                    <button
-                      type="button"
-                      className="my-profile-page__password-toggle"
-                      onClick={() => setShowNewPassword((current) => !current)}
-                      aria-label={
-                        showNewPassword
-                          ? "Ocultar nueva contraseña"
-                          : "Mostrar nueva contraseña"
-                      }
-                      aria-pressed={showNewPassword}
-                    >
-                      <IconImage
-                        name={
-                          showNewPassword
-                            ? "hidePasswordIcon"
-                            : "showPasswordIcon"
-                        }
-                        className="my-profile-page__password-toggle-icon"
-                        decorative
-                        size={20}
-                      />
-                    </button>
-                  </div>
-                  {renderPasswordError("newPassword")}
-                </label>
-
-                <label className="my-profile-page__field">
-                  <div className="my-profile-page__password-wrapper">
-                    <input
-                      type={showConfirmPassword ? "text" : "password"}
-                      name="confirmPassword"
-                      value={passwordForm.confirmPassword}
-                      onChange={handlePasswordChange}
-                      onBlur={handlePasswordBlur}
-                      placeholder="Confirm new password"
-                      className={`my-profile-page__input ${getPasswordControlStateClass(
-                        "confirmPassword"
-                      )}`}
-                      aria-invalid={Boolean(
-                        (passwordTouched.confirmPassword ||
-                          passwordSubmitAttempted) &&
-                        mergedPasswordErrors.confirmPassword
-                      )}
-                      aria-describedby="confirmPassword-profile-error"
-                    />
-
-                    <button
-                      type="button"
-                      className="my-profile-page__password-toggle"
-                      onClick={() =>
-                        setShowConfirmPassword((current) => !current)
-                      }
-                      aria-label={
-                        showConfirmPassword
-                          ? "Ocultar confirmación de contraseña"
-                          : "Mostrar confirmación de contraseña"
-                      }
-                      aria-pressed={showConfirmPassword}
-                    >
-                      <IconImage
-                        name={
-                          showConfirmPassword
-                            ? "hidePasswordIcon"
-                            : "showPasswordIcon"
-                        }
-                        className="my-profile-page__password-toggle-icon"
-                        decorative
-                        size={20}
-                      />
-                    </button>
-                  </div>
-                  {renderPasswordError("confirmPassword")}
-                </label>
+                <PasswordField
+                  name="confirmPassword"
+                  value={passwordForm.confirmPassword}
+                  onChange={handlePasswordChange}
+                  onBlur={handlePasswordBlur}
+                  placeholder="Confirm new password"
+                  showPassword={showConfirmPassword}
+                  onTogglePassword={() =>
+                    setShowConfirmPassword((current) => !current)
+                  }
+                  showLabelText="Mostrar confirmación de contraseña"
+                  hideLabelText="Ocultar confirmación de contraseña"
+                  autoComplete="new-password"
+                  {...getPasswordFieldProps("confirmPassword")}
+                />
               </div>
             )}
           </section>
