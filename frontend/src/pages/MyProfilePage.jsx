@@ -22,92 +22,14 @@ import {
   paymentFieldNames,
   validatePaymentForm,
 } from "../utils/paymentValidation";
-
-const initialPasswordForm = {
-  currentPassword: "",
-  newPassword: "",
-  confirmPassword: "",
-};
-
-const emptyCardForm = {
-  cardholder: "",
-  cardNumber: "",
-  expiryMonth: "",
-  expiryYear: "",
-  cvv: "",
-  saveForFuture: true,
-};
-
-function formatDateForInput(value) {
-  if (!value) {
-    return "";
-  }
-
-  const parsedDate = new Date(value);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return value;
-  }
-
-  return parsedDate.toISOString().slice(0, 10);
-}
-
-function getInitialProfileForm(user) {
-  return {
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    dateOfBirth: formatDateForInput(user?.dateOfBirth),
-    phone: user?.phone || "",
-    address: user?.address || "",
-    postalCode: user?.postalCode || "",
-    city: user?.city || "",
-    country: user?.country || "España",
-    region: user?.region || "",
-    email: user?.email || "",
-    newEmail: "",
-  };
-}
-
-function getInitialStoredCard(user) {
-  const hasStoredCard = Boolean(user?.cardLast4);
-
-  return {
-    brand: user?.paymentMethod?.toUpperCase() === "CARD" ? "VISA" : "VISA",
-    last4: user?.cardLast4 || "----",
-    expiryMonth: user?.cardExpiryMonth || "",
-    expiryYear: user?.cardExpiryYear || "",
-    saveCardForFuture: user?.saveCardForFuture ?? true,
-    hasStoredCard,
-  };
-}
-
-function getCardBrand(cardNumber) {
-  const cleanNumber = cardNumber.replace(/\D/g, "");
-
-  if (cleanNumber.startsWith("4")) {
-    return "VISA";
-  }
-
-  if (/^5[1-5]/.test(cleanNumber) || /^2[2-7]/.test(cleanNumber)) {
-    return "MASTERCARD";
-  }
-
-  return "CARD";
-}
-
-function getErrorMessage(error, fallbackMessage) {
-  const backendData = error?.response?.data;
-
-  if (typeof backendData === "string") {
-    return backendData;
-  }
-
-  if (typeof backendData?.message === "string") {
-    return backendData.message;
-  }
-
-  return fallbackMessage;
-}
+import {
+  emptyCardForm,
+  getCardBrand,
+  getErrorMessage,
+  getInitialProfileForm,
+  getInitialStoredCard,
+  initialPasswordForm,
+} from "../utils/profilePageUtils";
 
 export default function MyProfilePage() {
   const navigate = useNavigate();
