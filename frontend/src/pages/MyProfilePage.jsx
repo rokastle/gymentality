@@ -1,14 +1,14 @@
 import { Navigate, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useAuth from "../hooks/useAuth";
 import useProfilePersonalForm from "../hooks/useProfilePersonalForm";
 import useProfileLoginSettings from "../hooks/useProfileLoginSettings";
 import useProfilePaymentMethod from "../hooks/useProfilePaymentMethod";
+import useProfileSaveChanges from "../hooks/useProfileSaveChanges";
 import ProfilePersonalDetailsSection from "../components/profile/ProfilePersonalDetailsSection";
 import ProfileLoginSection from "../components/profile/ProfileLoginSection";
 import ProfilePaymentMethodSection from "../components/profile/ProfilePaymentMethodSection";
 import { AddressFields } from "../components/forms";
-import { getErrorMessage } from "../utils/profilePageUtils";
 
 export default function MyProfilePage() {
   const navigate = useNavigate();
@@ -22,10 +22,6 @@ export default function MyProfilePage() {
     updateEmail,
     updatePassword,
   } = useAuth();
-
-  const [feedbackMessage, setFeedbackMessage] = useState("");
-  const [feedbackType, setFeedbackType] = useState("success");
-  const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   const {
     form,
@@ -87,6 +83,33 @@ export default function MyProfilePage() {
     updatePaymentMethod,
   });
 
+  const {
+    feedbackMessage,
+    feedbackType,
+    isSavingProfile,
+    handleSubmit,
+  } = useProfileSaveChanges({
+    form,
+    setForm,
+    passwordForm,
+    isEmailChangeEnabled,
+    isPasswordChangeEnabled,
+    isPaymentEditOpen,
+    updateProfile,
+    updateEmail,
+    updatePassword,
+    validateProfileDetails,
+    validateEnabledEmailChange,
+    validateEnabledPasswordChange,
+    markAllPaymentFieldsAsTouched,
+    hasPaymentErrors,
+    savePaymentMethod,
+    resetProfileValidationState,
+    resetEmailState,
+    resetPasswordState,
+    registerPasswordBackendError,
+  });
+
   useEffect(() => {
     resetProfileForm();
     resetLoginState();
@@ -95,120 +118,6 @@ export default function MyProfilePage() {
   if (!isAuthenticated || !user) {
     return <Navigate to="/" replace />;
   }
-
-  const scrollToPageTop = () => {
-    requestAnimationFrame(() => {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    });
-  };
-
-  const showErrorFeedback = (message) => {
-    setFeedbackType("error");
-    setFeedbackMessage(message);
-    scrollToPageTop();
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!validateProfileDetails()) {
-      showErrorFeedback("Please review your personal details before saving.");
-      return;
-    }
-
-    if (isEmailChangeEnabled && !validateEnabledEmailChange()) {
-      showErrorFeedback("Please review your email details before saving.");
-      return;
-    }
-
-    if (isPasswordChangeEnabled && !validateEnabledPasswordChange()) {
-      showErrorFeedback("Please review your password details before saving.");
-      return;
-    }
-
-    if (isPaymentEditOpen) {
-      markAllPaymentFieldsAsTouched();
-
-      if (hasPaymentErrors) {
-        showErrorFeedback("Please review your card details before saving.");
-        return;
-      }
-    }
-
-    try {
-      setIsSavingProfile(true);
-      setFeedbackMessage("");
-      setFeedbackType("success");
-
-      await updateProfile({
-        firstName: form.firstName.trim(),
-        lastName: form.lastName.trim(),
-        dateOfBirth: form.dateOfBirth,
-        phone: form.phone.trim(),
-        address: form.address.trim(),
-        postalCode: form.postalCode.trim(),
-        city: form.city.trim(),
-        country: form.country.trim(),
-        region: form.region.trim(),
-      });
-
-      if (isEmailChangeEnabled) {
-        await updateEmail({
-          newEmail: form.newEmail.trim(),
-        });
-
-        setForm((current) => ({
-          ...current,
-          email: form.newEmail.trim().toLowerCase(),
-          newEmail: "",
-        }));
-
-        resetEmailState();
-      }
-
-      if (isPasswordChangeEnabled) {
-        await updatePassword({
-          currentPassword: passwordForm.currentPassword,
-          newPassword: passwordForm.newPassword,
-          confirmPassword: passwordForm.confirmPassword,
-        });
-
-        resetPasswordState();
-      }
-
-      if (isPaymentEditOpen) {
-        await savePaymentMethod();
-      }
-
-      resetProfileValidationState();
-      setFeedbackType("success");
-      setFeedbackMessage("Profile changes saved successfully.");
-      scrollToPageTop();
-    } catch (error) {
-      const message = getErrorMessage(error, "We could not update your profile.");
-      const status = error?.response?.status;
-
-      setFeedbackType("error");
-
-      if (
-        isPasswordChangeEnabled &&
-        (status === 401 ||
-          message.toLowerCase().includes("current password") ||
-          message.toLowerCase().includes("password is incorrect") ||
-          message.toLowerCase().includes("incorrect"))
-      ) {
-        registerPasswordBackendError(message);
-      }
-
-      setFeedbackMessage(message);
-      scrollToPageTop();
-    } finally {
-      setIsSavingProfile(false);
-    }
-  };
 
   const handleLogout = () => {
     logout();
