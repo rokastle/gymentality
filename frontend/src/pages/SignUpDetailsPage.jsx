@@ -3,9 +3,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import SignUpTimeline from "../components/signup/SignUpTimeline";
 import { useClubById } from "../hooks/useClubs";
 import useAuth from "../hooks/useAuth";
-import IconImage from "../components/common/IconImage";
 import CreditCardPaymentForm from "../components/payment/CreditCardPaymentForm";
-import { paymentFieldNames } from "../utils/paymentValidation";
+import { FormField, PasswordField } from "../components/forms";
 import {
   formatEuro,
   formatEuroMonth,
@@ -241,11 +240,7 @@ export default function SignUpDetailsPage() {
       return "";
     }
 
-    if (errors[fieldName]) {
-      return "is-invalid";
-    }
-
-    return "is-valid";
+    return errors[fieldName] ? "is-invalid" : "is-valid";
   };
 
   const focusFirstInvalidField = (validationErrors) => {
@@ -273,6 +268,14 @@ export default function SignUpDetailsPage() {
       </small>
     );
   };
+
+  const getSignUpFieldProps = (fieldName) => ({
+    error: errors[fieldName],
+    touched: touched[fieldName],
+    submitAttempted,
+    className: "signup-details-page__field",
+    controlClassName: "signup-details-page__control",
+  });
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -381,56 +384,39 @@ export default function SignUpDetailsPage() {
               </h2>
 
               <div className="signup-details-page__grid signup-details-page__grid--two">
-                <label className="signup-details-page__field">
-                  <span>First name*</span>
-                  <input
-                    ref={(element) => {
-                      fieldRefs.current.firstName = element;
-                    }}
-                    className={`signup-details-page__control ${getControlStateClass(
-                      "firstName"
-                    )}`}
-                    name="firstName"
-                    value={form.firstName}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    autoComplete="given-name"
-                    aria-invalid={Boolean(
-                      (touched.firstName || submitAttempted) && errors.firstName
-                    )}
-                    aria-describedby="firstName-error"
-                  />
-                  {renderError("firstName")}
-                </label>
+                <FormField
+                  ref={(element) => {
+                    fieldRefs.current.firstName = element;
+                  }}
+                  label="First name*"
+                  name="firstName"
+                  value={form.firstName}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                  autoComplete="given-name"
+                  {...getSignUpFieldProps("firstName")}
+                />
 
-                <label className="signup-details-page__field">
-                  <span>Last name*</span>
-                  <input
-                    ref={(element) => {
-                      fieldRefs.current.lastName = element;
-                    }}
-                    className={`signup-details-page__control ${getControlStateClass(
-                      "lastName"
-                    )}`}
-                    name="lastName"
-                    value={form.lastName}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    autoComplete="family-name"
-                    aria-invalid={Boolean(
-                      (touched.lastName || submitAttempted) && errors.lastName
-                    )}
-                    aria-describedby="lastName-error"
-                  />
-                  {renderError("lastName")}
-                </label>
+                <FormField
+                  ref={(element) => {
+                    fieldRefs.current.lastName = element;
+                  }}
+                  label="Last name*"
+                  name="lastName"
+                  value={form.lastName}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                  autoComplete="family-name"
+                  {...getSignUpFieldProps("lastName")}
+                />
               </div>
 
               <div className="signup-details-page__grid signup-details-page__grid--two signup-details-page__gender-row">
                 <div className="signup-details-page__field">
                   <span>Gender*</span>
+
                   <div className="signup-details-page__options">
                     <label>
                       <input
@@ -461,186 +447,96 @@ export default function SignUpDetailsPage() {
                       <span>Male</span>
                     </label>
                   </div>
+
                   {renderError("gender")}
                 </div>
 
-                <label className="signup-details-page__field">
-                  <span>Date of birth*</span>
-                  <input
-                    ref={(element) => {
-                      fieldRefs.current.dateOfBirth = element;
-                    }}
-                    className={`signup-details-page__control ${getControlStateClass(
-                      "dateOfBirth"
-                    )}`}
-                    type="date"
-                    name="dateOfBirth"
-                    value={form.dateOfBirth}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    aria-invalid={Boolean(
-                      (touched.dateOfBirth || submitAttempted) &&
-                      errors.dateOfBirth
-                    )}
-                    aria-describedby="dateOfBirth-error"
-                  />
-                  {renderError("dateOfBirth")}
-                </label>
+                <FormField
+                  ref={(element) => {
+                    fieldRefs.current.dateOfBirth = element;
+                  }}
+                  label="Date of birth*"
+                  type="date"
+                  name="dateOfBirth"
+                  value={form.dateOfBirth}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                  {...getSignUpFieldProps("dateOfBirth")}
+                />
               </div>
 
               <div className="signup-details-page__grid signup-details-page__grid--two">
-                <label className="signup-details-page__field">
-                  <span>Email*</span>
-                  <input
-                    ref={(element) => {
-                      fieldRefs.current.email = element;
-                    }}
-                    className={`signup-details-page__control ${getControlStateClass(
-                      "email"
-                    )}`}
-                    type="email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    autoComplete="email"
-                    placeholder="usuario@mail.com"
-                    aria-invalid={Boolean(
-                      (touched.email || submitAttempted) && errors.email
-                    )}
-                    aria-describedby="email-error"
-                  />
-                  {renderError("email")}
-                </label>
+                <FormField
+                  ref={(element) => {
+                    fieldRefs.current.email = element;
+                  }}
+                  label="Email*"
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                  autoComplete="email"
+                  placeholder="usuario@mail.com"
+                  {...getSignUpFieldProps("email")}
+                />
 
-                <label className="signup-details-page__field">
-                  <span>Phone number*</span>
-                  <input
-                    ref={(element) => {
-                      fieldRefs.current.phone = element;
-                    }}
-                    className={`signup-details-page__control ${getControlStateClass(
-                      "phone"
-                    )}`}
-                    type="tel"
-                    name="phone"
-                    value={form.phone}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    autoComplete="tel"
-                    inputMode="tel"
-                    placeholder="+34 600-123-456"
-                    aria-invalid={Boolean(
-                      (touched.phone || submitAttempted) && errors.phone
-                    )}
-                    aria-describedby="phone-error"
-                  />
-                  {renderError("phone")}
-                </label>
+                <FormField
+                  ref={(element) => {
+                    fieldRefs.current.phone = element;
+                  }}
+                  label="Phone number*"
+                  type="tel"
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                  autoComplete="tel"
+                  inputMode="tel"
+                  placeholder="+34 600-123-456"
+                  {...getSignUpFieldProps("phone")}
+                />
               </div>
 
               <div className="signup-details-page__grid signup-details-page__grid--two">
-                <label className="signup-details-page__field">
-                  <span>Password*</span>
+                <PasswordField
+                  ref={(element) => {
+                    fieldRefs.current.password = element;
+                  }}
+                  label="Password*"
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                  autoComplete="new-password"
+                  showPassword={showPassword}
+                  onTogglePassword={() => setShowPassword((prev) => !prev)}
+                  showLabelText="Mostrar contraseña"
+                  hideLabelText="Ocultar contraseña"
+                  {...getSignUpFieldProps("password")}
+                />
 
-                  <div className="signup-details-page__password-wrapper">
-                    <input
-                      ref={(element) => {
-                        fieldRefs.current.password = element;
-                      }}
-                      className={`signup-details-page__control ${getControlStateClass(
-                        "password"
-                      )}`}
-                      type={showPassword ? "text" : "password"}
-                      name="password"
-                      value={form.password}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      required
-                      autoComplete="new-password"
-                      aria-invalid={Boolean(
-                        (touched.password || submitAttempted) && errors.password
-                      )}
-                      aria-describedby="password-error"
-                    />
-
-                    <button
-                      type="button"
-                      className="signup-details-page__password-toggle"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      aria-label={
-                        showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
-                      }
-                      aria-pressed={showPassword}
-                    >
-                      <IconImage
-                        name={
-                          showPassword ? "hidePasswordIcon" : "showPasswordIcon"
-                        }
-                        className="signup-details-page__password-toggle-icon"
-                        decorative
-                        size={20}
-                      />
-                    </button>
-                  </div>
-
-                  {renderError("password")}
-                </label>
-
-                <label className="signup-details-page__field">
-                  <span>Confirm Password*</span>
-
-                  <div className="signup-details-page__password-wrapper">
-                    <input
-                      ref={(element) => {
-                        fieldRefs.current.confirmPassword = element;
-                      }}
-                      className={`signup-details-page__control ${getControlStateClass(
-                        "confirmPassword"
-                      )}`}
-                      type={showConfirmPassword ? "text" : "password"}
-                      name="confirmPassword"
-                      value={form.confirmPassword}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      required
-                      autoComplete="new-password"
-                      aria-invalid={Boolean(
-                        (touched.confirmPassword || submitAttempted) &&
-                        errors.confirmPassword
-                      )}
-                      aria-describedby="confirmPassword-error"
-                    />
-
-                    <button
-                      type="button"
-                      className="signup-details-page__password-toggle"
-                      onClick={() => setShowConfirmPassword((prev) => !prev)}
-                      aria-label={
-                        showConfirmPassword
-                          ? "Ocultar confirmación de contraseña"
-                          : "Mostrar confirmación de contraseña"
-                      }
-                      aria-pressed={showConfirmPassword}
-                    >
-                      <IconImage
-                        name={
-                          showConfirmPassword
-                            ? "hidePasswordIcon"
-                            : "showPasswordIcon"
-                        }
-                        className="signup-details-page__password-toggle-icon"
-                        decorative
-                        size={20}
-                      />
-                    </button>
-                  </div>
-
-                  {renderError("confirmPassword")}
-                </label>
+                <PasswordField
+                  ref={(element) => {
+                    fieldRefs.current.confirmPassword = element;
+                  }}
+                  label="Confirm Password*"
+                  name="confirmPassword"
+                  value={form.confirmPassword}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                  autoComplete="new-password"
+                  showPassword={showConfirmPassword}
+                  onTogglePassword={() => setShowConfirmPassword((prev) => !prev)}
+                  showLabelText="Mostrar confirmación de contraseña"
+                  hideLabelText="Ocultar confirmación de contraseña"
+                  {...getSignUpFieldProps("confirmPassword")}
+                />
               </div>
             </section>
 
@@ -650,6 +546,7 @@ export default function SignUpDetailsPage() {
               <div className="signup-details-page__grid signup-details-page__grid--one">
                 <label className="signup-details-page__field">
                   <span>Address*</span>
+
                   <input
                     ref={(element) => {
                       fieldRefs.current.address = element;
@@ -668,6 +565,7 @@ export default function SignUpDetailsPage() {
                     )}
                     aria-describedby="address-error"
                   />
+
                   {renderError("address")}
                 </label>
               </div>
@@ -675,6 +573,7 @@ export default function SignUpDetailsPage() {
               <div className="signup-details-page__grid signup-details-page__grid--two">
                 <label className="signup-details-page__field">
                   <span>Postal code*</span>
+
                   <input
                     ref={(element) => {
                       fieldRefs.current.postalCode = element;
@@ -694,15 +593,17 @@ export default function SignUpDetailsPage() {
                     placeholder="29001"
                     aria-invalid={Boolean(
                       (touched.postalCode || submitAttempted) &&
-                      errors.postalCode
+                        errors.postalCode
                     )}
                     aria-describedby="postalCode-error"
                   />
+
                   {renderError("postalCode")}
                 </label>
 
                 <label className="signup-details-page__field">
                   <span>City*</span>
+
                   <select
                     ref={(element) => {
                       fieldRefs.current.city = element;
@@ -730,6 +631,7 @@ export default function SignUpDetailsPage() {
                       </option>
                     ))}
                   </select>
+
                   {renderError("city")}
                 </label>
               </div>
@@ -737,6 +639,7 @@ export default function SignUpDetailsPage() {
               <div className="signup-details-page__grid signup-details-page__grid--two">
                 <label className="signup-details-page__field">
                   <span>Country*</span>
+
                   <select
                     ref={(element) => {
                       fieldRefs.current.country = element;
@@ -761,11 +664,13 @@ export default function SignUpDetailsPage() {
                       </option>
                     ))}
                   </select>
+
                   {renderError("country")}
                 </label>
 
                 <label className="signup-details-page__field">
                   <span>State / Province / Region*</span>
+
                   <select
                     ref={(element) => {
                       fieldRefs.current.region = element;
@@ -790,6 +695,7 @@ export default function SignUpDetailsPage() {
                       </option>
                     ))}
                   </select>
+
                   {renderError("region")}
                 </label>
               </div>
@@ -847,6 +753,7 @@ export default function SignUpDetailsPage() {
                 />
                 <span>I accept the terms and privacy policy</span>
               </label>
+
               {renderError("acceptedTerms")}
             </section>
 
