@@ -6,6 +6,10 @@
 @import "./styles/layout/navbar.css";
 @import "./styles/layout/footer.css";
 
+@import "./styles/components/auth-drawer.css";
+@import "./styles/components/credit-card-payment-form.css";
+@import "./styles/components/form-controls.css";
+
 @import "./styles/pages/home.css";
 @import "./styles/pages/clubs.css";
 @import "./styles/pages/membership.css";
@@ -14,8 +18,6 @@
 @import "./styles/pages/facilities.css";
 @import "./styles/pages/club-detail.css";
 @import "./styles/pages/signup.css";
-@import "./styles/components/auth-drawer.css";
-@import "./styles/components/credit-card-payment-form.css";
 @import "./styles/pages/book-class.css";
 @import "./styles/pages/my-workout-plan.css";
 @import "./styles/pages/my-membership.css";
