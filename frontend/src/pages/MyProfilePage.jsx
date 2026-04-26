@@ -5,7 +5,8 @@ import useAuth from "../hooks/useAuth";
 import IconImage from "../components/common/IconImage";
 import CreditCardPaymentForm from "../components/payment/CreditCardPaymentForm";
 import ProfilePersonalDetailsSection from "../components/profile/ProfilePersonalDetailsSection";
-import { AddressFields, FormField, PasswordField } from "../components/forms";
+import ProfileLoginSection from "../components/profile/ProfileLoginSection";
+import { AddressFields } from "../components/forms";
 import {
   hasValidationErrors,
   normalizePostalCode,
@@ -661,123 +662,30 @@ export default function MyProfilePage() {
             showDivider
           />
 
-          <section className="my-profile-page__section">
-            <h2 className="my-profile-page__section-title">LOGIN</h2>
-
-            <div className="my-profile-page__section-divider" />
-
-            <div className="my-profile-page__login-block">
-              <div>
-                <p className="my-profile-page__login-title">Login email</p>
-                <p className="my-profile-page__login-text">
-                  Current email: <strong>{form.email}</strong>
-                </p>
-                <p className="my-profile-page__login-text">
-                  If you change your email address, you will receive an email at
-                  the new account to confirm the change.
-                </p>
-              </div>
-
-              <label className="my-profile-page__toggle-row">
-                <input
-                  type="checkbox"
-                  checked={isEmailChangeEnabled}
-                  onChange={handleEmailToggleChange}
-                />
-                <span className="my-profile-page__toggle-track">
-                  <span className="my-profile-page__toggle-thumb" />
-                </span>
-              </label>
-            </div>
-
-            <FormField
-              type="email"
-              name="newEmail"
-              value={form.newEmail}
-              onChange={handleChange}
-              onBlur={handleEmailBlur}
-              disabled={!isEmailChangeEnabled}
-              placeholder="Update my email address"
-              showLabel={false}
-              {...getEmailFieldProps("newEmail")}
-            />
-
-            <div className="my-profile-page__login-block my-profile-page__login-block--spaced">
-              <div>
-                <p className="my-profile-page__login-title">
-                  Change account password
-                </p>
-              </div>
-
-              <label className="my-profile-page__toggle-row">
-                <input
-                  type="checkbox"
-                  checked={isPasswordChangeEnabled}
-                  onChange={handlePasswordToggleChange}
-                />
-                <span className="my-profile-page__toggle-track">
-                  <span className="my-profile-page__toggle-thumb" />
-                </span>
-              </label>
-            </div>
-
-            {!isPasswordChangeEnabled ? (
-              <input
-                type="text"
-                disabled
-                placeholder="Update my password"
-                className="my-profile-page__input my-profile-page__input--muted"
-              />
-            ) : (
-              <div className="my-profile-page__password-grid">
-                <PasswordField
-                  name="currentPassword"
-                  value={passwordForm.currentPassword}
-                  onChange={handlePasswordChange}
-                  onBlur={handlePasswordBlur}
-                  placeholder="Current password"
-                  showPassword={showCurrentPassword}
-                  onTogglePassword={() =>
-                    setShowCurrentPassword((current) => !current)
-                  }
-                  showLabelText="Mostrar contraseña actual"
-                  hideLabelText="Ocultar contraseña actual"
-                  autoComplete="current-password"
-                  {...getPasswordFieldProps("currentPassword")}
-                />
-
-                <PasswordField
-                  name="newPassword"
-                  value={passwordForm.newPassword}
-                  onChange={handlePasswordChange}
-                  onBlur={handlePasswordBlur}
-                  placeholder="New password"
-                  showPassword={showNewPassword}
-                  onTogglePassword={() => setShowNewPassword((current) => !current)}
-                  showLabelText="Mostrar nueva contraseña"
-                  hideLabelText="Ocultar nueva contraseña"
-                  autoComplete="new-password"
-                  {...getPasswordFieldProps("newPassword")}
-                />
-
-                <PasswordField
-                  name="confirmPassword"
-                  value={passwordForm.confirmPassword}
-                  onChange={handlePasswordChange}
-                  onBlur={handlePasswordBlur}
-                  placeholder="Confirm new password"
-                  showPassword={showConfirmPassword}
-                  onTogglePassword={() =>
-                    setShowConfirmPassword((current) => !current)
-                  }
-                  showLabelText="Mostrar confirmación de contraseña"
-                  hideLabelText="Ocultar confirmación de contraseña"
-                  autoComplete="new-password"
-                  {...getPasswordFieldProps("confirmPassword")}
-                />
-              </div>
-            )}
-          </section>
+          <ProfileLoginSection
+            form={form}
+            passwordForm={passwordForm}
+            isEmailChangeEnabled={isEmailChangeEnabled}
+            isPasswordChangeEnabled={isPasswordChangeEnabled}
+            showCurrentPassword={showCurrentPassword}
+            showNewPassword={showNewPassword}
+            showConfirmPassword={showConfirmPassword}
+            onEmailToggleChange={handleEmailToggleChange}
+            onPasswordToggleChange={handlePasswordToggleChange}
+            onEmailChange={handleChange}
+            onEmailBlur={handleEmailBlur}
+            onPasswordChange={handlePasswordChange}
+            onPasswordBlur={handlePasswordBlur}
+            onToggleCurrentPassword={() =>
+              setShowCurrentPassword((current) => !current)
+            }
+            onToggleNewPassword={() => setShowNewPassword((current) => !current)}
+            onToggleConfirmPassword={() =>
+              setShowConfirmPassword((current) => !current)
+            }
+            getEmailFieldProps={getEmailFieldProps}
+            getPasswordFieldProps={getPasswordFieldProps}
+          />
 
           <section className="my-profile-page__section">
             <h2 className="my-profile-page__section-title">PAYMENT METHOD</h2>
