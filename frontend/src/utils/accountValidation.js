@@ -139,7 +139,13 @@ export function validateAccountField(name, value, form = {}) {
         : "Min 8 characters, uppercase, lowercase, number, symbol (@$!%*?&)";
 
     case "currentPassword":
-      return textValue ? "" : "Current password is required";
+      if (!textValue) {
+        return "Current password is required";
+      }
+
+      return regex.password.test(textValue)
+        ? ""
+        : "Min 8 characters, uppercase, lowercase, number, symbol (@$!%*?&)";
 
     case "newPassword":
       if (!textValue) {
