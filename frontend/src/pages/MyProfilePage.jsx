@@ -1,24 +1,14 @@
 import { Navigate, useNavigate } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
-import useLocationFields from "../hooks/useLocationFields";
+import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
+import useProfilePersonalForm from "../hooks/useProfilePersonalForm";
 import useProfileLoginSettings from "../hooks/useProfileLoginSettings";
 import useProfilePaymentMethod from "../hooks/useProfilePaymentMethod";
 import ProfilePersonalDetailsSection from "../components/profile/ProfilePersonalDetailsSection";
 import ProfileLoginSection from "../components/profile/ProfileLoginSection";
 import ProfilePaymentMethodSection from "../components/profile/ProfilePaymentMethodSection";
 import { AddressFields } from "../components/forms";
-import { buildTouchedFields } from "../utils/formStateUtils";
-import {
-  hasValidationErrors,
-  normalizePostalCode,
-  profileFieldOrder,
-  validateProfileForm,
-} from "../utils/accountValidation";
-import {
-  getErrorMessage,
-  getInitialProfileForm,
-} from "../utils/profilePageUtils";
+import { getErrorMessage } from "../utils/profilePageUtils";
 
 export default function MyProfilePage() {
   const navigate = useNavigate();
@@ -33,16 +23,22 @@ export default function MyProfilePage() {
     updatePassword,
   } = useAuth();
 
-  const [form, setForm] = useState(() => getInitialProfileForm(user));
-
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [feedbackType, setFeedbackType] = useState("success");
   const [isSavingProfile, setIsSavingProfile] = useState(false);
 
-  const [profileTouched, setProfileTouched] = useState({});
-  const [profileSubmitAttempted, setProfileSubmitAttempted] = useState(false);
-
-  const profileErrors = useMemo(() => validateProfileForm(form), [form]);
+  const {
+    form,
+    setForm,
+    regionOptions,
+    cityOptions,
+    handleChange,
+    handleProfileBlur,
+    getProfileFieldProps,
+    validateProfileDetails,
+    resetProfileForm,
+    resetProfileValidationState,
+  } = useProfilePersonalForm({ user });
 
   const {
     passwordForm,
@@ -91,17 +87,8 @@ export default function MyProfilePage() {
     updatePaymentMethod,
   });
 
-  const { regionOptions, cityOptions, applyLocationChange } = useLocationFields({
-    country: form.country,
-    region: form.region,
-    city: form.city,
-    setForm,
-  });
-
   useEffect(() => {
-    setForm(getInitialProfileForm(user));
-    setProfileTouched({});
-    setProfileSubmitAttempted(false);
+    resetProfileForm();
     resetLoginState();
   }, [user?.id]);
 
@@ -124,59 +111,10 @@ export default function MyProfilePage() {
     scrollToPageTop();
   };
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-
-    setForm((current) => {
-      let nextValue = value;
-
-      if (name === "postalCode") {
-        nextValue = normalizePostalCode(value);
-      }
-
-      const nextForm = {
-        ...current,
-        [name]: nextValue,
-      };
-
-      return applyLocationChange({
-        name,
-        value: nextValue,
-        nextForm,
-      });
-    });
-  };
-
-  const handleProfileBlur = (event) => {
-    const { name } = event.target;
-
-    setProfileTouched((current) => ({
-      ...current,
-      [name]: true,
-    }));
-  };
-
-  const getProfileFieldProps = (fieldName) => ({
-    error: profileErrors[fieldName],
-    touched: profileTouched[fieldName],
-    submitAttempted: profileSubmitAttempted,
-    className: "my-profile-page__field",
-    controlClassName: "my-profile-page__input",
-    errorClassName: "my-profile-page__error",
-    errorId: `${fieldName}-profile-error`,
-  });
-
-  const markAllProfileFieldsAsTouched = () => {
-    setProfileTouched(buildTouchedFields(profileFieldOrder));
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    setProfileSubmitAttempted(true);
-    markAllProfileFieldsAsTouched();
-
-    if (hasValidationErrors(profileErrors)) {
+    if (!validateProfileDetails()) {
       showErrorFeedback("Please review your personal details before saving.");
       return;
     }
@@ -245,8 +183,7 @@ export default function MyProfilePage() {
         await savePaymentMethod();
       }
 
-      setProfileTouched({});
-      setProfileSubmitAttempted(false);
+      resetProfileValidationState();
       setFeedbackType("success");
       setFeedbackMessage("Profile changes saved successfully.");
       scrollToPageTop();
