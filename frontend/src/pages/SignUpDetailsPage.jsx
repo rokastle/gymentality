@@ -4,7 +4,7 @@ import SignUpTimeline from "../components/signup/SignUpTimeline";
 import { useClubById } from "../hooks/useClubs";
 import useAuth from "../hooks/useAuth";
 import CreditCardPaymentForm from "../components/payment/CreditCardPaymentForm";
-import { FormField, PasswordField } from "../components/forms";
+import { FormField, FormSelect, PasswordField } from "../components/forms";
 import {
   formatEuro,
   formatEuroMonth,
@@ -231,16 +231,6 @@ export default function SignUpDetailsPage() {
       ...current,
       [name]: true,
     }));
-  };
-
-  const getControlStateClass = (fieldName) => {
-    const shouldShowState = touched[fieldName] || submitAttempted;
-
-    if (!shouldShowState) {
-      return "";
-    }
-
-    return errors[fieldName] ? "is-invalid" : "is-valid";
   };
 
   const focusFirstInvalidField = (validationErrors) => {
@@ -544,160 +534,88 @@ export default function SignUpDetailsPage() {
               <h2 className="signup-details-page__section-title">Address</h2>
 
               <div className="signup-details-page__grid signup-details-page__grid--one">
-                <label className="signup-details-page__field">
-                  <span>Address*</span>
-
-                  <input
-                    ref={(element) => {
-                      fieldRefs.current.address = element;
-                    }}
-                    className={`signup-details-page__control ${getControlStateClass(
-                      "address"
-                    )}`}
-                    name="address"
-                    value={form.address}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    autoComplete="street-address"
-                    aria-invalid={Boolean(
-                      (touched.address || submitAttempted) && errors.address
-                    )}
-                    aria-describedby="address-error"
-                  />
-
-                  {renderError("address")}
-                </label>
+                <FormField
+                  ref={(element) => {
+                    fieldRefs.current.address = element;
+                  }}
+                  label="Address*"
+                  name="address"
+                  value={form.address}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                  autoComplete="street-address"
+                  {...getSignUpFieldProps("address")}
+                />
               </div>
 
               <div className="signup-details-page__grid signup-details-page__grid--two">
-                <label className="signup-details-page__field">
-                  <span>Postal code*</span>
+                <FormField
+                  ref={(element) => {
+                    fieldRefs.current.postalCode = element;
+                  }}
+                  label="Postal code*"
+                  type="text"
+                  name="postalCode"
+                  value={form.postalCode}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                  inputMode="numeric"
+                  maxLength={5}
+                  pattern="\d{5}"
+                  placeholder="29001"
+                  {...getSignUpFieldProps("postalCode")}
+                />
 
-                  <input
-                    ref={(element) => {
-                      fieldRefs.current.postalCode = element;
-                    }}
-                    className={`signup-details-page__control ${getControlStateClass(
-                      "postalCode"
-                    )}`}
-                    type="text"
-                    name="postalCode"
-                    value={form.postalCode}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    inputMode="numeric"
-                    maxLength={5}
-                    pattern="\d{5}"
-                    placeholder="29001"
-                    aria-invalid={Boolean(
-                      (touched.postalCode || submitAttempted) &&
-                        errors.postalCode
-                    )}
-                    aria-describedby="postalCode-error"
-                  />
-
-                  {renderError("postalCode")}
-                </label>
-
-                <label className="signup-details-page__field">
-                  <span>City*</span>
-
-                  <select
-                    ref={(element) => {
-                      fieldRefs.current.city = element;
-                    }}
-                    className={`signup-details-page__control ${getControlStateClass(
-                      "city"
-                    )}`}
-                    name="city"
-                    value={form.city}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    aria-invalid={Boolean(
-                      (touched.city || submitAttempted) && errors.city
-                    )}
-                    aria-describedby="city-error"
-                  >
-                    <option value="">Select a city</option>
-                    {cityOptions.map((item) => (
-                      <option
-                        key={`${item.city}-${item.region}`}
-                        value={item.city}
-                      >
-                        {item.city} ({item.region})
-                      </option>
-                    ))}
-                  </select>
-
-                  {renderError("city")}
-                </label>
+                <FormSelect
+                  ref={(element) => {
+                    fieldRefs.current.city = element;
+                  }}
+                  label="City*"
+                  name="city"
+                  value={form.city}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                  placeholder="Select a city"
+                  options={cityOptions}
+                  getOptionValue={(item) => item.city}
+                  getOptionLabel={(item) => `${item.city} (${item.region})`}
+                  {...getSignUpFieldProps("city")}
+                />
               </div>
 
               <div className="signup-details-page__grid signup-details-page__grid--two">
-                <label className="signup-details-page__field">
-                  <span>Country*</span>
+                <FormSelect
+                  ref={(element) => {
+                    fieldRefs.current.country = element;
+                  }}
+                  label="Country*"
+                  name="country"
+                  value={form.country}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                  placeholder="Select a country"
+                  options={countryOptions}
+                  {...getSignUpFieldProps("country")}
+                />
 
-                  <select
-                    ref={(element) => {
-                      fieldRefs.current.country = element;
-                    }}
-                    className={`signup-details-page__control ${getControlStateClass(
-                      "country"
-                    )}`}
-                    name="country"
-                    value={form.country}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    aria-invalid={Boolean(
-                      (touched.country || submitAttempted) && errors.country
-                    )}
-                    aria-describedby="country-error"
-                  >
-                    <option value="">Select a country</option>
-                    {countryOptions.map((country) => (
-                      <option key={country} value={country}>
-                        {country}
-                      </option>
-                    ))}
-                  </select>
-
-                  {renderError("country")}
-                </label>
-
-                <label className="signup-details-page__field">
-                  <span>State / Province / Region*</span>
-
-                  <select
-                    ref={(element) => {
-                      fieldRefs.current.region = element;
-                    }}
-                    className={`signup-details-page__control ${getControlStateClass(
-                      "region"
-                    )}`}
-                    name="region"
-                    value={form.region}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    aria-invalid={Boolean(
-                      (touched.region || submitAttempted) && errors.region
-                    )}
-                    aria-describedby="region-error"
-                  >
-                    <option value="">Select a region</option>
-                    {regionOptions.map((region) => (
-                      <option key={region} value={region}>
-                        {region}
-                      </option>
-                    ))}
-                  </select>
-
-                  {renderError("region")}
-                </label>
+                <FormSelect
+                  ref={(element) => {
+                    fieldRefs.current.region = element;
+                  }}
+                  label="State / Province / Region*"
+                  name="region"
+                  value={form.region}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                  placeholder="Select a region"
+                  options={regionOptions}
+                  {...getSignUpFieldProps("region")}
+                />
               </div>
             </section>
 
