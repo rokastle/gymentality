@@ -4,9 +4,9 @@ import useLocationFields from "../hooks/useLocationFields";
 import SignUpTimeline from "../components/signup/SignUpTimeline";
 import { useClubById } from "../hooks/useClubs";
 import useAuth from "../hooks/useAuth";
-import CreditCardPaymentForm from "../components/payment/CreditCardPaymentForm";
-import { AddressFields, FormCheckbox } from "../components/forms";
+import { AddressFields } from "../components/forms";
 import SignUpPersonalDetailsSection from "../components/signup/SignUpPersonalDetailsSection";
+import SignUpPaymentDetailsSection from "../components/signup/SignUpPaymentDetailsSection";
 import {
   formatEuro,
   formatEuroMonth,
@@ -331,61 +331,15 @@ export default function SignUpDetailsPage() {
               required
             />
 
-            <section className="signup-details-page__section">
-              <h2 className="signup-details-page__section-title">
-                Payment details
-              </h2>
-
-              <div className="signup-details-page__payment-box">
-                <div className="signup-details-page__payment-option">
-                  <div>
-                    <strong>Pay by card</strong>
-                    <span>Secure payment with Visa and Mastercard</span>
-                  </div>
-
-                  <div className="signup-details-page__payment-brands">
-                    <span className="signup-details-page__payment-brand-dot signup-details-page__payment-brand-dot--red" />
-                    <span className="signup-details-page__payment-brand-dot signup-details-page__payment-brand-dot--orange" />
-                    <strong>VISA</strong>
-                  </div>
-                </div>
-
-                <CreditCardPaymentForm
-                  cardForm={{
-                    cardholder: form.cardholder,
-                    cardNumber: form.cardNumber,
-                    expiryMonth: form.expiryMonth,
-                    expiryYear: form.expiryYear,
-                    cvv: form.cvv,
-                    saveForFuture: form.saveCardForFuture,
-                  }}
-                  onChange={handleCreditCardChange}
-                  onBlur={handleBlur}
-                  errors={errors}
-                  touched={touched}
-                  submitAttempted={submitAttempted}
-                  inputRefs={fieldRefs.current}
-                  compact
-                />
-              </div>
-
-              <FormCheckbox
-                ref={(element) => {
-                  fieldRefs.current.acceptedTerms = element;
-                }}
-                label="I accept the terms and privacy policy"
-                name="acceptedTerms"
-                checked={form.acceptedTerms}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                required
-                error={errors.acceptedTerms}
-                touched={touched.acceptedTerms}
-                submitAttempted={submitAttempted}
-                className="signup-details-page__checkbox"
-                errorClassName="signup-details-page__error"
-              />
-            </section>
+            <SignUpPaymentDetailsSection
+              form={form}
+              onCreditCardChange={handleCreditCardChange}
+              onBlur={handleBlur}
+              errors={errors}
+              touched={touched}
+              submitAttempted={submitAttempted}
+              fieldRefs={fieldRefs}
+            />
 
             <div className="signup-details-page__submit">
               <button
