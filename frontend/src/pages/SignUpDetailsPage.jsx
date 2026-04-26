@@ -1,41 +1,18 @@
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
-import { useMemo, useRef, useState } from "react";
-import useLocationFields from "../hooks/useLocationFields";
-import SignUpTimeline from "../components/signup/SignUpTimeline";
-import SignUpPersonalDetailsSection from "../components/signup/SignUpPersonalDetailsSection";
-import SignUpPaymentDetailsSection from "../components/signup/SignUpPaymentDetailsSection";
-import SignUpSummarySidebar from "../components/signup/SignUpSummarySidebar";
 import { AddressFields } from "../components/forms";
-import { buildTouchedFields } from "../utils/formStateUtils";
+import SignUpPaymentDetailsSection from "../components/signup/SignUpPaymentDetailsSection";
+import SignUpPersonalDetailsSection from "../components/signup/SignUpPersonalDetailsSection";
+import SignUpSummarySidebar from "../components/signup/SignUpSummarySidebar";
+import SignUpTimeline from "../components/signup/SignUpTimeline";
 import useAuth from "../hooks/useAuth";
-import { getSignupTotals } from "../data/signupPlansData";
+import useSignUpDetailsForm from "../hooks/useSignUpDetailsForm";
 import useSignUpDetailsSelection from "../hooks/useSignUpDetailsSelection";
-import {
-  hasValidationErrors,
-  normalizePostalCode,
-  signUpFieldOrder,
-  validateSignUpForm,
-} from "../utils/accountValidation";
-import {
-  buildSignUpCompleteParams,
-  buildSignUpRegistrationPayload,
-  getSignUpApiErrorMessage,
-  initialSignUpDetailsForm,
-} from "../utils/signupDetailsPageUtils";
+import { getSignupTotals } from "../data/signupPlansData";
 
 export default function SignUpDetailsPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const fieldRefs = useRef({});
   const { register } = useAuth();
-
-  const [form, setForm] = useState(initialSignUpDetailsForm);
-  const [touched, setTouched] = useState({});
-  const [submitAttempted, setSubmitAttempted] = useState(false);
-  const [apiError, setApiError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const clubId = searchParams.get("clubId");
   const membershipId = searchParams.get("membership");
@@ -53,14 +30,38 @@ export default function SignUpDetailsPage() {
     workoutId,
   });
 
-  const { regionOptions, cityOptions, applyLocationChange } = useLocationFields({
-    country: form.country,
-    region: form.region,
-    city: form.city,
-    setForm,
-  });
+  const totals =
+    membershipPlan && workoutPlan
+      ? getSignupTotals(membershipPlan, workoutPlan)
+      : null;
 
-  const errors = useMemo(() => validateSignUpForm(form), [form]);
+  const {
+    form,
+    touched,
+    errors,
+    fieldRefs,
+    apiError,
+    isSubmitting,
+    submitAttempted,
+    showPassword,
+    showConfirmPassword,
+    regionOptions,
+    cityOptions,
+    handleChange,
+    handleCreditCardChange,
+    handleBlur,
+    handleSubmit,
+    getSignUpFieldProps,
+    togglePassword,
+    toggleConfirmPassword,
+  } = useSignUpDetailsForm({
+    club,
+    membershipPlan,
+    workoutPlan,
+    totals,
+    register,
+    navigate,
+  });
 
   if (!clubId) {
     return <Navigate to="/clubs" replace />;
@@ -78,122 +79,9 @@ export default function SignUpDetailsPage() {
     );
   }
 
-  if (isInvalidSelection) {
+  if (isInvalidSelection || !club || !membershipPlan || !workoutPlan || !totals) {
     return <Navigate to="/clubs" replace />;
   }
-
-  const totals = getSignupTotals(membershipPlan, workoutPlan);
-
-  const handleChange = (event) => {
-    const { name, type, value, checked } = event.target;
-
-    setForm((current) => {
-      let nextValue = type === "checkbox" ? checked : value;
-
-      if (name === "postalCode") {
-        nextValue = normalizePostalCode(value);
-      }
-
-      const nextForm = {
-        ...current,
-        [name]: nextValue,
-      };
-
-      return applyLocationChange({
-        name,
-        value: nextValue,
-        nextForm,
-      });
-    });
-  };
-
-  const handleCreditCardChange = (event) => {
-    const { name, type, value, checked } = event.target;
-    const mappedName = name === "saveForFuture" ? "saveCardForFuture" : name;
-
-    handleChange({
-      target: {
-        name: mappedName,
-        type,
-        value,
-        checked,
-      },
-    });
-  };
-
-  const handleBlur = (event) => {
-    const { name } = event.target;
-
-    setTouched((current) => ({
-      ...current,
-      [name]: true,
-    }));
-  };
-
-  const focusFirstInvalidField = (validationErrors) => {
-    const firstInvalidField = signUpFieldOrder.find(
-      (fieldName) => validationErrors[fieldName] && fieldRefs.current[fieldName]
-    );
-
-    if (firstInvalidField) {
-      fieldRefs.current[firstInvalidField].focus();
-    }
-  };
-
-  const getSignUpFieldProps = (fieldName) => ({
-    error: errors[fieldName],
-    touched: touched[fieldName],
-    submitAttempted,
-    className: "signup-details-page__field",
-    controlClassName: "signup-details-page__control",
-  });
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (isSubmitting) {
-      return;
-    }
-
-    setSubmitAttempted(true);
-
-    setTouched(buildTouchedFields(signUpFieldOrder));
-
-    setApiError("");
-
-    if (hasValidationErrors(errors)) {
-      focusFirstInvalidField(errors);
-      return;
-    }
-
-    const payload = buildSignUpRegistrationPayload({
-      form,
-      club,
-      membershipPlan,
-      workoutPlan,
-    });
-
-    try {
-      setIsSubmitting(true);
-
-      const result = await register(payload);
-
-      const nextParams = buildSignUpCompleteParams({
-        club,
-        membershipPlan,
-        workoutPlan,
-        totals,
-        result,
-      });
-
-      navigate(`/signup/complete?${nextParams}`);
-
-    } catch (error) {
-      setApiError(getSignUpApiErrorMessage(error));
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <section className="signup-details-page gm-dark-section-bg">
@@ -226,10 +114,8 @@ export default function SignUpDetailsPage() {
               getFieldProps={getSignUpFieldProps}
               showPassword={showPassword}
               showConfirmPassword={showConfirmPassword}
-              onTogglePassword={() => setShowPassword((prev) => !prev)}
-              onToggleConfirmPassword={() =>
-                setShowConfirmPassword((prev) => !prev)
-              }
+              onTogglePassword={togglePassword}
+              onToggleConfirmPassword={toggleConfirmPassword}
             />
 
             <AddressFields
