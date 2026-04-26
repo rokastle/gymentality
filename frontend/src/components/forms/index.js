@@ -1,3 +1,4 @@
+export { default as AddressFields } from "./AddressFields";
 export { default as FormCheckbox } from "./FormCheckbox";
 export { default as FormError } from "./FormError";
 export { default as FormField } from "./FormField";

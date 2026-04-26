@@ -4,9 +4,8 @@ import useLocationFields from "../hooks/useLocationFields";
 import useAuth from "../hooks/useAuth";
 import IconImage from "../components/common/IconImage";
 import CreditCardPaymentForm from "../components/payment/CreditCardPaymentForm";
-import { FormField, FormSelect, PasswordField } from "../components/forms";
+import { AddressFields, FormField, PasswordField } from "../components/forms";
 import {
-  countryOptions,
   hasValidationErrors,
   normalizePostalCode,
   profileEmailFieldOrder,
@@ -695,77 +694,17 @@ export default function MyProfilePage() {
             </div>
           </section>
 
-          <section className="my-profile-page__section">
-            <h2 className="my-profile-page__section-title">ADDRESS</h2>
-
-            <div className="my-profile-page__section-divider" />
-
-            <div className="my-profile-page__grid my-profile-page__grid--one">
-              <FormField
-                label="Address*"
-                name="address"
-                value={form.address}
-                onChange={handleChange}
-                onBlur={handleProfileBlur}
-                autoComplete="street-address"
-                {...getProfileFieldProps("address")}
-              />
-            </div>
-
-            <div className="my-profile-page__grid my-profile-page__grid--two">
-              <FormField
-                label="Postal code*"
-                type="text"
-                name="postalCode"
-                value={form.postalCode}
-                onChange={handleChange}
-                onBlur={handleProfileBlur}
-                inputMode="numeric"
-                maxLength={5}
-                pattern="\d{5}"
-                placeholder="29001"
-                {...getProfileFieldProps("postalCode")}
-              />
-
-              <FormSelect
-                label="City*"
-                name="city"
-                value={form.city}
-                onChange={handleChange}
-                onBlur={handleProfileBlur}
-                placeholder="Select a city"
-                options={cityOptions}
-                getOptionKey={(item) => `${item.city}-${item.region}`}
-                getOptionValue={(item) => item.city}
-                getOptionLabel={(item) => `${item.city} (${item.region})`}
-                {...getProfileFieldProps("city")}
-              />
-            </div>
-
-            <div className="my-profile-page__grid my-profile-page__grid--two">
-              <FormSelect
-                label="Country*"
-                name="country"
-                value={form.country}
-                onChange={handleChange}
-                onBlur={handleProfileBlur}
-                placeholder="Select a country"
-                options={countryOptions}
-                {...getProfileFieldProps("country")}
-              />
-
-              <FormSelect
-                label="State / Province / Region*"
-                name="region"
-                value={form.region}
-                onChange={handleChange}
-                onBlur={handleProfileBlur}
-                placeholder="Select a region"
-                options={regionOptions}
-                {...getProfileFieldProps("region")}
-              />
-            </div>
-          </section>
+          <AddressFields
+            title="ADDRESS"
+            baseClassName="my-profile-page"
+            form={form}
+            onChange={handleChange}
+            onBlur={handleProfileBlur}
+            getFieldProps={getProfileFieldProps}
+            regionOptions={regionOptions}
+            cityOptions={cityOptions}
+            showDivider
+          />
 
           <section className="my-profile-page__section">
             <h2 className="my-profile-page__section-title">LOGIN</h2>

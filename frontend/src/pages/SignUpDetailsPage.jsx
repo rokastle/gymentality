@@ -6,10 +6,10 @@ import { useClubById } from "../hooks/useClubs";
 import useAuth from "../hooks/useAuth";
 import CreditCardPaymentForm from "../components/payment/CreditCardPaymentForm";
 import {
+  AddressFields,
   FormCheckbox,
   FormField,
   FormRadioGroup,
-  FormSelect,
   PasswordField,
 } from "../components/forms";
 import {
@@ -22,7 +22,6 @@ import {
   mapWorkoutPlanFromApi,
 } from "../data/signupPlansData";
 import {
-  countryOptions,
   hasValidationErrors,
   normalizeCardNumber,
   normalizePostalCode,
@@ -453,240 +452,164 @@ export default function SignUpDetailsPage() {
               </div>
             </section>
 
-            <section className="signup-details-page__section">
-              <h2 className="signup-details-page__section-title">Address</h2>
+            <AddressFields
+              title="Address"
+              baseClassName="signup-details-page"
+              form={form}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              getFieldProps={getSignUpFieldProps}
+              regionOptions={regionOptions}
+              cityOptions={cityOptions}
+              inputRefs={fieldRefs.current}
+              required
+            />
 
-              <div className="signup-details-page__grid signup-details-page__grid--one">
-                <FormField
-                  ref={(element) => {
-                    fieldRefs.current.address = element;
-                  }}
-                  label="Address*"
-                  name="address"
-                  value={form.address}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  required
-                  autoComplete="street-address"
-                  {...getSignUpFieldProps("address")}
-                />
-              </div>
+          <section className="signup-details-page__section">
+            <h2 className="signup-details-page__section-title">
+              Payment details
+            </h2>
 
-              <div className="signup-details-page__grid signup-details-page__grid--two">
-                <FormField
-                  ref={(element) => {
-                    fieldRefs.current.postalCode = element;
-                  }}
-                  label="Postal code*"
-                  type="text"
-                  name="postalCode"
-                  value={form.postalCode}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  required
-                  inputMode="numeric"
-                  maxLength={5}
-                  pattern="\d{5}"
-                  placeholder="29001"
-                  {...getSignUpFieldProps("postalCode")}
-                />
-
-                <FormSelect
-                  ref={(element) => {
-                    fieldRefs.current.city = element;
-                  }}
-                  label="City*"
-                  name="city"
-                  value={form.city}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  required
-                  placeholder="Select a city"
-                  options={cityOptions}
-                  getOptionValue={(item) => item.city}
-                  getOptionLabel={(item) => `${item.city} (${item.region})`}
-                  {...getSignUpFieldProps("city")}
-                />
-              </div>
-
-              <div className="signup-details-page__grid signup-details-page__grid--two">
-                <FormSelect
-                  ref={(element) => {
-                    fieldRefs.current.country = element;
-                  }}
-                  label="Country*"
-                  name="country"
-                  value={form.country}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  required
-                  placeholder="Select a country"
-                  options={countryOptions}
-                  {...getSignUpFieldProps("country")}
-                />
-
-                <FormSelect
-                  ref={(element) => {
-                    fieldRefs.current.region = element;
-                  }}
-                  label="State / Province / Region*"
-                  name="region"
-                  value={form.region}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  required
-                  placeholder="Select a region"
-                  options={regionOptions}
-                  {...getSignUpFieldProps("region")}
-                />
-              </div>
-            </section>
-
-            <section className="signup-details-page__section">
-              <h2 className="signup-details-page__section-title">
-                Payment details
-              </h2>
-
-              <div className="signup-details-page__payment-box">
-                <div className="signup-details-page__payment-option">
-                  <div>
-                    <strong>Pay by card</strong>
-                    <span>Secure payment with Visa and Mastercard</span>
-                  </div>
-
-                  <div className="signup-details-page__payment-brands">
-                    <span className="signup-details-page__payment-brand-dot signup-details-page__payment-brand-dot--red" />
-                    <span className="signup-details-page__payment-brand-dot signup-details-page__payment-brand-dot--orange" />
-                    <strong>VISA</strong>
-                  </div>
+            <div className="signup-details-page__payment-box">
+              <div className="signup-details-page__payment-option">
+                <div>
+                  <strong>Pay by card</strong>
+                  <span>Secure payment with Visa and Mastercard</span>
                 </div>
 
-                <CreditCardPaymentForm
-                  cardForm={{
-                    cardholder: form.cardholder,
-                    cardNumber: form.cardNumber,
-                    expiryMonth: form.expiryMonth,
-                    expiryYear: form.expiryYear,
-                    cvv: form.cvv,
-                    saveForFuture: form.saveCardForFuture,
-                  }}
-                  onChange={handleCreditCardChange}
-                  onBlur={handleBlur}
-                  errors={errors}
-                  touched={touched}
-                  submitAttempted={submitAttempted}
-                  inputRefs={fieldRefs.current}
-                  compact
-                />
+                <div className="signup-details-page__payment-brands">
+                  <span className="signup-details-page__payment-brand-dot signup-details-page__payment-brand-dot--red" />
+                  <span className="signup-details-page__payment-brand-dot signup-details-page__payment-brand-dot--orange" />
+                  <strong>VISA</strong>
+                </div>
               </div>
 
-              <FormCheckbox
-                ref={(element) => {
-                  fieldRefs.current.acceptedTerms = element;
+              <CreditCardPaymentForm
+                cardForm={{
+                  cardholder: form.cardholder,
+                  cardNumber: form.cardNumber,
+                  expiryMonth: form.expiryMonth,
+                  expiryYear: form.expiryYear,
+                  cvv: form.cvv,
+                  saveForFuture: form.saveCardForFuture,
                 }}
-                label="I accept the terms and privacy policy"
-                name="acceptedTerms"
-                checked={form.acceptedTerms}
-                onChange={handleChange}
+                onChange={handleCreditCardChange}
                 onBlur={handleBlur}
-                required
-                error={errors.acceptedTerms}
-                touched={touched.acceptedTerms}
+                errors={errors}
+                touched={touched}
                 submitAttempted={submitAttempted}
-                className="signup-details-page__checkbox"
-                errorClassName="signup-details-page__error"
+                inputRefs={fieldRefs.current}
+                compact
               />
-            </section>
-
-            <div className="signup-details-page__submit">
-              <button
-                type="submit"
-                className="gm-btn gm-btn--pill gm-btn--solid-yellow signup-details-page__submit-button"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "PROCESSING..." : "MAKE PAYMENT"}
-              </button>
             </div>
-          </form>
 
-          <aside className="signup-details-page__sidebar">
-            <div className="signup-details-page__summary-card gm-surface-card">
-              <p className="signup-details-page__summary-label">
-                Billing details
+            <FormCheckbox
+              ref={(element) => {
+                fieldRefs.current.acceptedTerms = element;
+              }}
+              label="I accept the terms and privacy policy"
+              name="acceptedTerms"
+              checked={form.acceptedTerms}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              required
+              error={errors.acceptedTerms}
+              touched={touched.acceptedTerms}
+              submitAttempted={submitAttempted}
+              className="signup-details-page__checkbox"
+              errorClassName="signup-details-page__error"
+            />
+          </section>
+
+          <div className="signup-details-page__submit">
+            <button
+              type="submit"
+              className="gm-btn gm-btn--pill gm-btn--solid-yellow signup-details-page__submit-button"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "PROCESSING..." : "MAKE PAYMENT"}
+            </button>
+          </div>
+        </form>
+
+        <aside className="signup-details-page__sidebar">
+          <div className="signup-details-page__summary-card gm-surface-card">
+            <p className="signup-details-page__summary-label">
+              Billing details
+            </p>
+
+            <h2 className="signup-details-page__summary-title">
+              {club.name}
+            </h2>
+
+            <div className="signup-details-page__summary-block">
+              <p className="signup-details-page__summary-subtitle">
+                Membership selected
               </p>
-
-              <h2 className="signup-details-page__summary-title">
-                {club.name}
-              </h2>
-
-              <div className="signup-details-page__summary-block">
-                <p className="signup-details-page__summary-subtitle">
-                  Membership selected
-                </p>
-                <div className="signup-details-page__summary-row">
-                  <span>{membershipPlan.summaryName}</span>
-                  <span>{formatEuro(membershipPlan.upfrontPrice)}</span>
-                </div>
-              </div>
-
-              <div className="signup-details-page__summary-block">
-                <p className="signup-details-page__summary-subtitle">
-                  Workout selected
-                </p>
-                <div className="signup-details-page__summary-row">
-                  <span>{workoutPlan.summaryName}</span>
-                  <span>{formatEuro(workoutPlan.monthlyPrice)}</span>
-                </div>
-              </div>
-
-              <div className="signup-details-page__summary-block">
-                <p className="signup-details-page__summary-subtitle">
-                  Monthly installments
-                </p>
-                <div className="signup-details-page__summary-row">
-                  <span>Monthly fee:</span>
-                  <span>{formatEuroMonth(totals.monthlyFee)}</span>
-                </div>
-              </div>
-
-              <div className="signup-details-page__summary-block">
-                <p className="signup-details-page__summary-subtitle">
-                  Amount due today
-                </p>
-                <div className="signup-details-page__summary-row">
-                  <span>Membership fee:</span>
-                  <span>{formatEuro(membershipPlan.upfrontPrice)}</span>
-                </div>
-                <div className="signup-details-page__summary-row">
-                  <span>Workout plan:</span>
-                  <span>{formatEuro(workoutPlan.monthlyPrice)}</span>
-                </div>
-                <div className="signup-details-page__summary-row">
-                  <span>Enrollment:</span>
-                  <span>0,00€</span>
-                </div>
-              </div>
-
-              <div className="signup-details-page__summary-total">
-                <p>Total first payment</p>
-                <strong>{formatEuro(totals.totalFirstPayment)}</strong>
-              </div>
-
-              <div className="signup-details-page__summary-block">
-                <div className="signup-details-page__summary-row signup-details-page__summary-row--stack">
-                  <span>Contract renewal date:</span>
-                  <strong>{totals.renewalDate}</strong>
-                </div>
+              <div className="signup-details-page__summary-row">
+                <span>{membershipPlan.summaryName}</span>
+                <span>{formatEuro(membershipPlan.upfrontPrice)}</span>
               </div>
             </div>
 
-            <div className="signup-details-page__help-card gm-surface-card">
-              <div className="signup-details-page__help-icon">?</div>
-              <span>Need help?</span>
+            <div className="signup-details-page__summary-block">
+              <p className="signup-details-page__summary-subtitle">
+                Workout selected
+              </p>
+              <div className="signup-details-page__summary-row">
+                <span>{workoutPlan.summaryName}</span>
+                <span>{formatEuro(workoutPlan.monthlyPrice)}</span>
+              </div>
             </div>
-          </aside>
-        </div>
+
+            <div className="signup-details-page__summary-block">
+              <p className="signup-details-page__summary-subtitle">
+                Monthly installments
+              </p>
+              <div className="signup-details-page__summary-row">
+                <span>Monthly fee:</span>
+                <span>{formatEuroMonth(totals.monthlyFee)}</span>
+              </div>
+            </div>
+
+            <div className="signup-details-page__summary-block">
+              <p className="signup-details-page__summary-subtitle">
+                Amount due today
+              </p>
+              <div className="signup-details-page__summary-row">
+                <span>Membership fee:</span>
+                <span>{formatEuro(membershipPlan.upfrontPrice)}</span>
+              </div>
+              <div className="signup-details-page__summary-row">
+                <span>Workout plan:</span>
+                <span>{formatEuro(workoutPlan.monthlyPrice)}</span>
+              </div>
+              <div className="signup-details-page__summary-row">
+                <span>Enrollment:</span>
+                <span>0,00€</span>
+              </div>
+            </div>
+
+            <div className="signup-details-page__summary-total">
+              <p>Total first payment</p>
+              <strong>{formatEuro(totals.totalFirstPayment)}</strong>
+            </div>
+
+            <div className="signup-details-page__summary-block">
+              <div className="signup-details-page__summary-row signup-details-page__summary-row--stack">
+                <span>Contract renewal date:</span>
+                <strong>{totals.renewalDate}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div className="signup-details-page__help-card gm-surface-card">
+            <div className="signup-details-page__help-icon">?</div>
+            <span>Need help?</span>
+          </div>
+        </aside>
       </div>
+    </div>
     </section >
   );
 }
