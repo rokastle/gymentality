@@ -50,6 +50,21 @@ public class User {
     @Column(length = 34)
     private String iban;
 
+    @Column(name = "payment_method", length = 24)
+    private String paymentMethod;
+
+    @Column(name = "card_last4", length = 4)
+    private String cardLast4;
+
+    @Column(name = "card_expiry_month", length = 2)
+    private String cardExpiryMonth;
+
+    @Column(name = "card_expiry_year", length = 4)
+    private String cardExpiryYear;
+
+    @Column(name = "save_card_for_future")
+    private Boolean saveCardForFuture;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id")
     private Club club;
@@ -192,6 +207,51 @@ public class User {
 
     public User setIban(String iban) {
         this.iban = iban;
+        return this;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public User setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+        return this;
+    }
+
+    public String getCardLast4() {
+        return cardLast4;
+    }
+
+    public User setCardLast4(String cardLast4) {
+        this.cardLast4 = cardLast4;
+        return this;
+    }
+
+    public String getCardExpiryMonth() {
+        return cardExpiryMonth;
+    }
+
+    public User setCardExpiryMonth(String cardExpiryMonth) {
+        this.cardExpiryMonth = cardExpiryMonth;
+        return this;
+    }
+
+    public String getCardExpiryYear() {
+        return cardExpiryYear;
+    }
+
+    public User setCardExpiryYear(String cardExpiryYear) {
+        this.cardExpiryYear = cardExpiryYear;
+        return this;
+    }
+
+    public Boolean getSaveCardForFuture() {
+        return saveCardForFuture;
+    }
+
+    public User setSaveCardForFuture(Boolean saveCardForFuture) {
+        this.saveCardForFuture = saveCardForFuture;
         return this;
     }
 

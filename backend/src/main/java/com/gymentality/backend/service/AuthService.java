@@ -6,6 +6,7 @@ import com.gymentality.backend.exception.*;
 import com.gymentality.backend.repository.*;
 import com.gymentality.backend.security.CustomUserDetailsService;
 import com.gymentality.backend.security.JwtService;
+import java.time.LocalDate;
 import java.util.Objects;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,7 @@ public class AuthService {
             throw new EmailAlreadyExistsException("Email already exists");
         }
 
-        if (Boolean.FALSE.equals(request.getAcceptedTerms())) {
+        if (!Boolean.TRUE.equals(request.getAcceptedTerms())) {
             throw new BadRequestException("You must accept the terms");
         }
 
@@ -62,6 +63,18 @@ public class AuthService {
         if (workoutPlanId == null) {
             throw new BadRequestException("Workout plan is required");
         }
+
+        String paymentMethod = normalizePaymentMethod(request.getPaymentMethod());
+        String cardLast4 = normalizeCardLast4(request.getCardLast4());
+        String cardExpiryMonth = normalizeCardExpiryMonth(request.getCardExpiryMonth());
+        String cardExpiryYear = normalizeCardExpiryYear(request.getCardExpiryYear());
+
+        validatePaymentDetails(
+                paymentMethod,
+                cardLast4,
+                cardExpiryMonth,
+                cardExpiryYear
+        );
 
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new ResourceNotFoundException("Club not found"));
@@ -85,7 +98,11 @@ public class AuthService {
                 .setCity(request.getCity().trim())
                 .setCountry(request.getCountry().trim())
                 .setRegion(request.getRegion().trim())
-                .setIban(request.getIban().trim().replace(" ", "").toUpperCase())
+                .setPaymentMethod(paymentMethod)
+                .setCardLast4(cardLast4)
+                .setCardExpiryMonth(cardExpiryMonth)
+                .setCardExpiryYear(cardExpiryYear)
+                .setSaveCardForFuture(Boolean.TRUE.equals(request.getSaveCardForFuture()))
                 .setRole(Role.USER)
                 .setClub(club)
                 .setMembershipPlan(membershipPlan)
@@ -132,6 +149,70 @@ public class AuthService {
                 user.getRole().name(),
                 user.getClub() != null ? user.getClub().getName() : null,
                 user.getMembershipPlan() != null ? user.getMembershipPlan().getName() : null,
-                user.getWorkoutPlan() != null ? user.getWorkoutPlan().getName() : null);
+                user.getWorkoutPlan() != null ? user.getWorkoutPlan().getName() : null,
+                user.getPhone(),
+                user.getGender(),
+                user.getDateOfBirth(),
+                user.getAddress(),
+                user.getPostalCode(),
+                user.getCity(),
+                user.getCountry(),
+                user.getRegion(),
+                user.getPaymentMethod(),
+                user.getCardLast4(),
+                user.getCardExpiryMonth(),
+                user.getCardExpiryYear(),
+                user.getSaveCardForFuture()
+        );
+    }
+
+    private String normalizePaymentMethod(String paymentMethod) {
+        return paymentMethod == null ? "" : paymentMethod.trim().toUpperCase();
+    }
+
+    private String normalizeCardLast4(String cardLast4) {
+        return cardLast4 == null ? "" : cardLast4.replaceAll("\\D", "");
+    }
+
+    private String normalizeCardExpiryMonth(String cardExpiryMonth) {
+        return cardExpiryMonth == null ? "" : cardExpiryMonth.trim();
+    }
+
+    private String normalizeCardExpiryYear(String cardExpiryYear) {
+        return cardExpiryYear == null ? "" : cardExpiryYear.trim();
+    }
+
+    private void validatePaymentDetails(
+            String paymentMethod,
+            String cardLast4,
+            String cardExpiryMonth,
+            String cardExpiryYear
+    ) {
+        if (!"CARD".equals(paymentMethod)) {
+            throw new BadRequestException("Payment method must be card");
+        }
+
+        if (!cardLast4.matches("^\\d{4}$")) {
+            throw new BadRequestException("Card last 4 digits are invalid");
+        }
+
+        if (!cardExpiryMonth.matches("^(0[1-9]|1[0-2])$")) {
+            throw new BadRequestException("Card expiry month is invalid");
+        }
+
+        if (!cardExpiryYear.matches("^\\d{4}$")) {
+            throw new BadRequestException("Card expiry year is invalid");
+        }
+
+        int expiryMonth = Integer.parseInt(cardExpiryMonth);
+        int expiryYear = Integer.parseInt(cardExpiryYear);
+
+        LocalDate today = LocalDate.now();
+        int currentMonth = today.getMonthValue();
+        int currentYear = today.getYear();
+
+        if (expiryYear < currentYear || (expiryYear == currentYear && expiryMonth < currentMonth)) {
+            throw new BadRequestException("Card expiry date is invalid");
+        }
     }
 }
