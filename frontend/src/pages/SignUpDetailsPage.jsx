@@ -6,18 +6,10 @@ import SignUpPersonalDetailsSection from "../components/signup/SignUpPersonalDet
 import SignUpPaymentDetailsSection from "../components/signup/SignUpPaymentDetailsSection";
 import SignUpSummarySidebar from "../components/signup/SignUpSummarySidebar";
 import { AddressFields } from "../components/forms";
-import { useClubById } from "../hooks/useClubs";
-import { useMembershipPlans } from "../hooks/useMembership";
-import { useWorkoutPlans } from "../hooks/useWorkoutPlans";
 import { buildTouchedFields } from "../utils/formStateUtils";
 import useAuth from "../hooks/useAuth";
-import {
-  getMembershipPlanById,
-  getSignupTotals,
-  getWorkoutPlanById,
-  mapMembershipPlanFromApi,
-  mapWorkoutPlanFromApi,
-} from "../data/signupPlansData";
+import { getSignupTotals } from "../data/signupPlansData";
+import useSignUpDetailsSelection from "../hooks/useSignUpDetailsSelection";
 import {
   hasValidationErrors,
   normalizePostalCode,
@@ -51,34 +43,15 @@ export default function SignUpDetailsPage() {
 
   const {
     club,
-    loading: clubLoading,
-    error: clubError,
-  } = useClubById(clubId);
-
-  const {
-    plans: membershipApiPlans,
-    loading: membershipsLoading,
-    error: membershipsError,
-  } = useMembershipPlans();
-
-  const {
-    plans: workoutApiPlans,
-    loading: workoutPlansLoading,
-    error: workoutPlansError,
-  } = useWorkoutPlans();
-
-  const membershipPlans = useMemo(
-    () => membershipApiPlans.map(mapMembershipPlanFromApi),
-    [membershipApiPlans]
-  );
-
-  const workoutPlans = useMemo(
-    () => workoutApiPlans.map(mapWorkoutPlanFromApi),
-    [workoutApiPlans]
-  );
-
-  const membershipPlan = getMembershipPlanById(membershipId, membershipPlans);
-  const workoutPlan = getWorkoutPlanById(workoutId, workoutPlans);
+    membershipPlan,
+    workoutPlan,
+    loading: selectionLoading,
+    isInvalidSelection,
+  } = useSignUpDetailsSelection({
+    clubId,
+    membershipId,
+    workoutId,
+  });
 
   const { regionOptions, cityOptions, applyLocationChange } = useLocationFields({
     country: form.country,
@@ -93,7 +66,7 @@ export default function SignUpDetailsPage() {
     return <Navigate to="/clubs" replace />;
   }
 
-  if (clubLoading || membershipsLoading || workoutPlansLoading) {
+  if (selectionLoading) {
     return (
       <section className="signup-details-page gm-dark-section-bg">
         <div className="gm-container signup-details-page__container">
@@ -105,14 +78,7 @@ export default function SignUpDetailsPage() {
     );
   }
 
-  if (
-    clubError ||
-    membershipsError ||
-    workoutPlansError ||
-    !club ||
-    !membershipPlan ||
-    !workoutPlan
-  ) {
+  if (isInvalidSelection) {
     return <Navigate to="/clubs" replace />;
   }
 
@@ -192,7 +158,7 @@ export default function SignUpDetailsPage() {
     setSubmitAttempted(true);
 
     setTouched(buildTouchedFields(signUpFieldOrder));
-    
+
     setApiError("");
 
     if (hasValidationErrors(errors)) {
