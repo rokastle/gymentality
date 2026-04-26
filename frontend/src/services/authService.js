@@ -14,3 +14,13 @@ export async function getMe() {
   const response = await axiosClient.get("/auth/me");
   return response.data;
 }
+
+export async function updateProfileUser(payload) {
+  const response = await axiosClient.put("/auth/me/profile", payload);
+  return response.data;
+}
+
+export async function updateUserPaymentMethod(payload) {
+  const response = await axiosClient.put("/auth/me/payment-method", payload);
+  return response.data;
+}

@@ -4,24 +4,32 @@
 
 .credit-card-payment-form__title {
   margin: 0 0 18px;
-  color: var(--gm-black);
+  color: var(--gm-white);
   font-size: 1.25rem;
   font-weight: 700;
 }
 
+.credit-card-payment-form__field {
+  display: flex;
+  flex-direction: column;
+}
+
 .credit-card-payment-form__input {
   width: 100%;
-  min-height: 56px;
-  margin-bottom: 18px;
-  padding: 0 16px;
-  border: 1px solid #667085;
-  border-radius: 8px;
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 7px;
   background: var(--gm-white);
   color: var(--gm-black);
   font-family: inherit;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 0.95rem;
+  font-weight: 400;
   outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
 
 .credit-card-payment-form__input::placeholder {
@@ -29,8 +37,18 @@
 }
 
 .credit-card-payment-form__input:focus {
-  border-color: #0074ff;
-  box-shadow: 0 0 0 3px rgba(0, 116, 255, 0.14);
+  border-color: var(--gm-btn-start);
+  box-shadow: 0 0 0 3px rgba(255, 195, 0, 0.18);
+}
+
+.credit-card-payment-form__input.is-valid {
+  border-color: #44c27a;
+  background: rgba(236, 255, 244, 0.98);
+}
+
+.credit-card-payment-form__input.is-invalid {
+  border-color: #ff6b6b;
+  background: rgba(255, 240, 240, 0.98);
 }
 
 .credit-card-payment-form__grid {
@@ -39,61 +57,41 @@
   gap: 18px;
 }
 
+.credit-card-payment-form__error {
+  display: block;
+  min-height: 18px;
+  margin: 4px 0 8px;
+  color: #ff8f8f;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
 .credit-card-payment-form__save-row {
+  margin-top: 2px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--gm-black);
+  color: var(--gm-white);
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
 }
 
 .credit-card-payment-form__save-row input {
   width: 18px;
   height: 18px;
-}
-
-.credit-card-payment-form--compact .credit-card-payment-form__title {
-  color: var(--gm-white);
+  accent-color: var(--gm-btn-start);
 }
 
 .credit-card-payment-form--compact .credit-card-payment-form__input {
-  height: 42px;
   min-height: 42px;
-  margin-bottom: 12px;
   padding: 0 12px;
   font-size: 0.95rem;
 }
 
 .credit-card-payment-form--compact .credit-card-payment-form__grid {
   gap: 18px;
-}
-
-.credit-card-payment-form--compact .credit-card-payment-form__input {
-  height: 42px;
-  min-height: 42px;
-  margin-bottom: 12px;
-  padding: 0 12px;
-  border: 1px solid transparent;
-  border-radius: 0;
-  background: rgba(255, 255, 255, 0.95);
-  color: #111111;
-  font-size: 0.95rem;
-}
-
-.credit-card-payment-form--compact .credit-card-payment-form__input:focus {
-  border-color: rgba(255, 195, 0, 0.75);
-  box-shadow: 0 0 0 3px rgba(255, 195, 0, 0.14);
-}
-
-.credit-card-payment-form--compact .credit-card-payment-form__grid {
-  gap: 18px;
-}
-
-.credit-card-payment-form--compact .credit-card-payment-form__save-row {
-  margin-top: 2px;
-  color: var(--gm-white)
 }
 
 @media (max-width: 700px) {

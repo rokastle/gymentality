@@ -1,5 +1,11 @@
 import { createContext, useEffect, useMemo, useState } from "react";
-import { getMe, loginUser, registerUser } from "../services/authService";
+import {
+  getMe,
+  loginUser,
+  registerUser,
+  updateProfileUser,
+  updateUserPaymentMethod,
+} from "../services/authService";
 
 export const AuthContext = createContext(null);
 
@@ -18,7 +24,14 @@ function getStoredUser() {
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem(TOKEN_KEY) || "");
   const [user, setUser] = useState(getStoredUser());
-  const [isInitializing, setIsInitializing] = useState(Boolean(localStorage.getItem(TOKEN_KEY)));
+  const [isInitializing, setIsInitializing] = useState(
+    Boolean(localStorage.getItem(TOKEN_KEY))
+  );
+
+  const persistUser = (currentUser) => {
+    localStorage.setItem(USER_KEY, JSON.stringify(currentUser));
+    setUser(currentUser);
+  };
 
   const persistAuth = (authData) => {
     localStorage.setItem(TOKEN_KEY, authData.token);
@@ -46,6 +59,24 @@ export function AuthProvider({ children }) {
     return authData;
   };
 
+  const refreshUser = async () => {
+    const currentUser = await getMe();
+    persistUser(currentUser);
+    return currentUser;
+  };
+
+  const updateProfile = async (payload) => {
+    const updatedUser = await updateProfileUser(payload);
+    persistUser(updatedUser);
+    return updatedUser;
+  };
+
+  const updatePaymentMethod = async (payload) => {
+    const updatedUser = await updateUserPaymentMethod(payload);
+    persistUser(updatedUser);
+    return updatedUser;
+  };
+
   const logout = () => {
     clearAuth();
   };
@@ -59,8 +90,7 @@ export function AuthProvider({ children }) {
 
       try {
         const currentUser = await getMe();
-        setUser(currentUser);
-        localStorage.setItem(USER_KEY, JSON.stringify(currentUser));
+        persistUser(currentUser);
       } catch {
         clearAuth();
       } finally {
@@ -79,6 +109,9 @@ export function AuthProvider({ children }) {
       isInitializing,
       login,
       register,
+      refreshUser,
+      updateProfile,
+      updatePaymentMethod,
       logout,
     }),
     [token, user, isInitializing]

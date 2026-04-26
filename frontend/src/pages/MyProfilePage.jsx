@@ -3,11 +3,39 @@ import { useEffect, useMemo, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import IconImage from "../components/common/IconImage";
 import CreditCardPaymentForm from "../components/payment/CreditCardPaymentForm";
+import {
+  cityOptionsByRegion,
+  countryOptions,
+  hasValidationErrors,
+  normalizePostalCode,
+  profileEmailFieldOrder,
+  profileFieldOrder,
+  profilePasswordFieldOrder,
+  regionOptionsByCountry,
+  validateProfileEmailForm,
+  validateProfileForm,
+  validateProfilePasswordForm,
+} from "../utils/accountValidation";
+import {
+  hasPaymentValidationErrors,
+  normalizeCardNumber,
+  paymentFieldNames,
+  validatePaymentForm,
+} from "../utils/paymentValidation";
 
 const initialPasswordForm = {
   currentPassword: "",
   newPassword: "",
   confirmPassword: "",
+};
+
+const emptyCardForm = {
+  cardholder: "",
+  cardNumber: "",
+  expiryMonth: "",
+  expiryYear: "",
+  cvv: "",
+  saveForFuture: true,
 };
 
 function formatDateForInput(value) {
@@ -67,46 +95,208 @@ function getCardBrand(cardNumber) {
   return "CARD";
 }
 
+function getErrorMessage(error, fallbackMessage) {
+  const backendData = error?.response?.data;
+
+  if (typeof backendData === "string") {
+    return backendData;
+  }
+
+  if (typeof backendData?.message === "string") {
+    return backendData.message;
+  }
+
+  return fallbackMessage;
+}
+
 export default function MyProfilePage() {
   const navigate = useNavigate();
-  const { user, isAuthenticated, logout } = useAuth();
 
-  const initialForm = useMemo(() => getInitialProfileForm(user), [user]);
-  const initialStoredCard = useMemo(() => getInitialStoredCard(user), [user]);
+  const {
+    user,
+    isAuthenticated,
+    logout,
+    updateProfile,
+    updatePaymentMethod,
+  } = useAuth();
 
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState(() => getInitialProfileForm(user));
   const [passwordForm, setPasswordForm] = useState(initialPasswordForm);
+
   const [isEmailChangeEnabled, setIsEmailChangeEnabled] = useState(false);
   const [isPasswordChangeEnabled, setIsPasswordChangeEnabled] = useState(false);
+
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
 
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-  const [storedCard, setStoredCard] = useState(initialStoredCard);
+  const [profileTouched, setProfileTouched] = useState({});
+  const [profileSubmitAttempted, setProfileSubmitAttempted] = useState(false);
 
-  const [cardForm, setCardForm] = useState({
-    cardholder: "",
-    cardNumber: "",
-    expiryMonth: "",
-    expiryYear: "",
-    cvv: "",
-    saveForFuture: true,
-  });
+  const [emailTouched, setEmailTouched] = useState({});
+  const [emailSubmitAttempted, setEmailSubmitAttempted] = useState(false);
+
+  const [passwordTouched, setPasswordTouched] = useState({});
+  const [passwordSubmitAttempted, setPasswordSubmitAttempted] = useState(false);
+
+  const [storedCard, setStoredCard] = useState(() => getInitialStoredCard(user));
+  const [isPaymentEditOpen, setIsPaymentEditOpen] = useState(false);
+  const [cardForm, setCardForm] = useState(emptyCardForm);
+  const [paymentTouched, setPaymentTouched] = useState({});
+  const [paymentSubmitAttempted, setPaymentSubmitAttempted] = useState(false);
+
+  const profileErrors = useMemo(() => validateProfileForm(form), [form]);
+
+  const emailErrors = useMemo(
+    () =>
+      validateProfileEmailForm({
+        email: form.email,
+        newEmail: form.newEmail,
+      }),
+    [form.email, form.newEmail]
+  );
+
+  const passwordErrors = useMemo(
+    () => validateProfilePasswordForm(passwordForm),
+    [passwordForm]
+  );
+
+  const paymentErrors = useMemo(() => validatePaymentForm(cardForm), [cardForm]);
+
+  const cityCatalog = useMemo(() => {
+    return Object.entries(cityOptionsByRegion).flatMap(([region, cities]) =>
+      cities.map((city) => ({
+        city,
+        region,
+        country: "España",
+      }))
+    );
+  }, []);
+
+  const regionOptions = useMemo(() => {
+    return regionOptionsByCountry[form.country] ?? [];
+  }, [form.country]);
+
+  const cityOptions = useMemo(() => {
+    return cityCatalog.filter((item) => {
+      const matchesCountry = !form.country || item.country === form.country;
+      const matchesRegion = !form.region || item.region === form.region;
+
+      return matchesCountry && matchesRegion;
+    });
+  }, [form.country, form.region, cityCatalog]);
 
   useEffect(() => {
-    setForm(initialForm);
-    setStoredCard(initialStoredCard);
-  }, [initialForm, initialStoredCard]);
+    setForm(getInitialProfileForm(user));
+    setProfileTouched({});
+    setProfileSubmitAttempted(false);
+    setEmailTouched({});
+    setEmailSubmitAttempted(false);
+    setPasswordTouched({});
+    setPasswordSubmitAttempted(false);
+    setPasswordForm(initialPasswordForm);
+    setIsEmailChangeEnabled(false);
+    setIsPasswordChangeEnabled(false);
+  }, [user?.id]);
+
+  useEffect(() => {
+    setStoredCard(getInitialStoredCard(user));
+  }, [
+    user?.paymentMethod,
+    user?.cardLast4,
+    user?.cardExpiryMonth,
+    user?.cardExpiryYear,
+    user?.saveCardForFuture,
+  ]);
+
+  useEffect(() => {
+    if (form.region && !regionOptions.includes(form.region)) {
+      setForm((current) => ({
+        ...current,
+        region: "",
+        city: "",
+      }));
+    }
+  }, [form.region, regionOptions]);
+
+  useEffect(() => {
+    if (form.city && !cityOptions.some((item) => item.city === form.city)) {
+      setForm((current) => ({
+        ...current,
+        city: "",
+      }));
+    }
+  }, [form.city, cityOptions]);
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/" replace />;
   }
 
+  const scrollToPageTop = () => {
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    });
+  };
+
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    setForm((current) => ({
+    setForm((current) => {
+      let nextValue = value;
+
+      if (name === "postalCode") {
+        nextValue = normalizePostalCode(value);
+      }
+
+      const nextForm = {
+        ...current,
+        [name]: nextValue,
+      };
+
+      if (name === "country") {
+        nextForm.region = "";
+        nextForm.city = "";
+      }
+
+      if (name === "region") {
+        nextForm.city = "";
+      }
+
+      if (name === "city") {
+        const selectedCity = cityCatalog.find((item) => item.city === nextValue);
+
+        if (selectedCity) {
+          nextForm.city = selectedCity.city;
+          nextForm.region = selectedCity.region;
+          nextForm.country = selectedCity.country;
+        }
+      }
+
+      return nextForm;
+    });
+  };
+
+  const handleProfileBlur = (event) => {
+    const { name } = event.target;
+
+    setProfileTouched((current) => ({
       ...current,
-      [name]: value,
+      [name]: true,
+    }));
+  };
+
+  const handleEmailBlur = (event) => {
+    const { name } = event.target;
+
+    setEmailTouched((current) => ({
+      ...current,
+      [name]: true,
     }));
   };
 
@@ -119,16 +309,64 @@ export default function MyProfilePage() {
     }));
   };
 
+  const handlePasswordBlur = (event) => {
+    const { name } = event.target;
+
+    setPasswordTouched((current) => ({
+      ...current,
+      [name]: true,
+    }));
+  };
+
+  const handleEmailToggleChange = (event) => {
+    const enabled = event.target.checked;
+
+    setIsEmailChangeEnabled(enabled);
+    setEmailTouched({});
+    setEmailSubmitAttempted(false);
+
+    setForm((current) => ({
+      ...current,
+      newEmail: "",
+    }));
+  };
+
+  const handlePasswordToggleChange = (event) => {
+    const enabled = event.target.checked;
+
+    setIsPasswordChangeEnabled(enabled);
+    setPasswordTouched({});
+    setPasswordSubmitAttempted(false);
+    setPasswordForm(initialPasswordForm);
+    setShowCurrentPassword(false);
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
+  };
+
   const handleCardFormChange = (event) => {
     const { name, type, value, checked } = event.target;
 
     setCardForm((current) => ({
       ...current,
-      [name]: type === "checkbox" ? checked : value,
+      [name]:
+        type === "checkbox"
+          ? checked
+          : name === "cardNumber" || name === "cvv"
+            ? value.replace(/\D/g, "")
+            : value,
     }));
   };
 
-  const handleOpenPaymentModal = () => {
+  const handleCardBlur = (event) => {
+    const { name } = event.target;
+
+    setPaymentTouched((current) => ({
+      ...current,
+      [name]: true,
+    }));
+  };
+
+  const handleOpenPaymentEdit = () => {
     setCardForm({
       cardholder: "",
       cardNumber: "",
@@ -138,51 +376,258 @@ export default function MyProfilePage() {
       saveForFuture: storedCard.saveCardForFuture ?? true,
     });
 
-    setIsPaymentModalOpen(true);
+    setPaymentTouched({});
+    setPaymentSubmitAttempted(false);
+    setIsPaymentEditOpen(true);
   };
 
-  const handleClosePaymentModal = () => {
-    setIsPaymentModalOpen(false);
+  const handleCancelPaymentEdit = () => {
+    setCardForm(emptyCardForm);
+    setPaymentTouched({});
+    setPaymentSubmitAttempted(false);
+    setIsPaymentEditOpen(false);
   };
 
-  const handleSaveCard = (event) => {
+  const getProfileControlStateClass = (fieldName) => {
+    const shouldShowState = profileTouched[fieldName] || profileSubmitAttempted;
+
+    if (!shouldShowState) {
+      return "";
+    }
+
+    return profileErrors[fieldName] ? "is-invalid" : "is-valid";
+  };
+
+  const getEmailControlStateClass = (fieldName) => {
+    if (!isEmailChangeEnabled) {
+      return "";
+    }
+
+    const shouldShowState = emailTouched[fieldName] || emailSubmitAttempted;
+
+    if (!shouldShowState) {
+      return "";
+    }
+
+    return emailErrors[fieldName] ? "is-invalid" : "is-valid";
+  };
+
+  const getPasswordControlStateClass = (fieldName) => {
+    if (!isPasswordChangeEnabled) {
+      return "";
+    }
+
+    const shouldShowState =
+      passwordTouched[fieldName] || passwordSubmitAttempted;
+
+    if (!shouldShowState) {
+      return "";
+    }
+
+    return passwordErrors[fieldName] ? "is-invalid" : "is-valid";
+  };
+
+  const renderProfileError = (fieldName) => {
+    const showError =
+      (profileTouched[fieldName] || profileSubmitAttempted) &&
+      profileErrors[fieldName];
+
+    return (
+      <small
+        id={`${fieldName}-profile-error`}
+        className="my-profile-page__error"
+        role={showError ? "alert" : undefined}
+        aria-live="polite"
+      >
+        {showError ? profileErrors[fieldName] : "\u00A0"}
+      </small>
+    );
+  };
+
+  const renderEmailError = (fieldName) => {
+    const showError =
+      isEmailChangeEnabled &&
+      (emailTouched[fieldName] || emailSubmitAttempted) &&
+      emailErrors[fieldName];
+
+    return (
+      <small
+        id={`${fieldName}-profile-error`}
+        className="my-profile-page__error"
+        role={showError ? "alert" : undefined}
+        aria-live="polite"
+      >
+        {showError ? emailErrors[fieldName] : "\u00A0"}
+      </small>
+    );
+  };
+
+  const renderPasswordError = (fieldName) => {
+    const showError =
+      isPasswordChangeEnabled &&
+      (passwordTouched[fieldName] || passwordSubmitAttempted) &&
+      passwordErrors[fieldName];
+
+    return (
+      <small
+        id={`${fieldName}-profile-error`}
+        className="my-profile-page__error"
+        role={showError ? "alert" : undefined}
+        aria-live="polite"
+      >
+        {showError ? passwordErrors[fieldName] : "\u00A0"}
+      </small>
+    );
+  };
+
+  const markAllProfileFieldsAsTouched = () => {
+    const allTouched = profileFieldOrder.reduce((accumulator, fieldName) => {
+      accumulator[fieldName] = true;
+      return accumulator;
+    }, {});
+
+    setProfileTouched(allTouched);
+  };
+
+  const markAllEmailFieldsAsTouched = () => {
+    const allTouched = profileEmailFieldOrder.reduce((accumulator, fieldName) => {
+      accumulator[fieldName] = true;
+      return accumulator;
+    }, {});
+
+    setEmailTouched(allTouched);
+  };
+
+  const markAllPasswordFieldsAsTouched = () => {
+    const allTouched = profilePasswordFieldOrder.reduce(
+      (accumulator, fieldName) => {
+        accumulator[fieldName] = true;
+        return accumulator;
+      },
+      {}
+    );
+
+    setPasswordTouched(allTouched);
+  };
+
+  const markAllPaymentFieldsAsTouched = () => {
+    const allPaymentTouched = paymentFieldNames.reduce(
+      (accumulator, fieldName) => {
+        accumulator[fieldName] = true;
+        return accumulator;
+      },
+      {}
+    );
+
+    setPaymentTouched(allPaymentTouched);
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const cleanNumber = cardForm.cardNumber.replace(/\D/g, "");
-    const last4 = cleanNumber.slice(-4);
+    setProfileSubmitAttempted(true);
+    markAllProfileFieldsAsTouched();
 
-    if (
-      !cardForm.cardholder.trim() ||
-      cleanNumber.length < 12 ||
-      !cardForm.expiryMonth ||
-      !cardForm.expiryYear ||
-      !cardForm.cvv.trim()
-    ) {
-      setFeedbackMessage("Please complete all card details before saving.");
+    if (hasValidationErrors(profileErrors)) {
+      setFeedbackMessage("Please review your personal details before saving.");
+      scrollToPageTop();
       return;
     }
 
-    setStoredCard({
-      brand: getCardBrand(cleanNumber),
-      last4: last4 || "0000",
-      expiryMonth: cardForm.expiryMonth,
-      expiryYear: cardForm.expiryYear,
-      saveCardForFuture: cardForm.saveForFuture,
-      hasStoredCard: true,
-    });
+    if (isEmailChangeEnabled) {
+      setEmailSubmitAttempted(true);
+      markAllEmailFieldsAsTouched();
 
-    setFeedbackMessage(
-      "Payment method updated locally. Backend profile update will be connected in the next integration step."
-    );
-    setIsPaymentModalOpen(false);
-  };
+      if (hasValidationErrors(emailErrors)) {
+        setFeedbackMessage("Please review your email details before saving.");
+        scrollToPageTop();
+        return;
+      }
+    }
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+    if (isPasswordChangeEnabled) {
+      setPasswordSubmitAttempted(true);
+      markAllPasswordFieldsAsTouched();
 
-    setFeedbackMessage(
-      "Profile changes saved locally. Backend profile update will be connected in the next integration step."
-    );
+      if (hasValidationErrors(passwordErrors)) {
+        setFeedbackMessage("Please review your password details before saving.");
+        scrollToPageTop();
+        return;
+      }
+    }
+
+    if (isPaymentEditOpen) {
+      setPaymentSubmitAttempted(true);
+      markAllPaymentFieldsAsTouched();
+
+      if (hasPaymentValidationErrors(paymentErrors)) {
+        setFeedbackMessage("Please review your card details before saving.");
+        scrollToPageTop();
+        return;
+      }
+    }
+
+    try {
+      setIsSavingProfile(true);
+      setFeedbackMessage("");
+
+      await updateProfile({
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
+        dateOfBirth: form.dateOfBirth,
+        phone: form.phone.trim(),
+        address: form.address.trim(),
+        postalCode: form.postalCode.trim(),
+        city: form.city.trim(),
+        country: form.country.trim(),
+        region: form.region.trim(),
+      });
+
+      if (isPaymentEditOpen) {
+        const cleanCardNumber = normalizeCardNumber(cardForm.cardNumber);
+        const last4 = cleanCardNumber.slice(-4);
+
+        await updatePaymentMethod({
+          paymentMethod: "card",
+          cardLast4: last4,
+          cardExpiryMonth: cardForm.expiryMonth,
+          cardExpiryYear: cardForm.expiryYear,
+          saveCardForFuture: cardForm.saveForFuture,
+        });
+
+        setStoredCard({
+          brand: getCardBrand(cleanCardNumber),
+          last4,
+          expiryMonth: cardForm.expiryMonth,
+          expiryYear: cardForm.expiryYear,
+          saveCardForFuture: cardForm.saveForFuture,
+          hasStoredCard: true,
+        });
+
+        setCardForm(emptyCardForm);
+        setPaymentTouched({});
+        setPaymentSubmitAttempted(false);
+        setIsPaymentEditOpen(false);
+      }
+
+      setProfileTouched({});
+      setProfileSubmitAttempted(false);
+
+      setFeedbackMessage(
+        isEmailChangeEnabled || isPasswordChangeEnabled
+          ? "Profile changes saved successfully. Email/password changes are validated, but backend update still needs to be connected."
+          : "Profile changes saved successfully."
+      );
+
+      scrollToPageTop();
+    } catch (error) {
+      setFeedbackMessage(
+        getErrorMessage(error, "We could not update your profile.")
+      );
+      scrollToPageTop();
+    } finally {
+      setIsSavingProfile(false);
+    }
   };
 
   const handleLogout = () => {
@@ -205,6 +650,7 @@ export default function MyProfilePage() {
         <form
           className="my-profile-page__card gm-surface-card"
           onSubmit={handleSubmit}
+          noValidate
         >
           {feedbackMessage && (
             <p className="my-profile-page__feedback" role="status">
@@ -225,9 +671,17 @@ export default function MyProfilePage() {
                   name="firstName"
                   value={form.firstName}
                   onChange={handleChange}
-                  className="my-profile-page__input"
-                  required
+                  onBlur={handleProfileBlur}
+                  className={`my-profile-page__input ${getProfileControlStateClass(
+                    "firstName"
+                  )}`}
+                  aria-invalid={Boolean(
+                    (profileTouched.firstName || profileSubmitAttempted) &&
+                      profileErrors.firstName
+                  )}
+                  aria-describedby="firstName-profile-error"
                 />
+                {renderProfileError("firstName")}
               </label>
 
               <label className="my-profile-page__field">
@@ -237,9 +691,17 @@ export default function MyProfilePage() {
                   name="lastName"
                   value={form.lastName}
                   onChange={handleChange}
-                  className="my-profile-page__input"
-                  required
+                  onBlur={handleProfileBlur}
+                  className={`my-profile-page__input ${getProfileControlStateClass(
+                    "lastName"
+                  )}`}
+                  aria-invalid={Boolean(
+                    (profileTouched.lastName || profileSubmitAttempted) &&
+                      profileErrors.lastName
+                  )}
+                  aria-describedby="lastName-profile-error"
                 />
+                {renderProfileError("lastName")}
               </label>
             </div>
 
@@ -251,9 +713,17 @@ export default function MyProfilePage() {
                   name="dateOfBirth"
                   value={form.dateOfBirth}
                   onChange={handleChange}
-                  className="my-profile-page__input"
-                  required
+                  onBlur={handleProfileBlur}
+                  className={`my-profile-page__input ${getProfileControlStateClass(
+                    "dateOfBirth"
+                  )}`}
+                  aria-invalid={Boolean(
+                    (profileTouched.dateOfBirth || profileSubmitAttempted) &&
+                      profileErrors.dateOfBirth
+                  )}
+                  aria-describedby="dateOfBirth-profile-error"
                 />
+                {renderProfileError("dateOfBirth")}
               </label>
 
               <label className="my-profile-page__field">
@@ -263,9 +733,18 @@ export default function MyProfilePage() {
                   name="phone"
                   value={form.phone}
                   onChange={handleChange}
-                  className="my-profile-page__input"
-                  required
+                  onBlur={handleProfileBlur}
+                  placeholder="+34 600-123-456"
+                  className={`my-profile-page__input ${getProfileControlStateClass(
+                    "phone"
+                  )}`}
+                  aria-invalid={Boolean(
+                    (profileTouched.phone || profileSubmitAttempted) &&
+                      profileErrors.phone
+                  )}
+                  aria-describedby="phone-profile-error"
                 />
+                {renderProfileError("phone")}
               </label>
             </div>
           </section>
@@ -283,9 +762,17 @@ export default function MyProfilePage() {
                   name="address"
                   value={form.address}
                   onChange={handleChange}
-                  className="my-profile-page__input"
-                  required
+                  onBlur={handleProfileBlur}
+                  className={`my-profile-page__input ${getProfileControlStateClass(
+                    "address"
+                  )}`}
+                  aria-invalid={Boolean(
+                    (profileTouched.address || profileSubmitAttempted) &&
+                      profileErrors.address
+                  )}
+                  aria-describedby="address-profile-error"
                 />
+                {renderProfileError("address")}
               </label>
             </div>
 
@@ -297,47 +784,100 @@ export default function MyProfilePage() {
                   name="postalCode"
                   value={form.postalCode}
                   onChange={handleChange}
-                  className="my-profile-page__input"
-                  required
+                  onBlur={handleProfileBlur}
+                  inputMode="numeric"
+                  maxLength={5}
+                  placeholder="29001"
+                  className={`my-profile-page__input ${getProfileControlStateClass(
+                    "postalCode"
+                  )}`}
+                  aria-invalid={Boolean(
+                    (profileTouched.postalCode || profileSubmitAttempted) &&
+                      profileErrors.postalCode
+                  )}
+                  aria-describedby="postalCode-profile-error"
                 />
+                {renderProfileError("postalCode")}
               </label>
 
               <label className="my-profile-page__field">
                 <span>City*</span>
-                <input
-                  type="text"
+                <select
                   name="city"
                   value={form.city}
                   onChange={handleChange}
-                  className="my-profile-page__input"
-                  required
-                />
+                  onBlur={handleProfileBlur}
+                  className={`my-profile-page__input ${getProfileControlStateClass(
+                    "city"
+                  )}`}
+                  aria-invalid={Boolean(
+                    (profileTouched.city || profileSubmitAttempted) &&
+                      profileErrors.city
+                  )}
+                  aria-describedby="city-profile-error"
+                >
+                  <option value="">Select a city</option>
+                  {cityOptions.map((item) => (
+                    <option key={`${item.city}-${item.region}`} value={item.city}>
+                      {item.city} ({item.region})
+                    </option>
+                  ))}
+                </select>
+                {renderProfileError("city")}
               </label>
             </div>
 
             <div className="my-profile-page__grid my-profile-page__grid--two">
               <label className="my-profile-page__field">
                 <span>Country*</span>
-                <input
-                  type="text"
+                <select
                   name="country"
                   value={form.country}
                   onChange={handleChange}
-                  className="my-profile-page__input"
-                  required
-                />
+                  onBlur={handleProfileBlur}
+                  className={`my-profile-page__input ${getProfileControlStateClass(
+                    "country"
+                  )}`}
+                  aria-invalid={Boolean(
+                    (profileTouched.country || profileSubmitAttempted) &&
+                      profileErrors.country
+                  )}
+                  aria-describedby="country-profile-error"
+                >
+                  <option value="">Select a country</option>
+                  {countryOptions.map((country) => (
+                    <option key={country} value={country}>
+                      {country}
+                    </option>
+                  ))}
+                </select>
+                {renderProfileError("country")}
               </label>
 
               <label className="my-profile-page__field">
                 <span>State / Province / Region*</span>
-                <input
-                  type="text"
+                <select
                   name="region"
                   value={form.region}
                   onChange={handleChange}
-                  className="my-profile-page__input"
-                  required
-                />
+                  onBlur={handleProfileBlur}
+                  className={`my-profile-page__input ${getProfileControlStateClass(
+                    "region"
+                  )}`}
+                  aria-invalid={Boolean(
+                    (profileTouched.region || profileSubmitAttempted) &&
+                      profileErrors.region
+                  )}
+                  aria-describedby="region-profile-error"
+                >
+                  <option value="">Select a region</option>
+                  {regionOptions.map((region) => (
+                    <option key={region} value={region}>
+                      {region}
+                    </option>
+                  ))}
+                </select>
+                {renderProfileError("region")}
               </label>
             </div>
           </section>
@@ -363,9 +903,7 @@ export default function MyProfilePage() {
                 <input
                   type="checkbox"
                   checked={isEmailChangeEnabled}
-                  onChange={(event) =>
-                    setIsEmailChangeEnabled(event.target.checked)
-                  }
+                  onChange={handleEmailToggleChange}
                 />
                 <span className="my-profile-page__toggle-track">
                   <span className="my-profile-page__toggle-thumb" />
@@ -373,15 +911,29 @@ export default function MyProfilePage() {
               </label>
             </div>
 
-            <input
-              type="email"
-              name="newEmail"
-              value={form.newEmail}
-              onChange={handleChange}
-              disabled={!isEmailChangeEnabled}
-              placeholder="Update my email address"
-              className="my-profile-page__input my-profile-page__input--muted"
-            />
+            <label className="my-profile-page__field">
+              <input
+                type="email"
+                name="newEmail"
+                value={form.newEmail}
+                onChange={handleChange}
+                onBlur={handleEmailBlur}
+                disabled={!isEmailChangeEnabled}
+                placeholder="Update my email address"
+                className={`my-profile-page__input ${
+                  isEmailChangeEnabled
+                    ? getEmailControlStateClass("newEmail")
+                    : "my-profile-page__input--muted"
+                }`}
+                aria-invalid={Boolean(
+                  isEmailChangeEnabled &&
+                    (emailTouched.newEmail || emailSubmitAttempted) &&
+                    emailErrors.newEmail
+                )}
+                aria-describedby="newEmail-profile-error"
+              />
+              {isEmailChangeEnabled && renderEmailError("newEmail")}
+            </label>
 
             <div className="my-profile-page__login-block my-profile-page__login-block--spaced">
               <div>
@@ -394,9 +946,7 @@ export default function MyProfilePage() {
                 <input
                   type="checkbox"
                   checked={isPasswordChangeEnabled}
-                  onChange={(event) =>
-                    setIsPasswordChangeEnabled(event.target.checked)
-                  }
+                  onChange={handlePasswordToggleChange}
                 />
                 <span className="my-profile-page__toggle-track">
                   <span className="my-profile-page__toggle-thumb" />
@@ -413,32 +963,147 @@ export default function MyProfilePage() {
               />
             ) : (
               <div className="my-profile-page__password-grid">
-                <input
-                  type="password"
-                  name="currentPassword"
-                  value={passwordForm.currentPassword}
-                  onChange={handlePasswordChange}
-                  placeholder="Current password"
-                  className="my-profile-page__input my-profile-page__input--muted"
-                />
+                <label className="my-profile-page__field">
+                  <div className="my-profile-page__password-wrapper">
+                    <input
+                      type={showCurrentPassword ? "text" : "password"}
+                      name="currentPassword"
+                      value={passwordForm.currentPassword}
+                      onChange={handlePasswordChange}
+                      onBlur={handlePasswordBlur}
+                      placeholder="Current password"
+                      className={`my-profile-page__input ${getPasswordControlStateClass(
+                        "currentPassword"
+                      )}`}
+                      aria-invalid={Boolean(
+                        (passwordTouched.currentPassword ||
+                          passwordSubmitAttempted) &&
+                          passwordErrors.currentPassword
+                      )}
+                      aria-describedby="currentPassword-profile-error"
+                    />
 
-                <input
-                  type="password"
-                  name="newPassword"
-                  value={passwordForm.newPassword}
-                  onChange={handlePasswordChange}
-                  placeholder="New password"
-                  className="my-profile-page__input my-profile-page__input--muted"
-                />
+                    <button
+                      type="button"
+                      className="my-profile-page__password-toggle"
+                      onClick={() =>
+                        setShowCurrentPassword((current) => !current)
+                      }
+                      aria-label={
+                        showCurrentPassword
+                          ? "Ocultar contraseña actual"
+                          : "Mostrar contraseña actual"
+                      }
+                      aria-pressed={showCurrentPassword}
+                    >
+                      <IconImage
+                        name={
+                          showCurrentPassword
+                            ? "hidePasswordIcon"
+                            : "showPasswordIcon"
+                        }
+                        className="my-profile-page__password-toggle-icon"
+                        decorative
+                        size={20}
+                      />
+                    </button>
+                  </div>
+                  {renderPasswordError("currentPassword")}
+                </label>
 
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={passwordForm.confirmPassword}
-                  onChange={handlePasswordChange}
-                  placeholder="Confirm new password"
-                  className="my-profile-page__input my-profile-page__input--muted"
-                />
+                <label className="my-profile-page__field">
+                  <div className="my-profile-page__password-wrapper">
+                    <input
+                      type={showNewPassword ? "text" : "password"}
+                      name="newPassword"
+                      value={passwordForm.newPassword}
+                      onChange={handlePasswordChange}
+                      onBlur={handlePasswordBlur}
+                      placeholder="New password"
+                      className={`my-profile-page__input ${getPasswordControlStateClass(
+                        "newPassword"
+                      )}`}
+                      aria-invalid={Boolean(
+                        (passwordTouched.newPassword ||
+                          passwordSubmitAttempted) &&
+                          passwordErrors.newPassword
+                      )}
+                      aria-describedby="newPassword-profile-error"
+                    />
+
+                    <button
+                      type="button"
+                      className="my-profile-page__password-toggle"
+                      onClick={() => setShowNewPassword((current) => !current)}
+                      aria-label={
+                        showNewPassword
+                          ? "Ocultar nueva contraseña"
+                          : "Mostrar nueva contraseña"
+                      }
+                      aria-pressed={showNewPassword}
+                    >
+                      <IconImage
+                        name={
+                          showNewPassword
+                            ? "hidePasswordIcon"
+                            : "showPasswordIcon"
+                        }
+                        className="my-profile-page__password-toggle-icon"
+                        decorative
+                        size={20}
+                      />
+                    </button>
+                  </div>
+                  {renderPasswordError("newPassword")}
+                </label>
+
+                <label className="my-profile-page__field">
+                  <div className="my-profile-page__password-wrapper">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      name="confirmPassword"
+                      value={passwordForm.confirmPassword}
+                      onChange={handlePasswordChange}
+                      onBlur={handlePasswordBlur}
+                      placeholder="Confirm new password"
+                      className={`my-profile-page__input ${getPasswordControlStateClass(
+                        "confirmPassword"
+                      )}`}
+                      aria-invalid={Boolean(
+                        (passwordTouched.confirmPassword ||
+                          passwordSubmitAttempted) &&
+                          passwordErrors.confirmPassword
+                      )}
+                      aria-describedby="confirmPassword-profile-error"
+                    />
+
+                    <button
+                      type="button"
+                      className="my-profile-page__password-toggle"
+                      onClick={() =>
+                        setShowConfirmPassword((current) => !current)
+                      }
+                      aria-label={
+                        showConfirmPassword
+                          ? "Ocultar confirmación de contraseña"
+                          : "Mostrar confirmación de contraseña"
+                      }
+                      aria-pressed={showConfirmPassword}
+                    >
+                      <IconImage
+                        name={
+                          showConfirmPassword
+                            ? "hidePasswordIcon"
+                            : "showPasswordIcon"
+                        }
+                        className="my-profile-page__password-toggle-icon"
+                        decorative
+                        size={20}
+                      />
+                    </button>
+                  </div>
+                  {renderPasswordError("confirmPassword")}
+                </label>
               </div>
             )}
           </section>
@@ -478,105 +1143,76 @@ export default function MyProfilePage() {
                 )}
               </div>
 
-              <button
-                type="button"
-                className="my-profile-page__payment-action"
-                onClick={handleOpenPaymentModal}
-              >
-                {storedCard.hasStoredCard ? "Edit" : "Add"}
-              </button>
+              {!isPaymentEditOpen && (
+                <button
+                  type="button"
+                  className="my-profile-page__payment-action"
+                  onClick={handleOpenPaymentEdit}
+                >
+                  {storedCard.hasStoredCard ? "Edit" : "Add"}
+                </button>
+              )}
             </div>
 
-            <label className="my-profile-page__checkbox-row">
-              <input
-                type="checkbox"
-                checked={storedCard.saveCardForFuture ?? true}
-                readOnly
-              />
-              <span>Save card for future payments</span>
-            </label>
+            {!isPaymentEditOpen && (
+              <>
+                <label className="my-profile-page__checkbox-row">
+                  <input
+                    type="checkbox"
+                    checked={storedCard.saveCardForFuture ?? true}
+                    readOnly
+                  />
+                  <span>Save card for future payments</span>
+                </label>
 
-            <p className="my-profile-page__payment-note">
-              Card details are protected according to payment card industry
-              security standards.
-            </p>
+                <p className="my-profile-page__payment-note">
+                  Card details are protected according to payment card industry
+                  security standards.
+                </p>
+              </>
+            )}
+
+            {isPaymentEditOpen && (
+              <div className="my-profile-page__payment-edit">
+                <CreditCardPaymentForm
+                  cardForm={cardForm}
+                  onChange={handleCardFormChange}
+                  onBlur={handleCardBlur}
+                  errors={paymentErrors}
+                  touched={paymentTouched}
+                  submitAttempted={paymentSubmitAttempted}
+                />
+
+                <button
+                  type="button"
+                  className="my-profile-page__payment-cancel"
+                  onClick={handleCancelPaymentEdit}
+                >
+                  Cancel payment edit
+                </button>
+              </div>
+            )}
           </section>
 
           <div className="my-profile-page__actions">
             <button
               type="submit"
               className="gm-btn gm-btn--pill gm-btn--solid-yellow my-profile-page__action-btn"
+              disabled={isSavingProfile}
             >
-              SAVE CHANGES
+              {isSavingProfile ? "SAVING..." : "SAVE CHANGES"}
             </button>
 
             <button
               type="button"
               className="gm-btn gm-btn--pill gm-btn--outline-danger my-profile-page__action-btn"
               onClick={handleLogout}
+              disabled={isSavingProfile}
             >
               LOG OUT
             </button>
           </div>
         </form>
-
-        {isPaymentModalOpen && (
-          <div className="my-profile-page__modal-backdrop">
-            <div
-              className="my-profile-page__payment-modal"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="payment-modal-title"
-            >
-              <h2
-                id="payment-modal-title"
-                className="my-profile-page__payment-modal-title"
-              >
-                How would you like to pay?
-              </h2>
-
-              <div className="my-profile-page__payment-option">
-                <div>
-                  <strong>Pay by card</strong>
-                  <span>Secure payment with Visa and Mastercard</span>
-                </div>
-
-                <div className="my-profile-page__payment-brands">
-                  <span className="my-profile-page__payment-brand-dot my-profile-page__payment-brand-dot--red" />
-                  <span className="my-profile-page__payment-brand-dot my-profile-page__payment-brand-dot--orange" />
-                  <strong>VISA</strong>
-                </div>
-              </div>
-
-              <form
-                className="my-profile-page__card-form"
-                onSubmit={handleSaveCard}
-              >
-                <CreditCardPaymentForm
-                  cardForm={cardForm}
-                  onChange={handleCardFormChange}
-                />
-
-                <div className="my-profile-page__payment-modal-actions">
-                  <button
-                    type="button"
-                    className="my-profile-page__payment-cancel"
-                    onClick={handleClosePaymentModal}
-                  >
-                    Cancel
-                  </button>
-
-                  <button
-                    type="submit"
-                    className="gm-btn gm-btn--pill my-profile-page__payment-save-btn"
-                  >
-                    Save card
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
       </div>
     </section>
   );

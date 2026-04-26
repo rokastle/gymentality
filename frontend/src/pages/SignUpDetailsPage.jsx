@@ -5,6 +5,7 @@ import { useClubById } from "../hooks/useClubs";
 import useAuth from "../hooks/useAuth";
 import IconImage from "../components/common/IconImage";
 import CreditCardPaymentForm from "../components/payment/CreditCardPaymentForm";
+import { paymentFieldNames } from "../utils/paymentValidation";
 import {
   formatEuro,
   formatEuroMonth,
@@ -23,7 +24,7 @@ import {
   regionOptionsByCountry,
   signUpFieldOrder,
   validateSignUpForm,
-} from "../utils/signupValidation";
+} from "../utils/accountValidation";
 import { useMembershipPlans } from "../hooks/useMembership";
 import { useWorkoutPlans } from "../hooks/useWorkoutPlans";
 
@@ -49,14 +50,6 @@ const initialForm = {
   saveCardForFuture: true,
   acceptedTerms: false,
 };
-
-const paymentFieldNames = [
-  "cardholder",
-  "cardNumber",
-  "expiryMonth",
-  "expiryYear",
-  "cvv",
-];
 
 export default function SignUpDetailsPage() {
   const navigate = useNavigate();
@@ -281,27 +274,6 @@ export default function SignUpDetailsPage() {
     );
   };
 
-  const renderPaymentErrors = () => {
-    const visiblePaymentErrors = paymentFieldNames.filter(
-      (fieldName) =>
-        (touched[fieldName] || submitAttempted) && errors[fieldName]
-    );
-
-    if (!visiblePaymentErrors.length) {
-      return null;
-    }
-
-    return (
-      <div className="signup-details-page__payment-errors">
-        {visiblePaymentErrors.map((fieldName) => (
-          <small key={fieldName} className="signup-details-page__error">
-            {errors[fieldName]}
-          </small>
-        ))}
-      </div>
-    );
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -339,7 +311,7 @@ export default function SignUpDetailsPage() {
       city: form.city,
       country: form.country,
       region: form.region,
-      
+
       paymentMethod: "card",
       cardLast4: cleanCardNumber.slice(-4),
       cardExpiryMonth: form.expiryMonth,
@@ -509,7 +481,7 @@ export default function SignUpDetailsPage() {
                     required
                     aria-invalid={Boolean(
                       (touched.dateOfBirth || submitAttempted) &&
-                        errors.dateOfBirth
+                      errors.dateOfBirth
                     )}
                     aria-describedby="dateOfBirth-error"
                   />
@@ -638,7 +610,7 @@ export default function SignUpDetailsPage() {
                       autoComplete="new-password"
                       aria-invalid={Boolean(
                         (touched.confirmPassword || submitAttempted) &&
-                          errors.confirmPassword
+                        errors.confirmPassword
                       )}
                       aria-describedby="confirmPassword-error"
                     />
@@ -722,7 +694,7 @@ export default function SignUpDetailsPage() {
                     placeholder="29001"
                     aria-invalid={Boolean(
                       (touched.postalCode || submitAttempted) &&
-                        errors.postalCode
+                      errors.postalCode
                     )}
                     aria-describedby="postalCode-error"
                   />
@@ -852,10 +824,13 @@ export default function SignUpDetailsPage() {
                     saveForFuture: form.saveCardForFuture,
                   }}
                   onChange={handleCreditCardChange}
+                  onBlur={handleBlur}
+                  errors={errors}
+                  touched={touched}
+                  submitAttempted={submitAttempted}
+                  inputRefs={fieldRefs.current}
                   compact
                 />
-
-                {renderPaymentErrors()}
               </div>
 
               <label className="signup-details-page__checkbox">

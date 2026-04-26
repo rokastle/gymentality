@@ -63,7 +63,7 @@
 
 .my-profile-page__section-title {
   margin: 0;
-  color: var(--gm-white);
+  color: var(--gm-btn-start);
   font-size: 1.45rem;
   font-weight: 700;
   text-align: center;
@@ -77,10 +77,15 @@
   background: var(--gm-divider-accent-gradient);
 }
 
+/* =========================
+   FORM FIELDS
+   Same visual style as SignUpDetailsPage
+   ========================= */
+
 .my-profile-page__grid {
   display: grid;
-  gap: 28px;
-  margin-bottom: 26px;
+  gap: 12px 18px;
+  margin-bottom: 0;
 }
 
 .my-profile-page__grid--one {
@@ -95,26 +100,28 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-height: 108px;
 }
 
 .my-profile-page__field span {
   color: var(--gm-white);
-  font-size: 0.98rem;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .my-profile-page__input {
   width: 100%;
+  height: 42px;
   min-height: 42px;
-  padding: 0 14px;
+  padding: 0 12px;
   border: 1px solid transparent;
   border-radius: 7px;
-  background: var(--gm-white);
-  color: var(--gm-black);
+  outline: none;
+  background: rgba(255, 255, 255, 0.95);
+  color: #111111;
   font-family: inherit;
   font-size: 0.95rem;
-  font-weight: 600;
-  outline: none;
+  font-weight: 400;
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
@@ -122,9 +129,23 @@
     opacity 0.2s ease;
 }
 
+.my-profile-page__input::placeholder {
+  color: rgba(17, 17, 17, 0.52);
+}
+
 .my-profile-page__input:focus {
-  border-color: var(--gm-btn-start);
-  box-shadow: 0 0 0 3px rgba(255, 195, 0, 0.18);
+  border-color: rgba(255, 195, 0, 0.75);
+  box-shadow: 0 0 0 3px rgba(255, 195, 0, 0.14);
+}
+
+.my-profile-page__input.is-valid {
+  border-color: #44c27a;
+  background: rgba(236, 255, 244, 0.96);
+}
+
+.my-profile-page__input.is-invalid {
+  border-color: #ff6b6b;
+  background: rgba(255, 240, 240, 0.98);
 }
 
 .my-profile-page__input:disabled {
@@ -133,8 +154,10 @@
 }
 
 .my-profile-page__input--muted {
+  height: 38px;
   min-height: 38px;
   border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 7px;
   background: rgba(255, 255, 255, 0.18);
   color: var(--gm-white);
 }
@@ -146,6 +169,30 @@
 .my-profile-page__input--muted:disabled {
   background: rgba(255, 255, 255, 0.18);
   color: rgba(255, 255, 255, 0.75);
+}
+
+.my-profile-page__error {
+  display: block;
+  min-height: 21px;
+  margin-top: 4px;
+  color: #ff8f8f;
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+select.my-profile-page__input {
+  appearance: none;
+  cursor: pointer;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #111111 50%),
+    linear-gradient(135deg, #111111 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% - 3px),
+    calc(100% - 12px) calc(50% - 3px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 36px;
 }
 
 /* =========================
@@ -220,11 +267,7 @@
 }
 
 .my-profile-page__toggle-row input:checked + .my-profile-page__toggle-track {
-  background: linear-gradient(
-    90deg,
-    var(--gm-btn-start),
-    var(--gm-btn-end)
-  );
+  background: linear-gradient(90deg, var(--gm-btn-start), var(--gm-btn-end));
 }
 
 .my-profile-page__toggle-row
@@ -241,6 +284,43 @@
 .my-profile-page__password-grid {
   display: grid;
   gap: 12px;
+}
+
+.my-profile-page__password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.my-profile-page__password-wrapper .my-profile-page__input {
+  padding-right: 3.25rem;
+}
+
+.my-profile-page__password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.my-profile-page__password-toggle-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+  object-fit: contain;
+}
+
+.my-profile-page__password-toggle:focus-visible {
+  outline: 2px solid #f0c400;
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /* =========================
@@ -346,6 +426,95 @@
   line-height: 1.35;
 }
 
+.my-profile-page__payment-edit {
+  margin-top: 18px;
+  padding: 22px 20px;
+  border: 1px solid var(--gm-border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.my-profile-page__payment-edit .credit-card-payment-form {
+  width: 100%;
+}
+
+.my-profile-page__payment-edit .credit-card-payment-form__title {
+  color: var(--gm-white);
+}
+
+.my-profile-page__payment-edit .credit-card-payment-form__input {
+  height: 42px;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #111111;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+.my-profile-page__payment-edit .credit-card-payment-form__input:focus {
+  border-color: rgba(255, 195, 0, 0.75);
+  box-shadow: 0 0 0 3px rgba(255, 195, 0, 0.14);
+}
+
+.my-profile-page__payment-edit .credit-card-payment-form__input.is-valid {
+  border-color: #44c27a;
+  background: rgba(236, 255, 244, 0.96);
+}
+
+.my-profile-page__payment-edit .credit-card-payment-form__input.is-invalid {
+  border-color: #ff6b6b;
+  background: rgba(255, 240, 240, 0.98);
+}
+
+.my-profile-page__payment-edit .credit-card-payment-form__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 120px;
+  gap: 18px;
+}
+
+.my-profile-page__payment-edit .credit-card-payment-form__error {
+  min-height: 21px;
+  margin-top: 4px;
+  color: #ff8f8f;
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.my-profile-page__payment-edit .credit-card-payment-form__save-row {
+  margin-top: 2px;
+  color: var(--gm-white);
+}
+
+.my-profile-page__payment-edit .credit-card-payment-form__save-row span {
+  color: var(--gm-white);
+}
+
+.my-profile-page__payment-edit .credit-card-payment-form__save-row input {
+  accent-color: var(--gm-btn-start);
+}
+
+.my-profile-page__payment-cancel {
+  margin-top: 16px;
+  border: none;
+  background: transparent;
+  color: var(--gm-btn-start);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: color 0.2s ease;
+}
+
+.my-profile-page__payment-cancel:hover {
+  color: var(--gm-btn-hover-yellow-end);
+}
+
 /* =========================
    ACTIONS
    ========================= */
@@ -363,190 +532,9 @@
   justify-content: center;
 }
 
-.my-profile-page__modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 2200;
-  padding: 24px;
-  background: rgba(0, 0, 0, 0.58);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.my-profile-page__payment-modal {
-  width: min(100%, 720px);
-  padding: 34px 36px;
-  border-radius: 18px;
-  background: var(--gm-white);
-  color: var(--gm-black);
-  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.36);
-}
-
-.my-profile-page__payment-modal-title {
-  margin: 0 0 36px;
-  color: var(--gm-black);
-  font-size: 1.8rem;
-  font-weight: 700;
-  text-align: center;
-}
-
-.my-profile-page__payment-option {
-  min-height: 96px;
-  padding: 18px 28px;
-  border: 2px solid #0074ff;
-  border-radius: 7px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-}
-
-.my-profile-page__payment-option strong {
-  color: var(--gm-black);
-  font-size: 1.05rem;
-  font-weight: 700;
-}
-
-.my-profile-page__payment-option span {
-  display: block;
-  margin-top: 4px;
-  color: rgba(0, 0, 0, 0.62);
-  font-size: 0.88rem;
-  font-weight: 600;
-}
-
-.my-profile-page__payment-brands {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: #0a3c92;
-}
-
-.my-profile-page__payment-brand-dot {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-}
-
-.my-profile-page__payment-brand-dot--red {
-  background: #eb001b;
-}
-
-.my-profile-page__payment-brand-dot--orange {
-  margin-left: -8px;
-  background: #f79e1b;
-}
-
-.my-profile-page__card-form {
-  margin-top: 26px;
-}
-
-.my-profile-page__card-form-title {
-  margin: 0 0 18px;
-  color: var(--gm-black);
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.my-profile-page__payment-input {
-  width: 100%;
-  min-height: 56px;
-  margin-bottom: 18px;
-  padding: 0 16px;
-  border: 1px solid #667085;
-  border-radius: 8px;
-  background: var(--gm-white);
-  color: var(--gm-black);
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: 600;
-  outline: none;
-}
-
-.my-profile-page__payment-input::placeholder {
-  color: rgba(0, 0, 0, 0.45);
-}
-
-.my-profile-page__payment-input:focus {
-  border-color: #0074ff;
-  box-shadow: 0 0 0 3px rgba(0, 116, 255, 0.14);
-}
-
-.my-profile-page__payment-form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 120px;
-  gap: 18px;
-}
-
-.my-profile-page__payment-save-row {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--gm-black);
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.my-profile-page__payment-save-row input {
-  width: 18px;
-  height: 18px;
-}
-
-.my-profile-page__payment-modal-actions {
-  margin-top: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.my-profile-page__payment-cancel {
-  border: none;
-  background: transparent;
-  color: #0074ff;
-  font-family: inherit;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.my-profile-page__payment-save-btn {
-  min-width: 210px;
-  background: var(--gm-black);
-  color: var(--gm-white);
-}
-
-.my-profile-page__payment-save-btn:hover {
-  background: var(--gm-black);
-  color: var(--gm-white);
-  filter: brightness(1.1);
-}
-
-@media (max-width: 700px) {
-  .my-profile-page__payment-modal {
-    padding: 28px 20px;
-  }
-
-  .my-profile-page__payment-option {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .my-profile-page__payment-form-grid {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .my-profile-page__payment-modal-actions {
-    flex-direction: column-reverse;
-    gap: 16px;
-    align-items: stretch;
-  }
-
-  .my-profile-page__payment-save-btn {
-    width: 100%;
-  }
+.my-profile-page__action-btn:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
 }
 
 /* =========================
@@ -584,6 +572,11 @@
   .my-profile-page__payment-action {
     grid-column: 1 / -1;
     width: 100%;
+  }
+
+  .my-profile-page__payment-edit .credit-card-payment-form__grid {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 
   .my-profile-page__actions {
@@ -624,5 +617,9 @@
 
   .my-profile-page__checkbox-row {
     align-items: flex-start;
+  }
+
+  .my-profile-page__payment-edit {
+    padding: 18px 14px;
   }
 }
