@@ -91,32 +91,9 @@
   flex-shrink: 0;
 }
 
-.gm-icon-btn {
-  width: 46px;
-  height: 46px;
-  padding: 0;
-  background: transparent;
-  border: none;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.gm-icon-btn:hover {
-  background: rgba(0, 0, 0, 0.06);
-}
-
-.gm-icon-btn:active {
-  transform: scale(0.97);
-}
-
-.gm-icon-btn:focus-visible {
-  outline: 2px solid var(--gm-accent);
-  outline-offset: 3px;
-}
+/* ============================================
+   ICONS SYSTEM - See ./styles/components/icons.css
+   ============================================ */
 
 .gm-navbar__profile-icon {
   display: block;

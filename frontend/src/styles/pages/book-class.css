@@ -11,13 +11,16 @@
 }
 
 .book-class-page__header {
-  display: flex;
-  justify-content: center;
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto 18px;
+  text-align: center;
 }
 
 .book-class-page__club {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.85rem;
 }
 
@@ -25,14 +28,26 @@
   width: 2.75rem;
   height: 2.75rem;
   object-fit: contain;
+  flex: 0 0 auto;
 }
 
 .book-class-page__club-title {
   margin: 0;
-  color: var(--gm-text-main);
-  font-size: clamp(2rem, 4vw, 3.5rem);
+  color: var(--gm-white);
+  font-size: clamp(2.35rem, 4vw, 3.5rem);
   font-weight: 800;
+  line-height: 1;
   letter-spacing: 0.02em;
+}
+
+.book-class-page__booking-policy {
+  margin: 14px auto 0;
+  max-width: 980px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.45;
+  text-align: center;
 }
 
 .book-class-page__panel {
@@ -308,5 +323,29 @@
     width: 100%;
     justify-content: flex-start;
     margin-left: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .book-class-page {
+    padding: 22px 0 54px;
+  }
+
+  .book-class-page__club {
+    gap: 0.65rem;
+  }
+
+  .book-class-page__club-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .book-class-page__club-title {
+    font-size: 2.25rem;
+  }
+
+  .book-class-page__booking-policy {
+    font-size: 0.95rem;
+    line-height: 1.5;
   }
 }

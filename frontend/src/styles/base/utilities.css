@@ -10,11 +10,9 @@
   background: var(--gm-section-bg);
 }
 
-.gm-surface-card {
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: var(--gm-surface-bg);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
-}
+/* ============================================
+   CARDS SYSTEM - See ./styles/components/cards.css
+   ============================================ */
 
 .gm-navbar__profile-icon,
 .home-benefit__icon-image,
@@ -24,49 +22,13 @@
   object-fit: contain;
 }
 
-.gm-icon-btn,
-.gm-footer__submit,
-.gm-social-btn,
-.home-benefit__icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 0;
-}
+/* ============================================
+   ICONS SYSTEM - See ./styles/components/icons.css
+   ============================================ */
 
-.gm-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  cursor: pointer;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
-}
-
-.gm-btn:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.02);
-}
-
-.gm-btn--yellow {
-  min-width: 180px;
-  height: 54px;
-  padding: 0 24px;
-  border-radius: 18px;
-  color: var(--gm-black);
-  background: linear-gradient(90deg, var(--gm-btn-start), var(--gm-btn-end));
-  box-shadow: 0 10px 24px rgba(255, 195, 0, 0.16);
-}
-
-.gm-btn--compact {
-  min-width: 160px;
-  height: 48px;
-  border-radius: 10px;
-  font-size: 0.95rem;
-}
+/* ============================================
+   BUTTON SYSTEM - See ./styles/components/buttons.css
+   ============================================ */
 
 .gm-placeholder-page {
   margin-top: var(--gm-navbar-height);

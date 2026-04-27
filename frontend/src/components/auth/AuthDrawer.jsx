@@ -175,19 +175,53 @@ export default function AuthDrawer({ open, onClose }) {
 
             <nav className="auth-drawer__menu">
               <Link to="/account/book-class" className="auth-drawer__menu-item">
-                BOOK A CLASS
+                <IconImage
+                  name="bookClass"
+                  className="auth-drawer__menu-icon"
+                  decorative
+                  size={28}
+                />
+                <span>BOOK A CLASS</span>
               </Link>
+
               <Link to="/account/workout" className="auth-drawer__menu-item">
-                MY WORKOUT PLAN
+                <IconImage
+                  name="myWorkoutPlan"
+                  className="auth-drawer__menu-icon"
+                  decorative
+                  size={28}
+                />
+                <span>MY WORKOUT PLAN</span>
               </Link>
+
               <Link to="/account/membership" className="auth-drawer__menu-item">
-                MY MEMBERSHIP
+                <IconImage
+                  name="membership"
+                  className="auth-drawer__menu-icon"
+                  decorative
+                  size={28}
+                />
+                <span>MY MEMBERSHIP</span>
               </Link>
+
               <Link to="/account/notifications" className="auth-drawer__menu-item">
-                NOTIFICATIONS
+                <IconImage
+                  name="notifications"
+                  className="auth-drawer__menu-icon"
+                  decorative
+                  size={28}
+                />
+                <span>NOTIFICATIONS</span>
               </Link>
+
               <Link to="/account/profile" className="auth-drawer__menu-item">
-                MY PROFILE
+                <IconImage
+                  name="myProfile"
+                  className="auth-drawer__menu-icon"
+                  decorative
+                  size={28}
+                />
+                <span>MY PROFILE</span>
               </Link>
             </nav>
 

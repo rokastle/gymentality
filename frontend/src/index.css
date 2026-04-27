@@ -4,6 +4,8 @@
 @import "./styles/base/utilities.css";
 
 @import "./styles/components/buttons.css";
+@import "./styles/components/cards.css";
+@import "./styles/components/icons.css";
 
 @import "./styles/layout/navbar.css";
 @import "./styles/layout/footer.css";

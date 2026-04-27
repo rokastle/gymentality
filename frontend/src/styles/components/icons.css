@@ -1,0 +1,102 @@
+/* ============================================
+   GYMENTALITY ICONS SYSTEM
+   Sistema de iconos y botones de icono
+   ============================================ */
+
+/* --- Base Icon Button --- */
+.gm-icon-btn {
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.gm-icon-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.gm-icon-btn:active {
+  transform: scale(0.97);
+}
+
+.gm-icon-btn:focus-visible {
+  outline: 2px solid var(--gm-accent);
+  outline-offset: 3px;
+}
+
+/* --- Icon Button Variants --- */
+
+/* Icon button small */
+.gm-icon-btn--sm {
+  width: 36px;
+  height: 36px;
+}
+
+/* Icon button large */
+.gm-icon-btn--lg {
+  width: 56px;
+  height: 56px;
+}
+
+/* Icon button with background */
+.gm-icon-btn--filled {
+  background: var(--gm-btn-start);
+}
+
+.gm-icon-btn--filled:hover {
+  background: var(--gm-btn-hover-yellow-start);
+}
+
+/* Icon button outlined */
+.gm-icon-btn--outlined {
+  border: 2px solid var(--gm-border);
+}
+
+.gm-icon-btn--outlined:hover {
+  border-color: var(--gm-accent);
+}
+
+/* --- Social Buttons --- */
+.gm-social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.gm-social-btn__icon {
+  display: block;
+  object-fit: contain;
+}
+
+/* --- Footer Submit Button --- */
+.gm-footer__submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+/* --- Icon Image Helper --- */
+.gm-navbar__profile-icon,
+.home-benefit__icon-image,
+.gm-footer__submit-icon,
+.gm-social-btn__icon {
+  display: block;
+  object-fit: contain;
+}
+
+/* --- Generic Icon Container --- */
+.home-benefit__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}

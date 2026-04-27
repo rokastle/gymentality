@@ -40,6 +40,12 @@ import paypal from "./icon_Paypal_180x180.png";
 import creditCardBlack from "./icon_creditcardBlack_180x180.png";
 import date from "./icon_date_180x180.png";
 
+import bookClassIcon from "./icon_bookClass_180x180.png";
+import myWorkoutPlanIcon from "./icon_myWorkoutPlan_180x180.png";
+import membershipIcon from "./icon_membership_180x180.png";
+import notificationsIcon from "./icon_notifications_180x180.png";
+import myProfileIcon from "./icon_myProfile_180x180.png";
+
 export const icons = {
   profile,
   arrowRight,
@@ -82,6 +88,12 @@ export const icons = {
   paypal,
   creditCardBlack,
   date,
+
+  bookClass: bookClassIcon,
+  myWorkoutPlan: myWorkoutPlanIcon,
+  membership: membershipIcon,
+  notifications: notificationsIcon,
+  myProfile: myProfileIcon,
 };
 
 export default icons;

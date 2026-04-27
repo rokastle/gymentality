@@ -1,0 +1,52 @@
+/* ============================================
+   GYMENTALITY CARDS SYSTEM
+   Sistema de tarjetas del proyecto
+   ============================================ */
+
+/* --- Base Card --- */
+.gm-surface-card {
+  border: 1px solid var(--gm-border);
+  background: var(--gm-surface-bg);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+  border-radius: 22px;
+}
+
+/* --- Card Variants --- */
+
+/* Card con padding interno */
+.gm-surface-card--padded {
+  padding: 24px;
+}
+
+/* Card más pequeño */
+.gm-surface-card--compact {
+  padding: 16px;
+  border-radius: 14px;
+}
+
+/* Card elevado (más sombra) */
+.gm-surface-card--elevated {
+  box-shadow: 0 28px 52px rgba(0, 0, 0, 0.25);
+}
+
+/* Card interactivo (hover) */
+.gm-surface-card--interactive {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gm-surface-card--interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.22);
+}
+
+/* Card invertida (fondo claro) */
+.gm-surface-card--inverted {
+  background: var(--gm-white);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.gm-surface-card--inverted .gm-card-title,
+.gm-surface-card--inverted .gm-card-text {
+  color: var(--gm-black);
+}

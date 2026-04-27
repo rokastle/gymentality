@@ -196,6 +196,8 @@
 
 .auth-drawer__toggle-password-icon {
   display: block;
+  width: 18px;
+  height: 18px;
   object-fit: contain;
 }
 
@@ -209,6 +211,53 @@
   font-size: 0.9rem;
   font-weight: 600;
   line-height: 1.4;
+}
+
+.auth-drawer__menu {
+  margin-top: 24px;
+  display: grid;
+  gap: 0;
+}
+
+.auth-drawer__menu-item {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  min-height: 72px;
+  padding: 0 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  color: #111111;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    padding-left 0.2s ease;
+}
+
+.auth-drawer__menu-item:hover {
+  background: var(--gm-btn-start);
+  color: #111111;
+  padding-left: 18px;
+}
+
+.auth-drawer__menu-item:focus-visible {
+  outline: 2px solid var(--gm-accent);
+  outline-offset: -2px;
+}
+
+.auth-drawer__menu-icon {
+  display: block;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  object-fit: contain;
+}
+
+.auth-drawer__menu-item span {
+  display: block;
+  line-height: 1.2;
 }
 
 .auth-drawer__bottom-card {
@@ -247,37 +296,30 @@
   word-break: break-word;
 }
 
-.auth-drawer__menu {
-  margin-top: 24px;
-  display: grid;
-  gap: 0;
-}
-
-.auth-drawer__menu-item {
-  display: flex;
-  align-items: center;
-  min-height: 72px;
-  padding: 0 14px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-  color: #111111;
-  font-size: 1rem;
-  font-weight: 700;
-  text-decoration: none;
-  transition: background 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
-}
-
-.auth-drawer__menu-item:hover {
-  background: var(--gm-btn-start);
-  color: #111111;
-  padding-left: 18px;
-}
-
-.auth-drawer__menu-item:focus-visible {
-  outline: 2px solid var(--gm-accent);
-  outline-offset: -2px;
-}
-
 .auth-drawer__cta-card .gm-btn,
 .auth-drawer__account-card .gm-btn {
   text-decoration: none;
+}
+
+@media (max-width: 560px) {
+  .auth-drawer__panel {
+    max-width: none;
+    padding: 28px 22px;
+  }
+
+  .auth-drawer__menu-item {
+    gap: 20px;
+    min-height: 66px;
+    padding: 0 10px;
+  }
+
+  .auth-drawer__menu-icon {
+    width: 26px;
+    height: 26px;
+    flex-basis: 26px;
+  }
+
+  .auth-drawer__bottom-card {
+    padding: 22px;
+  }
 }
