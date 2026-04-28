@@ -1,0 +1,153 @@
+/* ============================================
+   GYMENTALITY PAGE LAYOUT SYSTEM
+   Estilos base para todas las páginas
+   ============================================ */
+
+/* --- Base Page Layout --- */
+[class$="-page"] {
+  margin-top: var(--gm-navbar-height);
+  min-height: calc(100vh - var(--gm-navbar-height));
+}
+
+/* --- Page Container --- */
+[class$="-page__container"] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* --- Page Header --- */
+[class$="-page__header"] {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto 22px;
+  text-align: center;
+}
+
+/* --- Page Title --- */
+[class$="-page__title"] {
+  margin: 20px 0 12px;
+  color: var(--gm-white);
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+/* --- Page Subtitle --- */
+[class$="-page__subtitle"] {
+  margin: 0 0 30px;
+  max-width: 760px;
+  color: var(--gm-white);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* --- Page Intro --- */
+[class$="-page__intro"] {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+/* --- Page Card --- */
+[class$="-page__card"] {
+  width: 100%;
+  max-width: 1180px;
+  padding: 32px 110px 70px;
+  color: var(--gm-white);
+}
+
+/* --- Page Section --- */
+[class$="-page__section"] {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* --- Page Grid --- */
+[class$="-page__grid"] {
+  width: 100%;
+  max-width: 980px;
+  display: grid;
+  gap: 30px;
+  justify-content: center;
+}
+
+/* --- Page Feedback --- */
+[class$="-page__feedback"] {
+  margin: 0 0 22px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+[class$="-page__feedback--success"] {
+  border: 1px solid rgba(40, 201, 55, 0.5);
+  background: rgba(40, 201, 55, 0.12);
+  color: #28c937;
+}
+
+[class$="-page__feedback--error"] {
+  border: 1px solid rgba(255, 107, 107, 0.55);
+  background: rgba(255, 107, 107, 0.12);
+  color: #ff6b6b;
+}
+
+/* --- Page Filters --- */
+[class$="-page__filters"] {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 22px;
+  margin-bottom: 34px;
+  flex-wrap: wrap;
+}
+
+[class$="-page__filter"] {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+[class$="-page__filter-label"] {
+  color: var(--gm-white);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* --- Page Select --- */
+[class$="-page__select"] {
+  min-width: 220px;
+  height: 42px;
+  padding: 0 42px 0 16px;
+  border: none;
+  border-radius: 14px;
+  background-color: rgba(255, 255, 255, 0.96);
+  color: #111111;
+  font-size: 0.92rem;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #111111 50%),
+    linear-gradient(135deg, #111111 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% - 3px),
+    calc(100% - 12px) calc(50% - 3px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}

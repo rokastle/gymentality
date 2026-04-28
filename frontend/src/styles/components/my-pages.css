@@ -1,0 +1,143 @@
+/* ============================================
+   MY PAGES COMPONENTS
+   Componentes reutilizables para páginas "my-"
+   ============================================ */
+
+/* --- My Page Container --- */
+.my-membership-page__container,
+.my-profile-page__container,
+.my-workout-page__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* --- My Page Header --- */
+.my-membership-page__header,
+.my-profile-page__header,
+.my-workout-page__header {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto 18px;
+  text-align: center;
+}
+
+/* --- My Page Title --- */
+.my-membership-page__title,
+.my-profile-page__title,
+.my-workout-page__title {
+  margin: 0 0 14px;
+  color: var(--gm-white);
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* --- My Page Intro --- */
+.my-membership-page__intro,
+.my-profile-page__intro,
+.my-workout-page__intro {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+/* --- My Page Card --- */
+.my-profile-page__card {
+  width: 100%;
+  max-width: 1180px;
+  padding: 32px 110px 70px;
+  color: var(--gm-white);
+}
+
+/* --- My Page Section --- */
+.my-profile-page__section {
+  margin-top: 28px;
+}
+
+.my-profile-page__section:first-of-type {
+  margin-top: 0;
+}
+
+/* --- My Page Section Title --- */
+.my-profile-page__section-title {
+  margin: 0;
+  color: var(--gm-btn-start);
+  font-size: 1.45rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* --- My Page Feedback --- */
+.my-profile-page__feedback {
+  margin: 0 0 22px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.my-profile-page__feedback--success {
+  border: 1px solid rgba(40, 201, 55, 0.5);
+  background: rgba(40, 201, 55, 0.12);
+  color: #28c937;
+}
+
+.my-profile-page__feedback--error {
+  border: 1px solid rgba(255, 107, 107, 0.55);
+  background: rgba(255, 107, 107, 0.14);
+  color: #ff8f8f;
+}
+
+/* --- Stat Card --- */
+.my-membership-page__stat-card {
+  min-height: 112px;
+  padding: 20px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-radius: 18px;
+}
+
+.my-membership-page__stat-icon {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  flex: 0 0 52px;
+}
+
+.my-membership-page__stat-label {
+  margin: 0 0 4px;
+  color: var(--gm-btn-start);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.my-membership-page__stat-value {
+  margin: 0;
+  color: var(--gm-white);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.my-membership-page__stat-value--success {
+  color: #38d84f;
+}
+
+.my-membership-page__stat-value--warning {
+  color: var(--gm-btn-start);
+}
+
+/* --- Stats Grid --- */
+.my-membership-page__stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}

@@ -1,0 +1,198 @@
+/* ============================================
+   SIGNUP PAGES COMPONENTS
+   Componentes reutilizables para páginas de signup
+   ============================================ */
+
+/* --- Signup Timeline --- */
+.signup-timeline {
+  width: 100%;
+  max-width: 760px;
+  margin: 28px auto 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signup-timeline__item {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.signup-timeline__item:last-child {
+  flex: 0 0 auto;
+}
+
+.signup-timeline__dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #c9c9c9;
+  flex: 0 0 18px;
+}
+
+.signup-timeline__dot.is-active {
+  background: var(--gm-btn-start);
+}
+
+.signup-timeline__segment {
+  height: 2px;
+  flex: 1;
+  background: #9a9a9a;
+}
+
+.signup-timeline__segment.is-active {
+  background: var(--gm-btn-start);
+}
+
+/* --- Signup Selection Page --- */
+.signup-selection-page {
+  margin-top: var(--gm-navbar-height);
+  min-height: calc(100vh - var(--gm-navbar-height));
+  padding: 18px 0 42px;
+}
+
+.signup-selection-page__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.signup-selection-page__title {
+  margin: 0 0 42px;
+  color: var(--gm-white);
+  font-size: 3.1rem;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.signup-selection-page__grid {
+  width: 100%;
+  max-width: 980px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+/* --- Signup Plan Card --- */
+.signup-plan-card {
+  min-height: 480px;
+  padding: 24px 24px 20px;
+  border-radius: 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.signup-plan-card__title {
+  margin: 10px 0 16px;
+  color: var(--gm-btn-start);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.signup-plan-card__pricing {
+  text-align: center;
+}
+
+.signup-plan-card__price {
+  margin: 0 0 8px;
+  color: var(--gm-white);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.signup-plan-card__price-period {
+  color: var(--gm-text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.signup-plan-card__features {
+  margin: 24px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.signup-plan-card__feature {
+  position: relative;
+  padding-left: 28px;
+  margin-bottom: 14px;
+  color: var(--gm-white);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.signup-plan-card__feature::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--gm-btn-start);
+  font-weight: 700;
+}
+
+.signup-plan-card__feature.is-disabled {
+  color: var(--gm-text-secondary);
+}
+
+.signup-plan-card__feature.is-disabled::before {
+  content: "✕";
+  color: var(--gm-text-secondary);
+}
+
+.signup-plan-card__cta {
+  margin-top: auto;
+}
+
+/* --- Signup Form --- */
+.signup-form {
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+.signup-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.signup-form__field {
+  margin-bottom: 18px;
+}
+
+.signup-form__label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--gm-white);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.signup-form__input {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid var(--gm-border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #111111;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.signup-form__input:focus {
+  border-color: var(--gm-btn-start);
+  box-shadow: 0 0 0 3px rgba(255, 195, 0, 0.15);
+}
+
+.signup-form__actions {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 32px;
+}

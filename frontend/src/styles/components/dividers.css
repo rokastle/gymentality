@@ -1,0 +1,99 @@
+/* ============================================
+   GYMENTALITY DIVIDERS SYSTEM
+   Sistema de divisores y separadores
+   ============================================ */
+
+/* --- Base Divider --- */
+.gm-divider-accent {
+  width: 100%;
+  height: 2px;
+  background: var(--gm-divider-accent-gradient);
+}
+
+/* --- Divider Variants --- */
+
+/* Divider simple */
+.gm-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--gm-border);
+}
+
+/* Divider con más grosor */
+.gm-divider--thick {
+  height: 3px;
+}
+
+/* Divider vertical */
+.gm-divider--vertical {
+  width: 2px;
+  height: 100%;
+  min-height: 20px;
+}
+
+/* Divider con spacing */
+.gm-divider--spaced {
+  margin: 16px 0;
+}
+
+/* Divider con texto centrado */
+.gm-divider-text {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--gm-text-secondary);
+}
+
+.gm-divider-text::before,
+.gm-divider-text::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--gm-border);
+}
+
+/* --- Section Heading with Divider --- */
+.gm-section-heading-lined {
+  position: relative;
+  width: calc(100% - 72px);
+  max-width: 1080px;
+  margin: 10px auto 26px;
+  padding-bottom: 12px;
+  color: var(--gm-btn-start);
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.gm-section-heading-lined::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--gm-divider-accent-gradient);
+}
+
+/* --- Heading Variants --- */
+
+/* Heading sin línea inferior */
+.gm-section-heading {
+  margin: 10px auto 26px;
+  color: var(--gm-btn-start);
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* Heading pequeño */
+.gm-section-heading--sm {
+  font-size: 1.5rem;
+}
+
+/* Heading grande */
+.gm-section-heading--lg {
+  font-size: 2.5rem;
+}
