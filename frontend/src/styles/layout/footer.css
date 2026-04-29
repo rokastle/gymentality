@@ -129,6 +129,11 @@
   height: 68px;
   padding: 0 30px;
   text-decoration: none;
+
+  font-size: 1.85rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.02em;
 }
 
 .gm-footer__links-area {

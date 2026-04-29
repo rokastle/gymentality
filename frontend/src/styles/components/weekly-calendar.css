@@ -1,5 +1,11 @@
 .weekly-calendar {
-  --wc-bg: rgba(255, 255, 255, 0.06);
+  --wc-bg: linear-gradient(
+    180deg,
+    rgba(30, 33, 36, 0.95) 0%,
+    rgba(44, 48, 51, 0.72) 58%,
+    rgba(44, 48, 51, 0) 100%
+  );
+
   --wc-month-title-bg: var(--gm-white);
   --wc-month-title-color: var(--gm-black);
 
@@ -35,37 +41,26 @@
   --wc-hover-weekday: var(--gm-white);
   --wc-hover-shadow: 0 6px 14px rgba(255, 184, 0, 0.22);
 
-  --wc-selected-bg: linear-gradient(
-    180deg,
-    var(--gm-btn-hover-yellow-start),
-    var(--gm-btn-hover-yellow-end)
-  );
+  --wc-selected-bg: var(--wc-hover-bg);
   --wc-selected-border: var(--gm-btn-hover-yellow-start);
   --wc-selected-text: var(--gm-black);
   --wc-selected-weekday: var(--gm-white);
-  --wc-selected-shadow: 0 6px 14px rgba(255, 184, 0, 0.22);
+  --wc-selected-shadow: var(--wc-hover-shadow);
 
-  --wc-completed-hover-bg: linear-gradient(
-    180deg,
-    var(--gm-btn-hover-yellow-start),
-    var(--gm-btn-hover-yellow-end)
-  );
+  --wc-completed-hover-bg: var(--wc-hover-bg);
   --wc-completed-hover-border: var(--gm-btn-hover-yellow-start);
   --wc-completed-hover-text: var(--gm-black);
   --wc-completed-hover-weekday: var(--gm-white);
-  --wc-completed-hover-shadow: 0 6px 14px rgba(255, 184, 0, 0.22);
+  --wc-completed-hover-shadow: var(--wc-hover-shadow);
 
-  --wc-selected-completed-bg: linear-gradient(
-    180deg,
-    var(--gm-btn-hover-yellow-start),
-    var(--gm-btn-hover-yellow-end)
-  );
+  --wc-selected-completed-bg: var(--wc-hover-bg);
   --wc-selected-completed-border: var(--gm-btn-hover-yellow-start);
   --wc-selected-completed-text: var(--gm-black);
   --wc-selected-completed-weekday: var(--gm-white);
-  --wc-selected-completed-shadow: 0 6px 14px rgba(255, 184, 0, 0.22);
+  --wc-selected-completed-shadow: var(--wc-hover-shadow);
 
-  width: 100%;
+  width: min(100%, 1100px);
+  margin-inline: auto;
   overflow: hidden;
   border-radius: 16px;
   background: var(--wc-bg);
@@ -364,6 +359,12 @@
    RESPONSIVE
    ========================= */
 
+@media (max-width: 1200px) {
+  .weekly-calendar {
+    width: calc(100% - 40px);
+  }
+}
+
 @media (max-width: 1100px) {
   .weekly-calendar__body {
     grid-template-columns: 2.5rem 1fr 2.5rem;
@@ -401,6 +402,10 @@
 }
 
 @media (max-width: 700px) {
+  .weekly-calendar {
+    width: 100%;
+  }
+
   .weekly-calendar__body {
     grid-template-columns: 1fr;
   }

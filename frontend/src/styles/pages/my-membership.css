@@ -8,6 +8,15 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
+  width: 100%;
+  max-width: 1260px;
+  margin: 0 auto;
+}
+
+.my-membership-page__stats-grid,
+.my-membership-page__main-card,
+.my-membership-page__bottom-grid {
+  width: 100%;
 }
 
 .my-membership-page__header {
@@ -16,18 +25,12 @@
 
 .my-membership-page__title {
   margin: 0 0 14px;
-  color: var(--gm-white);
-  font-size: 3rem;
-  font-weight: 700;
-  line-height: 1;
-  text-transform: uppercase;
+  composes: gm-title--page;
 }
 
 .my-membership-page__intro {
   margin: 0;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1.15rem;
-  font-weight: 600;
+  composes: gm-text--body;
 }
 
 /* =========================
@@ -689,6 +692,12 @@
    RESPONSIVE
    ========================= */
 
+@media (max-width: 1300px) {
+  .my-membership-page__container {
+    width: calc(100% - 40px);
+  }
+}
+
 @media (max-width: 1200px) {
   .my-membership-page__stats-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -716,6 +725,10 @@
 @media (max-width: 768px) {
   .my-membership-page {
     padding: 22px 0 54px;
+  }
+
+  .my-membership-page__container {
+    width: calc(100% - 28px);
   }
 
   .my-membership-page__title {

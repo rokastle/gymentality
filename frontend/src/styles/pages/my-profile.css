@@ -19,19 +19,14 @@
 
 .my-profile-page__title {
   margin: 0 0 18px;
-  color: var(--gm-white);
-  font-size: 3rem;
-  font-weight: 700;
-  line-height: 1;
-  text-transform: uppercase;
+  /* Usar clase de typography.css */
+  composes: gm-title--page;
 }
 
 .my-profile-page__intro {
   margin: 0;
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 1.15rem;
-  font-weight: 700;
-  line-height: 1.35;
+  /* Usar clase de typography.css */
+  composes: gm-text--body;
 }
 
 .my-profile-page__card {
