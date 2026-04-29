@@ -24,12 +24,8 @@
 
 .facilities-page__title {
   margin: 20px 0 12px;
-  color: var(--gm-white);
-  font-size: 3rem;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
+  /* Usar clase de typography.css */
+  composes: gm-title--page;
 }
 
 .facilities-page__subtitle {

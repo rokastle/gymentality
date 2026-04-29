@@ -1,0 +1,219 @@
+/* ============================================
+   GYMENTALITY TYPOGRAPHY
+   Sistema de tipografía del proyecto
+   ============================================ */
+
+/* --- Page Titles --- */
+.gm-title--page {
+  margin: 20px 0 12px;
+  color: var(--gm-white);
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.gm-title--page-sm {
+  font-size: 2rem;
+}
+
+.gm-title--page-lg {
+  font-size: 3.5rem;
+}
+
+/* --- Section Titles --- */
+.gm-title--section {
+  margin: 10px auto 26px;
+  color: var(--gm-btn-start);
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.gm-title--section-sm {
+  font-size: 1.5rem;
+}
+
+.gm-title--section-lg {
+  font-size: 2.5rem;
+}
+
+/* --- Card Titles --- */
+.gm-title--card {
+  margin: 10px 0 16px;
+  color: var(--gm-btn-start);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.gm-title--card-sm {
+  font-size: 1.1rem;
+}
+
+.gm-title--card-lg {
+  font-size: 1.6rem;
+}
+
+/* --- Text Styles --- */
+.gm-text--primary {
+  color: var(--gm-white);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.gm-text--secondary {
+  color: var(--gm-text-secondary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.gm-text--accent {
+  color: var(--gm-btn-start);
+  font-weight: 700;
+}
+
+.gm-text--success {
+  color: #38d84f;
+}
+
+.gm-text--error {
+  color: #ff6b6b;
+}
+
+.gm-text--warning {
+  color: var(--gm-btn-start);
+}
+
+/* --- Body Text --- */
+.gm-text--body {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.gm-text--body-sm {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.gm-text--body-lg {
+  font-size: 1.25rem;
+}
+
+/* --- Labels --- */
+.gm-label {
+  color: var(--gm-white);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.gm-label--sm {
+  font-size: 0.85rem;
+}
+
+.gm-label--uppercase {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* --- Stat Labels --- */
+.gm-stat-label {
+  margin: 0 0 4px;
+  color: var(--gm-btn-start);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* --- Stat Values --- */
+.gm-stat-value {
+  margin: 0;
+  color: var(--gm-white);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* --- Feature Text --- */
+.gm-feature-text {
+  position: relative;
+  padding-left: 28px;
+  margin-bottom: 14px;
+  color: var(--gm-white);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.gm-feature-text::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--gm-btn-start);
+  font-weight: 700;
+}
+
+.gm-feature-text.is-disabled {
+  color: var(--gm-text-secondary);
+}
+
+.gm-feature-text.is-disabled::before {
+  content: "✕";
+  color: var(--gm-text-secondary);
+}
+
+/* --- Intro Text --- */
+.gm-intro {
+  margin: 0 0 30px;
+  max-width: 760px;
+  color: var(--gm-white);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* --- Eyebrow Text --- */
+.gm-eyebrow {
+  margin: 0 0 34px;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gm-text-secondary);
+}
+
+/* --- Price Text --- */
+.gm-price {
+  margin: 0 0 8px;
+  color: var(--gm-white);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.gm-price-period {
+  color: var(--gm-text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* --- Link Text --- */
+.gm-link {
+  color: var(--gm-btn-start);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.gm-link:hover {
+  color: var(--gm-white);
+}

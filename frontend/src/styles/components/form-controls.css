@@ -137,3 +137,38 @@
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+/* =========================
+   CHECKBOX
+   ========================= */
+
+.gm-form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--gm-white);
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.gm-form-checkbox input[type="checkbox"],
+.signup-details-page input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  margin: 0;
+  accent-color: var(--gm-btn-start);
+  cursor: pointer;
+}
+
+.gm-form-checkbox input[type="checkbox"]:focus-visible,
+.signup-details-page input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--gm-btn-start);
+  outline-offset: 3px;
+}
+
+.gm-form-checkbox span {
+  color: inherit;
+}

@@ -1,0 +1,96 @@
+/* ============================================
+   GYMENTALITY GRADIENTS
+   Gradientes reutilizables del proyecto
+   ============================================ */
+
+/* --- Page Background (already in global.css) --- */
+/* background: linear-gradient(180deg, var(--gm-bg-start), var(--gm-bg-end)); */
+
+/* --- Hero Overlay Gradient --- */
+.gm-gradient-hero-overlay {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.42) 0%,
+    rgba(0, 0, 0, 0.16) 55%,
+    rgba(0, 0, 0, 0.28) 100%
+  );
+}
+
+/* --- Card Gradient --- */
+.gm-gradient-card {
+  background: var(--gm-surface-bg);
+}
+
+/* --- Button Gradient (primary) --- */
+.gm-gradient-btn-primary {
+  background: linear-gradient(90deg, var(--gm-btn-start), var(--gm-btn-end));
+}
+
+.gm-gradient-btn-primary-hover {
+  background: linear-gradient(
+    90deg,
+    var(--gm-btn-hover-orange-start),
+    var(--gm-btn-hover-orange-end)
+  );
+}
+
+/* --- Button Gradient (outline hover) --- */
+.gm-gradient-btn-outline-hover {
+  background: linear-gradient(
+    90deg,
+    var(--gm-btn-hover-yellow-start),
+    var(--gm-btn-hover-yellow-end)
+  );
+}
+
+/* --- Button Gradient (danger) --- */
+.gm-gradient-btn-danger {
+  background: linear-gradient(
+    90deg,
+    var(--gm-btn-hover-danger-start),
+    var(--gm-btn-hover-danger-end)
+  );
+}
+
+/* --- Section Background --- */
+.gm-gradient-section {
+  background: var(--gm-section-bg);
+}
+
+/* --- Footer Background --- */
+.gm-gradient-footer {
+  background: var(--gm-footer-bg);
+}
+
+/* --- Completed State --- */
+.gm-gradient-completed {
+  background: #145214;
+}
+
+/* --- Hover State (calendar) --- */
+.gm-gradient-hover {
+  background: linear-gradient(
+    180deg,
+    var(--gm-btn-hover-yellow-start),
+    var(--gm-btn-hover-yellow-end)
+  );
+}
+
+/* --- Selected State (calendar) --- */
+.gm-gradient-selected {
+  background: linear-gradient(
+    180deg,
+    var(--gm-btn-hover-yellow-start),
+    var(--gm-btn-hover-yellow-end)
+  );
+}
+
+/* --- Light Background (clubs page fallback) --- */
+.gm-gradient-light {
+  background: linear-gradient(180deg, #eef0f2, #d9dde1);
+}
+
+/* --- Dark Overlay --- */
+.gm-gradient-dark-overlay {
+  background: rgba(0, 0, 0, 0.32);
+}

@@ -10,6 +10,8 @@
 @import "./styles/components/page-layout.css";
 @import "./styles/components/my-pages.css";
 @import "./styles/components/signup-pages.css";
+@import "./styles/components/gradients.css";
+@import "./styles/components/typography.css";
 
 @import "./styles/layout/navbar.css";
 @import "./styles/layout/footer.css";

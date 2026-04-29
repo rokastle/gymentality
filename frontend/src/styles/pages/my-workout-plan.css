@@ -25,12 +25,9 @@
 
 .my-workout-page__title {
   margin: 0 0 18px;
-  color: var(--gm-white);
-  font-size: 3rem;
-  font-weight: 700;
-  line-height: 1;
+  /* Usar clase de typography.css */
+  composes: gm-title--page;
   text-align: center;
-  text-transform: uppercase;
 }
 
 .my-workout-page__intro,
@@ -49,11 +46,13 @@
   max-width: 1260px;
   padding: 0 0 42px;
   color: var(--gm-white);
+  border-radius: 24px;
+  overflow: hidden;
 }
 
 .my-workout-page__panel--basic,
 .my-workout-page__panel--personal {
-  border-radius: 0 0 24px 24px;
+  border-radius: 24px;
 }
 
 .my-workout-page__panel--personal {
