@@ -64,7 +64,7 @@
 
 /* --- Completed State --- */
 .gm-gradient-completed {
-  background: #145214;
+  background: var(--gm-success-deep-bg);
 }
 
 /* --- Hover State (calendar) --- */

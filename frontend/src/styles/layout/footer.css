@@ -25,7 +25,7 @@
 
 .gm-footer__newsletter-title {
   margin: 0 0 26px;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 1.55rem;
   font-weight: 700;
   line-height: 1.22;
@@ -51,7 +51,7 @@
 }
 
 .gm-footer__input-wrapper:focus-within {
-  border-color: var(--gm-btn-start);
+  border-color: var(--gm-accent);
   box-shadow: 0 0 0 3px rgba(255, 195, 0, 0.16);
 }
 
@@ -92,10 +92,10 @@
   outline-offset: -2px;
 }
 
-.gm-footer__submit-arrow {
-  font-size: 1.9rem;
-  line-height: 1;
-  transform: translateY(-1px);
+.gm-footer__submit-icon {
+  display: block;
+  object-fit: contain;
+  filter: grayscale(1) brightness(0.45);
 }
 
 .gm-footer__checkbox {
@@ -111,7 +111,7 @@
 
 .gm-footer__checkbox input {
   margin-top: 3px;
-  accent-color: var(--gm-btn-start);
+  accent-color: var(--gm-accent);
 }
 
 .gm-footer__legal-text {
@@ -150,7 +150,7 @@
 
 .gm-footer__heading {
   margin: 0;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 1.1rem;
   font-weight: 500;
   text-transform: uppercase;
@@ -171,7 +171,7 @@
 }
 
 .gm-footer__links-list a:hover {
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
 }
 
 .gm-footer__links-list a:focus-visible {

@@ -1,0 +1,12 @@
+/* ============================================
+   SIGNUP PAGES STYLES
+   Entry point for signup page modules
+   ============================================ */
+
+@import url("./_timeline.css");
+@import url("./details/_layout.css");
+@import url("./details/_form.css");
+@import url("./details/_sidebar.css");
+@import url("./details/_payment.css");
+@import url("./details/_register.css");
+@import url("./_complete.css");

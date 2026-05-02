@@ -29,14 +29,14 @@
 
 .membership-card {
   min-height: 460px;
-  padding: 24px 24px 24px;
+  padding: var(--gm-card-padding);
   display: flex;
   flex-direction: column;
 }
 
 .membership-card__title {
   margin: 10px 0 20px;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 1.3rem;
   font-weight: 500;
   line-height: 1;
@@ -109,7 +109,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 1rem;
   font-weight: 800;
   line-height: 1.3;

@@ -199,7 +199,7 @@ export default function ClassesPage() {
         {visibleClasses.length > 0 ? (
           <div className="classes-page__results">
             <div className="classes-page__results-top">
-              <p className="classes-page__results-count">
+              <p className="gm-results-count classes-page__results-count">
                 {visibleClasses.length} class
                 {visibleClasses.length !== 1 ? "es" : ""} found
               </p>

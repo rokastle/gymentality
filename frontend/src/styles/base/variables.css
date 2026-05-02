@@ -1,40 +1,24 @@
 :root {
+  /* Paleta de marca: colores base para construir el tema oscuro y el acento principal. */
+  --gm-black: #000000;
+  --gm-white: #ffffff;
+  --gm-gray-100: #f6f6f6;
+  --gm-gray-900: #111111;
+  --gm-accent: #ffc300;
+
+  /* Texto: tonos compartidos para contenido sobre superficies oscuras. */
+  --gm-text-main: var(--gm-white);
+  --gm-text-secondary: #b3b3b3;
+  --gm-text-strong: rgba(255, 255, 255, 0.96);
+
+  /* Fondos de la app: fondos de pagina, seccion, superficies y footer. */
   --gm-bg-start: #141414;
   --gm-bg-end: #242424;
   --gm-surface-start: #1e2124;
-  --gm-surface-end: #2c3033;
-  --gm-border: rgba(255, 255, 255, 0.35);
-  --gm-text-main: #ffffff;
-  --gm-text-secondary: #b3b3b3;
-  --gm-accent: #e6a900;
-
-  --gm-black: #000000;
-  --gm-white: #ffffff;
-
-  --gm-btn-start: #ffc300;
-  --gm-btn-end: #ffd600;
-
-  --gm-btn-hover-yellow-start: #ffb800;
-  --gm-btn-hover-yellow-end: #ffda00;
-
-  --gm-btn-hover-orange-start: #ff9800;
-  --gm-btn-hover-orange-end: #ff6f00;
-
-  --gm-btn-hover-danger-start: #ff5f6d;
-  --gm-btn-hover-danger-end: #f04b4b;
-
-  --gm-btn-locked-bg: rgba(255, 255, 255, 0.12);
-  --gm-btn-locked-border: rgba(255, 255, 255, 0.75);
-  --gm-btn-locked-text: rgba(255, 255, 255, 0.9);
-
-  --gm-danger: #ff7f7f;
-  --gm-locked-text: rgba(255, 255, 255, 0.9);
-  --gm-locked-bg: rgba(255, 255, 255, 0.12);
-  --gm-locked-border: rgba(255, 255, 255, 0.75);
-
-  --gm-navbar-height: 88px;
-  --gm-page-max-width: 1360px;
-  --gm-page-side-gap: 90px;
+  --gm-surface-end: #0091ff;
+  --gm-card-bg: #23262e;
+  --gm-card-padding: 28px;
+  --gm-border: #9D9D9D;
 
   --gm-section-bg:
     radial-gradient(circle at 24% 16%, rgba(255, 195, 0, 0.09), transparent 26%),
@@ -46,17 +30,114 @@
   --gm-footer-bg:
     linear-gradient(90deg, #23272d 0%, #2b3138 40%, #1e2228 100%);
 
-  --gm-macro-protein: #ffc300;
+  /* Estados semanticos: colores reutilizables para feedback y estados. */
+  --gm-success: #38d84f;
+  --gm-success-strong: #28c937;
+  --gm-success-deep-bg: #145214;
+  --gm-success-bg: rgba(40, 201, 55, 0.12);
+  --gm-success-border: rgba(40, 201, 55, 0.5);
+  --gm-error: #d95b5b;
+  --gm-warning: #ff6b6b;
+  --gm-error-soft: #ff8f8f;
+  --gm-error-bg: rgba(255, 107, 107, 0.14);
+  --gm-error-bg-subtle: rgba(255, 107, 107, 0.12);
+  --gm-error-border: rgba(255, 107, 107, 0.55);
+  --gm-info: #6f8dff;
+  --gm-danger: #ff7f7f;
+
+  /* Botones: CTA, hover y estados deshabilitados. El hover secundario iguala al CTA principal. */
+  --gm-btn-start: #eba000;
+  --gm-btn-end: #FFD600;
+  --gm-btn-secondary: var(--gm-accent);
+
+  --gm-btn-hover-yellow-start: var(--gm-btn-start);
+  --gm-btn-hover-yellow-end: var(--gm-btn-end);
+
+  --gm-btn-hover-orange-start: #ff9800;
+  --gm-btn-hover-orange-end: #ff6f00;
+
+  --gm-btn-hover-danger-start: #ff5f6d;
+  --gm-btn-hover-danger-end: #f04b4b;
+
+  --gm-locked-bg: rgba(255, 255, 255, 0.12);
+  --gm-locked-border: rgba(255, 255, 255, 0.75);
+  --gm-locked-text: rgba(255, 255, 255, 0.9);
+  --gm-btn-locked-bg: var(--gm-locked-bg);
+  --gm-btn-locked-border: var(--gm-locked-border);
+  --gm-btn-locked-text: var(--gm-locked-text);
+
+  /* Formularios: superficies, textos, focus, validacion y mensajes de error. */
+  --gm-form-bg: rgba(255, 255, 255, 0.95);
+  --gm-form-select-bg: rgba(255, 255, 255, 0.96);
+  --gm-form-text: var(--gm-gray-900);
+  --gm-form-placeholder: rgba(17, 17, 17, 0.52);
+  --gm-form-card-placeholder: rgba(0, 0, 0, 0.45);
+  --gm-form-focus-border: rgba(255, 195, 0, 0.75);
+  --gm-form-focus-shadow: 0 0 0 3px rgba(255, 195, 0, 0.14);
+  --gm-form-focus-shadow-sm: 0 0 0 2px rgba(255, 195, 0, 0.45);
+  --gm-form-valid-border: #44c27a;
+  --gm-form-valid-bg: rgba(236, 255, 244, 0.96);
+  --gm-form-invalid-border: var(--gm-warning);
+  --gm-form-invalid-bg: rgba(255, 240, 240, 0.98);
+  --gm-form-error: var(--gm-error-soft);
+  --gm-form-api-error: #ff9c9c;
+
+  /* Signup y pagos: tokens especificos de pagina centralizados por consistencia. */
+  --gm-timeline-idle-dot: #c9c9c9;
+  --gm-timeline-idle-segment: #9a9a9a;
+  --gm-payment-selected-border: #0074ff;
+  --gm-payment-muted-text: rgba(0, 0, 0, 0.62);
+  --gm-payment-brand-text: #0a3c92;
+  --gm-payment-brand-red: #eb001b;
+  --gm-payment-brand-orange: #f79e1b;
+
+  /* Nutricion: indicadores de macros usados en entrenamientos y planes. */
+  --gm-macro-protein: var(--gm-btn-start);
   --gm-macro-carbs: #47c97d;
-  --gm-macro-fats: #6f8dff;
+  --gm-macro-fats: var(--gm-info);
 
-  --gm-divider-accent: rgba(255, 195, 0, 0.75);
+  /* Divisores: lineas de acento y separadores. */
+  --gm-divider-accent: var(--gm-form-focus-border);
   --gm-divider-accent-strong: var(--gm-btn-start);
+  --gm-divider-accent-gradient: linear-gradient(
+    90deg,
+    rgba(255, 195, 0, 0) 0%,
+    rgba(255, 195, 0, 0.22) 18%,
+    rgba(255, 195, 0, 0.8) 50%,
+    rgba(255, 195, 0, 0.22) 82%,
+    rgba(255, 195, 0, 0) 100%
+  );
 
-  --gm-divider-accent-gradient: linear-gradient(90deg,
-      rgba(255, 195, 0, 0) 0%,
-      rgba(255, 195, 0, 0.22) 18%,
-      rgba(255, 195, 0, 0.8) 50%,
-      rgba(255, 195, 0, 0.22) 82%,
-      rgba(255, 195, 0, 0) 100%);
+  /* Disposicion: medidas globales del contenedor principal y limites de ancho de pagina. */
+  --gm-navbar-height: 88px;
+  --gm-page-max-width: 1360px;
+  --gm-page-side-gap: 90px;
+
+  /* Puntos de corte: umbrales responsive compartidos. */
+  --gm-breakpoint-sm: 576px;
+  --gm-breakpoint-md: 768px;
+  --gm-breakpoint-lg: 992px;
+  --gm-breakpoint-xl: 1200px;
+
+  /* Espaciado: escala compacta para gaps, margenes y padding. */
+  --gm-space-1: 4px;
+  --gm-space-2: 8px;
+  --gm-space-3: 12px;
+  --gm-space-4: 16px;
+  --gm-space-5: 24px;
+  --gm-space-6: 32px;
+  --gm-space-7: 40px;
+  --gm-space-8: 48px;
+  --gm-space-9: 64px;
+
+  /* Radios: escala compartida para controles, tarjetas y botones tipo pill. */
+  --gm-radius-sm: 8px;
+  --gm-radius-md: 12px;
+  --gm-radius-lg: 22px;
+  --gm-radius-full: 9999px;
+
+  /* Sombras: niveles de elevacion para tarjetas y superficies destacadas. */
+  --gm-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --gm-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --gm-shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.18);
 }

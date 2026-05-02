@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ClubSearchMap from "../components/clubs/ClubSearchMap";
 import ClubSearchItem from "../components/clubs/ClubSearchItem";
 import { clubs, malagaMapCenter, malagaMapZoom } from "../data/clubsData";
@@ -55,10 +55,15 @@ function clubMatchesQuery(club, query) {
 export default function ClubsPage() {
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? "";
 
+  const resultsRef = useRef(null);
   const [searchValue, setSearchValue] = useState("");
   const [appliedQuery, setAppliedQuery] = useState("");
   const [selectedClubId, setSelectedClubId] = useState(null);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [scrollShadows, setScrollShadows] = useState({
+    top: false,
+    bottom: false,
+  });
 
   const visibleClubs = useMemo(() => {
     return appliedQuery
@@ -98,6 +103,26 @@ export default function ClubsPage() {
     setSelectedClubId(null);
     setIsErrorModalOpen(false);
   };
+
+  const updateScrollShadows = useCallback(() => {
+    const results = resultsRef.current;
+
+    if (!results) {
+      return;
+    }
+
+    const maxScrollTop = results.scrollHeight - results.clientHeight;
+    const hasOverflow = maxScrollTop > 1;
+
+    setScrollShadows({
+      top: hasOverflow && results.scrollTop > 1,
+      bottom: hasOverflow && results.scrollTop < maxScrollTop - 1,
+    });
+  }, []);
+
+  useEffect(() => {
+    updateScrollShadows();
+  }, [updateScrollShadows, visibleClubs]);
 
   return (
     <section className="clubs-page">
@@ -141,15 +166,25 @@ export default function ClubsPage() {
             </div>
           </form>
 
-          <div className="clubs-page__results">
-            {visibleClubs.map((club) => (
-              <ClubSearchItem
-                key={club.id}
-                club={club}
-                isSelected={String(club.id) === String(selectedClubId)}
-                onSelect={handleSelectClub}
-              />
-            ))}
+          <div
+            className={`clubs-page__results-shell ${
+              scrollShadows.top ? "has-top-shadow" : ""
+            } ${scrollShadows.bottom ? "has-bottom-shadow" : ""}`}
+          >
+            <div
+              ref={resultsRef}
+              className="clubs-page__results"
+              onScroll={updateScrollShadows}
+            >
+              {visibleClubs.map((club) => (
+                <ClubSearchItem
+                  key={club.id}
+                  club={club}
+                  isSelected={String(club.id) === String(selectedClubId)}
+                  onSelect={handleSelectClub}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>

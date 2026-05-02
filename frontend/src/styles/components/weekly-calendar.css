@@ -27,8 +27,8 @@
   --wc-today-weekday-hover: var(--gm-white);
   --wc-today-shadow: 0 6px 14px rgba(255, 255, 255, 0.16);
 
-  --wc-completed-bg: #145214;
-  --wc-completed-border: #28c937;
+  --wc-completed-bg: var(--gm-success-deep-bg);
+  --wc-completed-border: var(--gm-success-strong);
   --wc-completed-text: var(--gm-white);
 
   --wc-hover-bg: linear-gradient(

@@ -13,7 +13,7 @@ export default function ClubDetailCard({ club }) {
 
       <div className="club-detail-card__body">
         <h2 className="club-detail-card__title">
-          <span>{club.brand}</span>
+          <span className="club-detail-card__brand">{club.brand}</span>
           <span>{club.shortName}</span>
         </h2>
 

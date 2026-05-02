@@ -32,7 +32,12 @@ export default function Footer() {
                   className="gm-footer__submit"
                   aria-label="Submit email"
                 >
-                  <span className="gm-footer__submit-arrow">→</span>
+                  <IconImage
+                    name="arrowRight"
+                    className="gm-footer__submit-icon"
+                    decorative
+                    size={22}
+                  />
                 </button>
               </div>
 

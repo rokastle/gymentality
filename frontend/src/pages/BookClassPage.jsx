@@ -17,6 +17,12 @@ import {
     getClassSchedule,
     requestClassAvailabilityNotification,
 } from "../services/bookingService";
+import {
+    buildClassBookedNotification,
+    buildClassBookingOpenNotification,
+    buildClassNotifyRequestedNotification,
+    upsertStoredNotification,
+} from "../utils/notificationsStorage";
 import getClassImageByName from "../utils/getClassImageByName";
 import iconLocationWhite from "../assets/icons/icon_locationWhite_80x80.png";
 import iconScheduleWhite from "../assets/icons/icon_scheduleWhite_80x80.png";
@@ -67,6 +73,15 @@ function formatBookingOpensAt(bookingOpensAt) {
 function getCardMeta(item) {
     const categoryLabel = CATEGORY_LABELS[item.category] || item.category;
     return `${categoryLabel} (1 hour)`;
+}
+
+function isBookingOpenNotificationReady(item) {
+    return (
+        item.notifyRequested &&
+        item.bookingOpensAt &&
+        new Date(item.bookingOpensAt) <= new Date() &&
+        ["AVAILABLE", "FULL_WAITLIST_AVAILABLE"].includes(item.state)
+    );
 }
 
 function isSelectableDate(date, today, maxSelectableDate) {
@@ -370,6 +385,14 @@ export default function BookClassPage() {
 
                 if (!ignore) {
                     setScheduleItems(data);
+                    data
+                        .filter(isBookingOpenNotificationReady)
+                        .forEach((item) => {
+                            upsertStoredNotification(
+                                user.id,
+                                buildClassBookingOpenNotification(item)
+                            );
+                        });
                 }
             } catch (error) {
                 if (!ignore) {
@@ -473,10 +496,18 @@ export default function BookClassPage() {
             await refreshSchedule();
 
             if (response.bookingStatus === "WAITLISTED") {
+                upsertStoredNotification(
+                    user.id,
+                    buildClassBookedNotification(item, response.bookingStatus)
+                );
                 setFeedbackMessage("You've been added to the waitlist");
                 return;
             }
 
+            upsertStoredNotification(
+                user.id,
+                buildClassBookedNotification(item, response.bookingStatus)
+            );
             setFeedbackMessage("Class booked successfully");
         } catch (error) {
             setErrorMessage(
@@ -526,6 +557,10 @@ export default function BookClassPage() {
             );
 
             await refreshSchedule();
+            upsertStoredNotification(
+                user.id,
+                buildClassNotifyRequestedNotification(item)
+            );
             setFeedbackMessage("We’ll notify you when this class opens for booking");
         } catch (error) {
             setErrorMessage(

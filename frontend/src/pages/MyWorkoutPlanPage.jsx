@@ -253,50 +253,51 @@ function getBestDateForWeek(week, today) {
   return getStartOfDay(realDays[0] ?? today);
 }
 
+function WorkoutWeekTabs({ monthWeeks, activeWeekIndex, onSelectWeek }) {
+  return (
+    <div className="my-workout-page__week-tabs">
+      {monthWeeks.map((week, index) => (
+        <button
+          key={week.id}
+          type="button"
+          className={`my-workout-page__week-tab ${
+            index === activeWeekIndex ? "is-active" : ""
+          }`}
+          onClick={() => onSelectWeek(index)}
+        >
+          <span>{week.label}</span>
+          <small>{week.range}</small>
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function WorkoutCalendarPanel({
   monthWeeks,
   activeWeekIndex,
   selectedDate,
-  onSelectWeek,
   onSelectDate,
 }) {
   const today = getStartOfDay(new Date());
   const activeWeek = monthWeeks[activeWeekIndex] ?? monthWeeks[0];
 
   return (
-    <>
-      <div className="my-workout-page__week-tabs">
-        {monthWeeks.map((week, index) => (
-          <button
-            key={week.id}
-            type="button"
-            className={`my-workout-page__week-tab ${
-              index === activeWeekIndex ? "is-active" : ""
-            }`}
-            onClick={() => onSelectWeek(index)}
-          >
-            <span>{week.label}</span>
-            <small>{week.range}</small>
-          </button>
-        ))}
-      </div>
-
-      <div className="my-workout-page__calendar-wrapper">
-        <WeeklyCalendar
-          monthTitle={formatMonthTitle(today)}
-          days={activeWeek.days}
-          selectedDate={selectedDate}
-          onSelectDate={(day) => {
-            if (day) {
-              onSelectDate(getStartOfDay(day));
-            }
-          }}
-          getDayStateClassName={getWorkoutCalendarDayStateClassName}
-          renderDayExtra={renderWorkoutCalendarDayExtra}
-          weekdayLabels={WEEKDAY_SHORT_LABELS}
-        />
-      </div>
-    </>
+    <div className="my-workout-page__calendar-wrapper">
+      <WeeklyCalendar
+        monthTitle={formatMonthTitle(today)}
+        days={activeWeek.days}
+        selectedDate={selectedDate}
+        onSelectDate={(day) => {
+          if (day) {
+            onSelectDate(getStartOfDay(day));
+          }
+        }}
+        getDayStateClassName={getWorkoutCalendarDayStateClassName}
+        renderDayExtra={renderWorkoutCalendarDayExtra}
+        weekdayLabels={WEEKDAY_SHORT_LABELS}
+      />
+    </div>
   );
 }
 
@@ -402,10 +403,23 @@ function PersonalWorkoutPlanView() {
         </p>
       </header>
 
+      <WorkoutWeekTabs
+        monthWeeks={monthWeeks}
+        activeWeekIndex={activeWeekIndex}
+        onSelectWeek={handleSelectWeek}
+      />
+
       <div className="my-workout-page__panel my-workout-page__panel--personal gm-surface-card">
+        <WorkoutCalendarPanel
+          monthWeeks={monthWeeks}
+          activeWeekIndex={activeWeekIndex}
+          selectedDate={selectedDate}
+          onSelectDate={setSelectedDate}
+        />
+
         <div className="my-workout-page__personal-header">
           <h2 className="my-workout-page__personal-week">
-            {monthWeeks[activeWeekIndex]?.label} ·{" "}
+            {monthWeeks[activeWeekIndex]?.label} -{" "}
             {formatSelectedDate(selectedDate)}
           </h2>
           <p className="my-workout-page__personal-day-title">
@@ -446,14 +460,6 @@ function PersonalWorkoutPlanView() {
             </div>
           ))}
         </div>
-
-        <WorkoutCalendarPanel
-          monthWeeks={monthWeeks}
-          activeWeekIndex={activeWeekIndex}
-          selectedDate={selectedDate}
-          onSelectWeek={handleSelectWeek}
-          onSelectDate={setSelectedDate}
-        />
 
         {activeDay.sections.map((section) => (
           <section key={section.title} className="my-workout-page__day-section">
@@ -509,10 +515,23 @@ function IntegralWorkoutPlanView() {
         </p>
       </header>
 
+      <WorkoutWeekTabs
+        monthWeeks={monthWeeks}
+        activeWeekIndex={activeWeekIndex}
+        onSelectWeek={handleSelectWeek}
+      />
+
       <div className="my-workout-page__panel my-workout-page__panel--personal gm-surface-card">
+        <WorkoutCalendarPanel
+          monthWeeks={monthWeeks}
+          activeWeekIndex={activeWeekIndex}
+          selectedDate={selectedDate}
+          onSelectDate={setSelectedDate}
+        />
+
         <div className="my-workout-page__personal-header">
           <h2 className="my-workout-page__personal-week">
-            {monthWeeks[activeWeekIndex]?.label} ·{" "}
+            {monthWeeks[activeWeekIndex]?.label} -{" "}
             {formatSelectedDate(selectedDate)}
           </h2>
           <p className="my-workout-page__personal-day-title">
@@ -553,14 +572,6 @@ function IntegralWorkoutPlanView() {
             </div>
           ))}
         </div>
-
-        <WorkoutCalendarPanel
-          monthWeeks={monthWeeks}
-          activeWeekIndex={activeWeekIndex}
-          selectedDate={selectedDate}
-          onSelectWeek={handleSelectWeek}
-          onSelectDate={setSelectedDate}
-        />
 
         {activeDay.sections.map((section) => (
           <section key={section.title} className="my-workout-page__day-section">

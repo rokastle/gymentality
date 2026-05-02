@@ -34,7 +34,7 @@
   margin: 36px 0 0 56px;
   padding: 24px 22px 22px;
   border-radius: 24px;
-  background: var(--gm-surface-bg);
+  background: var(--gm-card-bg);
   box-shadow: 0 24px 40px rgba(0, 0, 0, 0.28);
   border: 1px solid var(--gm-border);
 }
@@ -72,7 +72,7 @@
   padding: 0;
   border: none;
   border-radius: 999px;
-  background: var(--gm-btn-start);
+  background: var(--gm-accent);
   color: #111111;
   display: inline-flex;
   align-items: center;
@@ -91,8 +91,40 @@
   height: 30px;
 }
 
-.clubs-page__results {
+.clubs-page__results-shell {
+  position: relative;
   margin-top: 26px;
+}
+
+.clubs-page__results-shell::before,
+.clubs-page__results-shell::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 12px;
+  height: 34px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 2;
+}
+
+.clubs-page__results-shell::before {
+  top: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.44), transparent);
+}
+
+.clubs-page__results-shell::after {
+  bottom: 0;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.44), transparent);
+}
+
+.clubs-page__results-shell.has-top-shadow::before,
+.clubs-page__results-shell.has-bottom-shadow::after {
+  opacity: 1;
+}
+
+.clubs-page__results {
   max-height: 560px;
   overflow-y: auto;
   padding-right: 8px;
@@ -114,13 +146,17 @@
 }
 
 .clubs-page__results::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.14);
+  background: rgba(0, 0, 0, 0.3);
   border-radius: 999px;
 }
 
 .clubs-page__results::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.58);
   border-radius: 999px;
+}
+
+.clubs-page__results::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.72);
 }
 
 .clubs-page__club-item {
@@ -129,7 +165,7 @@
   gap: 18px;
   padding: 16px 18px;
   border-radius: 16px;
-  background: var(--gm-surface-bg);
+  background: var(--gm-card-bg);
   border: 1px solid var(--gm-border);
   cursor: pointer;
   transition:
@@ -158,9 +194,13 @@
   letter-spacing: 0.02em;
 }
 
+.clubs-page__club-brand {
+  color: var(--gm-accent);
+}
+
 .clubs-page__club-city {
   margin: 6px 0 14px;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 1rem;
   font-weight: 600;
 }
@@ -179,7 +219,7 @@
   width: 22px;
   height: 22px;
   flex: 0 0 22px;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   margin-top: 1px;
 }
 

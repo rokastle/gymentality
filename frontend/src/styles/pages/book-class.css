@@ -56,7 +56,7 @@
   margin: 0 auto;
   border-radius: 1.5rem;
   overflow: hidden;
-  background: var(--gm-surface-bg);
+  background: var(--gm-card-bg);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
 }
 
@@ -85,7 +85,7 @@
   gap: 0;
   align-items: stretch;
   min-height: 11rem;
-  background: var(--gm-surface-bg);
+  background: var(--gm-card-bg);
   border: 1px solid var(--gm-border);
   border-radius: 1rem;
   padding: 0;

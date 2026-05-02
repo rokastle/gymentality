@@ -69,8 +69,8 @@
   padding: 0 42px 0 16px;
   border: none;
   border-radius: 14px;
-  background-color: rgba(255, 255, 255, 0.96);
-  color: #111111;
+  background-color: var(--gm-form-select-bg);
+  color: var(--gm-form-text);
   font-size: 0.92rem;
   font-weight: 500;
   outline: none;
@@ -83,7 +83,7 @@
 }
 
 .facilities-page__select:focus {
-  box-shadow: 0 0 0 2px rgba(255, 195, 0, 0.45);
+  box-shadow: var(--gm-form-focus-shadow-sm);
 }
 
 .facilities-page__filter-button {
@@ -91,11 +91,29 @@
   align-self: flex-end;
 }
 
+.facilities-page__results {
+  width: fit-content;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.facilities-page__results-top {
+  width: fit-content;
+  min-width: 900px;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
 .facilities-page__grid {
-  width: 100%;
-  max-width: 1180px;
+  width: fit-content;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 240px);
   gap: 90px;
 }
 
@@ -141,14 +159,45 @@
   display: block;
 }
 
+.club-detail-card__brand {
+  color: var(--gm-accent);
+}
+
 .club-detail-card__title span:last-child {
-  color: var(--gm-btn-start);
+  color: var(--gm-white);
   text-transform: none;
 }
 
 .club-detail-card__address {
   margin: 18px 0 0;
-  color: var(--gm-btn-start);
+  color: var(--gm-white);
   font-size: 1rem;
   font-weight: 600;
+}
+
+@media (max-width: 980px) {
+  .facilities-page__results-top {
+    min-width: 570px;
+  }
+
+  .facilities-page__grid {
+    grid-template-columns: repeat(2, 240px);
+  }
+}
+
+@media (max-width: 640px) {
+  .facilities-page__results,
+  .facilities-page__results-top,
+  .facilities-page__grid {
+    width: 100%;
+  }
+
+  .facilities-page__results-top {
+    min-width: 0;
+  }
+
+  .facilities-page__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 44px;
+  }
 }

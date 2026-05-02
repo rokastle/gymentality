@@ -16,6 +16,22 @@
   max-width: 1260px;
 }
 
+.my-workout-page__basic {
+  --my-workout-plan-content-width: 1260px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.my-workout-page__personal {
+  --my-workout-plan-content-width: 1100px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .my-workout-page__header {
   width: 100%;
   max-width: 980px;
@@ -42,8 +58,8 @@
 }
 
 .my-workout-page__panel {
-  width: 100%;
-  max-width: 1260px;
+  width: min(100%, var(--my-workout-plan-content-width, 1260px));
+  max-width: none;
   padding: 0 0 42px;
   color: var(--gm-white);
   border-radius: 24px;
@@ -52,7 +68,10 @@
 
 .my-workout-page__panel--basic,
 .my-workout-page__panel--personal {
-  border-radius: 24px;
+  width: min(100%, var(--my-workout-plan-content-width));
+  max-width: none;
+  border-top: 0;
+  border-radius: 0 0 24px 24px;
 }
 
 .my-workout-page__panel--personal {
@@ -64,8 +83,8 @@
    ========================= */
 
 .my-workout-page__tabbar {
-  width: 100%;
-  max-width: 1260px;
+  width: min(100%, var(--my-workout-plan-content-width));
+  max-width: none;
   margin: 18px auto 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -78,7 +97,7 @@
   border-bottom: 4px solid var(--gm-btn-start);
   border-radius: 22px 22px 0 0;
   background: #242728;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 0.98rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -192,22 +211,24 @@
    ========================= */
 
 .my-workout-page__personal-header {
-  padding: 18px 24px 10px;
+  padding: 2px 24px 10px;
   text-align: center;
 }
 
 .my-workout-page__personal-week {
   margin: 0 0 6px;
   color: var(--gm-white);
-  font-size: 2rem;
+  font-size: 1.35rem;
   font-weight: 700;
+  line-height: 1.16;
 }
 
 .my-workout-page__personal-day-title {
   margin: 0;
   color: var(--gm-white);
-  font-size: 1.7rem;
+  font-size: 1.35rem;
   font-weight: 700;
+  line-height: 1.16;
 }
 
 .my-workout-page__personal-metrics {
@@ -245,7 +266,7 @@
 }
 
 .my-workout-page__personal-metric-label {
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
 }
 
 .my-workout-page__personal-metric-value {
@@ -273,8 +294,8 @@
    ========================= */
 
 .my-workout-page__week-tabs {
-  width: calc(100% - 72px);
-  max-width: 1100px;
+  width: min(100%, var(--my-workout-plan-content-width));
+  max-width: none;
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -286,7 +307,7 @@
   border-bottom: 4px solid var(--gm-btn-start);
   border-radius: 18px 18px 0 0;
   background: #2b2f34;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -327,21 +348,22 @@
 }
 
 .my-workout-page__calendar-wrapper {
-  width: calc(100% - 72px);
-  max-width: 1100px;
-  margin: 0 auto 26px;
+  width: 100%;
+  max-width: none;
+  margin: 0 auto 18px;
 }
 
 .my-workout-page__calendar-wrapper .weekly-calendar {
-  border-radius: 0 0 16px 16px;
+  width: 100%;
+  border-radius: 0;
 }
 
 .my-workout-page__calendar-wrapper .weekly-calendar {
-  --wc-completed-bg: #145214;
-  --wc-completed-border: #28c937;
-  --wc-completed-text: #28c937;
+  --wc-completed-bg: var(--gm-success-deep-bg);
+  --wc-completed-border: var(--gm-success-strong);
+  --wc-completed-text: var(--gm-success-strong);
 
-  border-radius: 0 0 16px 16px;
+  border-radius: 0;
 }
 
 .my-workout-page__calendar-check {
@@ -357,6 +379,10 @@
 
 .my-workout-page__section-heading {
   margin-top: 10px;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.16;
+  text-transform: uppercase;
 }
 
 .my-workout-page__section-heading--personal {
@@ -572,8 +598,6 @@
 @media (max-width: 1200px) {
   .my-workout-page__metrics,
   .my-workout-page__personal-metrics,
-  .my-workout-page__week-tabs,
-  .my-workout-page__calendar-wrapper,
   .my-workout-page__nutrition-layout {
     width: calc(100% - 40px);
   }
@@ -630,7 +654,7 @@
   }
 
   .my-workout-page__personal-week {
-    font-size: 1.55rem;
+    font-size: 1.35rem;
   }
 
   .my-workout-page__personal-day-title {

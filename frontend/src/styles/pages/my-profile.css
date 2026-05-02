@@ -46,15 +46,15 @@
 }
 
 .my-profile-page__feedback--success {
-  border: 1px solid rgba(40, 201, 55, 0.5);
-  background: rgba(40, 201, 55, 0.12);
-  color: #28c937;
+  border: 1px solid var(--gm-success-border);
+  background: var(--gm-success-bg);
+  color: var(--gm-success-strong);
 }
 
 .my-profile-page__feedback--error {
-  border: 1px solid rgba(255, 107, 107, 0.55);
-  background: rgba(255, 107, 107, 0.14);
-  color: #ff8f8f;
+  border: 1px solid var(--gm-error-border);
+  background: var(--gm-error-bg);
+  color: var(--gm-form-error);
 }
 
 .my-profile-page__section {
@@ -67,7 +67,7 @@
 
 .my-profile-page__section-title {
   margin: 0;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 1.45rem;
   font-weight: 700;
   text-align: center;
@@ -121,8 +121,8 @@
   border: 1px solid transparent;
   border-radius: 7px;
   outline: none;
-  background: rgba(255, 255, 255, 0.95);
-  color: #111111;
+  background: var(--gm-form-bg);
+  color: var(--gm-form-text);
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 400;
@@ -134,22 +134,22 @@
 }
 
 .my-profile-page__input::placeholder {
-  color: rgba(17, 17, 17, 0.52);
+  color: var(--gm-form-placeholder);
 }
 
 .my-profile-page__input:focus {
-  border-color: rgba(255, 195, 0, 0.75);
-  box-shadow: 0 0 0 3px rgba(255, 195, 0, 0.14);
+  border-color: var(--gm-form-focus-border);
+  box-shadow: var(--gm-form-focus-shadow);
 }
 
 .my-profile-page__input.is-valid {
-  border-color: #44c27a;
-  background: rgba(236, 255, 244, 0.96);
+  border-color: var(--gm-form-valid-border);
+  background: var(--gm-form-valid-bg);
 }
 
 .my-profile-page__input.is-invalid {
-  border-color: #ff6b6b;
-  background: rgba(255, 240, 240, 0.98);
+  border-color: var(--gm-form-invalid-border);
+  background: var(--gm-form-invalid-bg);
 }
 
 .my-profile-page__input:disabled {
@@ -179,7 +179,7 @@
   display: block;
   min-height: 21px;
   margin-top: 4px;
-  color: #ff8f8f;
+  color: var(--gm-form-error);
   font-size: 0.84rem;
   font-weight: 600;
   line-height: 1.25;
@@ -189,8 +189,8 @@ select.my-profile-page__input {
   appearance: none;
   cursor: pointer;
   background-image:
-    linear-gradient(45deg, transparent 50%, #111111 50%),
-    linear-gradient(135deg, #111111 50%, transparent 50%);
+    linear-gradient(45deg, transparent 50%, var(--gm-form-text) 50%),
+    linear-gradient(135deg, var(--gm-form-text) 50%, transparent 50%);
   background-position:
     calc(100% - 18px) calc(50% - 3px),
     calc(100% - 12px) calc(50% - 3px);
@@ -322,7 +322,7 @@ select.my-profile-page__input {
 }
 
 .my-profile-page__password-toggle:focus-visible {
-  outline: 2px solid #f0c400;
+  outline: 2px solid var(--gm-accent);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -383,7 +383,7 @@ select.my-profile-page__input {
   border: 2px solid var(--gm-btn-start);
   border-radius: 999px;
   background: transparent;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-family: inherit;
   font-size: 0.78rem;
   font-weight: 700;
@@ -452,26 +452,26 @@ select.my-profile-page__input {
   padding: 0 12px;
   border: 1px solid transparent;
   border-radius: 7px;
-  background: rgba(255, 255, 255, 0.95);
-  color: #111111;
+  background: var(--gm-form-bg);
+  color: var(--gm-form-text);
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 400;
 }
 
 .my-profile-page__payment-edit .credit-card-payment-form__input:focus {
-  border-color: rgba(255, 195, 0, 0.75);
-  box-shadow: 0 0 0 3px rgba(255, 195, 0, 0.14);
+  border-color: var(--gm-form-focus-border);
+  box-shadow: var(--gm-form-focus-shadow);
 }
 
 .my-profile-page__payment-edit .credit-card-payment-form__input.is-valid {
-  border-color: #44c27a;
-  background: rgba(236, 255, 244, 0.96);
+  border-color: var(--gm-form-valid-border);
+  background: var(--gm-form-valid-bg);
 }
 
 .my-profile-page__payment-edit .credit-card-payment-form__input.is-invalid {
-  border-color: #ff6b6b;
-  background: rgba(255, 240, 240, 0.98);
+  border-color: var(--gm-form-invalid-border);
+  background: var(--gm-form-invalid-bg);
 }
 
 .my-profile-page__payment-edit .credit-card-payment-form__grid {
@@ -483,7 +483,7 @@ select.my-profile-page__input {
 .my-profile-page__payment-edit .credit-card-payment-form__error {
   min-height: 21px;
   margin-top: 4px;
-  color: #ff8f8f;
+  color: var(--gm-form-error);
   font-size: 0.84rem;
   font-weight: 600;
   line-height: 1.25;
@@ -506,7 +506,7 @@ select.my-profile-page__input {
   margin-top: 16px;
   border: none;
   background: transparent;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-family: inherit;
   font-size: 0.92rem;
   font-weight: 700;

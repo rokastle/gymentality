@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import gymentalityLogo from "../../assets/logo/logo_gymentality.png";
 import IconImage from "../common/IconImage";
 import AuthDrawer from "../auth/AuthDrawer";
 
@@ -48,7 +49,11 @@ export default function Navbar() {
             onClick={handleNavClick}
             aria-label="Ir a la página principal de Gymentality"
           >
-            GYMENTALITY
+            <img
+              src={gymentalityLogo}
+              alt="Gymentality"
+              className="gm-logo__image"
+            />
           </Link>
 
           <nav className="gm-navbar__nav" aria-label="Navegación principal">

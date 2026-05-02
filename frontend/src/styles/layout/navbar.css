@@ -6,7 +6,7 @@
   background: rgba(255, 255, 255, 0.96);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(10px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
 }
 
 .gm-navbar__inner {
@@ -19,13 +19,17 @@
 
 .gm-logo {
   flex-shrink: 0;
-  color: var(--gm-accent);
-  font-size: 2.25rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  line-height: 1;
+  display: inline-flex;
+  align-items: center;
   text-decoration: none;
   transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.gm-logo__image {
+  display: block;
+  width: auto;
+  height: 54px;
+  object-fit: contain;
 }
 
 .gm-logo:hover {
@@ -33,7 +37,7 @@
 }
 
 .gm-logo:focus-visible {
-  outline: 2px solid var(--gm-accent);
+  outline: 2px solid var(--gm-btn-start);
   outline-offset: 4px;
   border-radius: 8px;
 }
@@ -64,13 +68,13 @@
   bottom: -8px;
   width: 0;
   height: 2px;
-  background: var(--gm-accent);
+  background: var(--gm-btn-start);
   transition: width 0.2s ease;
 }
 
 .gm-navbar__link:hover,
 .gm-navbar__link.is-active {
-  color: var(--gm-accent);
+  color: var(--gm-btn-start);
 }
 
 .gm-navbar__link:hover::after,
@@ -79,7 +83,7 @@
 }
 
 .gm-navbar__link:focus-visible {
-  outline: 2px solid var(--gm-accent);
+  outline: 2px solid var(--gm-btn-start);
   outline-offset: 4px;
   border-radius: 4px;
 }
@@ -135,7 +139,7 @@
 }
 
 .gm-lang-btn:focus-visible {
-  outline: 2px solid var(--gm-accent);
+  outline: 2px solid var(--gm-btn-start);
   outline-offset: 3px;
 }
 

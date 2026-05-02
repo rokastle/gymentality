@@ -51,7 +51,7 @@
 /* --- Page Intro --- */
 [class$="-page__intro"] {
   margin: 0;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--gm-text-strong);
   font-size: 1.15rem;
   font-weight: 700;
   line-height: 1.35;
@@ -82,6 +82,16 @@
   justify-content: center;
 }
 
+/* --- Page Result Indicator --- */
+.gm-results-count {
+  margin: 0;
+  color: var(--gm-accent);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 /* --- Page Feedback --- */
 [class$="-page__feedback"] {
   margin: 0 0 22px;
@@ -93,15 +103,15 @@
 }
 
 [class$="-page__feedback--success"] {
-  border: 1px solid rgba(40, 201, 55, 0.5);
-  background: rgba(40, 201, 55, 0.12);
-  color: #28c937;
+  border: 1px solid var(--gm-success-border);
+  background: var(--gm-success-bg);
+  color: var(--gm-success-strong);
 }
 
 [class$="-page__feedback--error"] {
-  border: 1px solid rgba(255, 107, 107, 0.55);
-  background: rgba(255, 107, 107, 0.12);
-  color: #ff6b6b;
+  border: 1px solid var(--gm-error-border);
+  background: var(--gm-error-bg-subtle);
+  color: var(--gm-warning);
 }
 
 /* --- Page Filters --- */
@@ -135,16 +145,16 @@
   padding: 0 42px 0 16px;
   border: none;
   border-radius: 14px;
-  background-color: rgba(255, 255, 255, 0.96);
-  color: #111111;
+  background-color: var(--gm-form-select-bg);
+  color: var(--gm-form-text);
   font-size: 0.92rem;
   font-weight: 500;
   outline: none;
   cursor: pointer;
   appearance: none;
   background-image:
-    linear-gradient(45deg, transparent 50%, #111111 50%),
-    linear-gradient(135deg, #111111 50%, transparent 50%);
+    linear-gradient(45deg, transparent 50%, var(--gm-form-text) 50%),
+    linear-gradient(135deg, var(--gm-form-text) 50%, transparent 50%);
   background-position:
     calc(100% - 18px) calc(50% - 3px),
     calc(100% - 12px) calc(50% - 3px);

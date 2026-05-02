@@ -231,7 +231,7 @@ export default function ClubDetailPage() {
           </section>
 
           <section className="club-detail__classes-section">
-            <h2 className="club-detail__section-title">CLASSES</h2>
+            <h2 className="club-detail__section-title">OUR CLASSES</h2>
 
             <div className="club-detail__classes-carousel">
               <button
