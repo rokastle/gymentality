@@ -114,7 +114,7 @@ export default function FacilitiesPage() {
         {visibleClubs.length > 0 ? (
           <div className="facilities-page__results">
             <div className="facilities-page__results-top">
-              <p className="facilities-page__results-count">
+              <p className="gm-results-count facilities-page__results-count">
                 {visibleClubs.length} club{visibleClubs.length !== 1 ? "s" : ""} found
               </p>
             </div>

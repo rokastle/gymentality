@@ -25,7 +25,7 @@
 /* --- Section Titles --- */
 .gm-title--section {
   margin: 10px auto 26px;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 2rem;
   font-weight: 700;
   text-align: center;
@@ -43,7 +43,7 @@
 /* --- Card Titles --- */
 .gm-title--card {
   margin: 10px 0 16px;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 1.35rem;
   font-weight: 700;
   line-height: 1;
@@ -75,20 +75,20 @@
 }
 
 .gm-text--accent {
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-weight: 700;
 }
 
 .gm-text--success {
-  color: #38d84f;
+  color: var(--gm-success);
 }
 
 .gm-text--error {
-  color: #ff6b6b;
+  color: var(--gm-error);
 }
 
 .gm-text--warning {
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
 }
 
 /* --- Body Text --- */
@@ -128,7 +128,7 @@
 /* --- Stat Labels --- */
 .gm-stat-label {
   margin: 0 0 4px;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 0.95rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -157,7 +157,7 @@
   content: "✓";
   position: absolute;
   left: 0;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-weight: 700;
 }
 
@@ -209,11 +209,99 @@
 
 /* --- Link Text --- */
 .gm-link {
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .gm-link:hover {
   color: var(--gm-white);
+}
+
+/* --- Responsive Typography --- */
+
+@media (max-width: var(--gm-breakpoint-md)) {
+  .gm-title--page {
+    font-size: 2rem;
+  }
+
+  .gm-title--page-sm {
+    font-size: 1.5rem;
+  }
+
+  .gm-title--page-lg {
+    font-size: 2.5rem;
+  }
+
+  .gm-title--section {
+    font-size: 1.5rem;
+  }
+
+  .gm-title--section-lg {
+    font-size: 2rem;
+  }
+
+  .gm-title--card {
+    font-size: 1.1rem;
+  }
+
+  .gm-text--body {
+    font-size: 1rem;
+  }
+
+  .gm-text--body-lg {
+    font-size: 1.1rem;
+  }
+
+  .gm-price {
+    font-size: 1.5rem;
+  }
+}
+
+/* --- Additional Utility Classes --- */
+
+/* Truncate text with ellipsis */
+.gm-text--truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Text alignment */
+.gm-text--center {
+  text-align: center;
+}
+
+.gm-text--left {
+  text-align: left;
+}
+
+.gm-text--right {
+  text-align: right;
+}
+
+/* Text transform */
+.gm-text--uppercase {
+  text-transform: uppercase;
+}
+
+.gm-text--lowercase {
+  text-transform: lowercase;
+}
+
+.gm-text--capitalize {
+  text-transform: capitalize;
+}
+
+/* Line height utilities */
+.gm-text--tight {
+  line-height: 1.1;
+}
+
+.gm-text--normal {
+  line-height: 1.5;
+}
+
+.gm-text--relaxed {
+  line-height: 1.75;
 }

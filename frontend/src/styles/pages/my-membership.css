@@ -61,7 +61,7 @@
 
 .my-membership-page__stat-label {
   margin: 0 0 4px;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 0.95rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -80,7 +80,7 @@
 }
 
 .my-membership-page__stat-value--warning {
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
 }
 
 /* =========================
@@ -113,7 +113,7 @@
 
 .my-membership-page__section-kicker {
   margin: 0 0 18px;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 1.05rem;
   font-weight: 700;
   text-align: center;
@@ -206,7 +206,7 @@
 }
 
 .my-membership-page__detail-value--warning {
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
 }
 
 /* =========================
@@ -499,7 +499,7 @@
 }
 
 .my-membership-page__invoice-btn:hover {
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
 }
 
 .my-membership-page__empty-state {
@@ -533,7 +533,7 @@
   border: 2px solid var(--gm-btn-start);
   border-radius: 999px;
   background: transparent;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 0.78rem;
   font-weight: 700;
   text-transform: uppercase;

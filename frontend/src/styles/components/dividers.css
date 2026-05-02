@@ -59,7 +59,7 @@
   max-width: 1080px;
   margin: 10px auto 26px;
   padding-bottom: 12px;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 2rem;
   font-weight: 700;
   text-align: center;
@@ -81,7 +81,7 @@
 /* Heading sin línea inferior */
 .gm-section-heading {
   margin: 10px auto 26px;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 2rem;
   font-weight: 700;
   text-align: center;

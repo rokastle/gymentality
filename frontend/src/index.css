@@ -9,7 +9,6 @@
 @import "./styles/components/dividers.css";
 @import "./styles/components/page-layout.css";
 @import "./styles/components/my-pages.css";
-@import "./styles/components/signup-pages.css";
 @import "./styles/components/gradients.css";
 @import "./styles/components/typography.css";
 
@@ -27,8 +26,9 @@
 @import "./styles/pages/classes.css";
 @import "./styles/pages/facilities.css";
 @import "./styles/pages/club-detail.css";
-@import "./styles/pages/signup.css";
+@import "./styles/pages/signup/index.css";
 @import "./styles/pages/book-class.css";
+@import "./styles/pages/notifications.css";
 @import "./styles/pages/my-workout-plan.css";
 @import "./styles/pages/my-membership.css";
 @import "./styles/pages/my-profile.css";

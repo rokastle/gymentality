@@ -53,7 +53,10 @@ export default function MembershipPage() {
 
         <div className="membership-page__grid">
           {membershipPlans.map((plan) => (
-            <article key={plan.id} className="membership-card gm-surface-card">
+            <article
+              key={plan.id}
+              className="membership-card gm-surface-card gm-card-lift"
+            >
               <h2 className="membership-card__title">{plan.title}</h2>
 
               <div className="membership-card__pricing">

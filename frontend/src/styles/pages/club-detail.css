@@ -178,19 +178,36 @@
   width: 54px;
   height: 54px;
   padding: 0;
-  border: none;
+  border: 3px solid var(--gm-btn-secondary);
   background: transparent;
   border-radius: 999px;
+  color: var(--gm-btn-secondary);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .club-detail__arrow:hover {
   transform: translateY(-1px);
-  background: rgba(255, 195, 0, 0.08);
+  border-color: transparent;
+  color: var(--gm-black);
+  background: linear-gradient(
+    90deg,
+    var(--gm-btn-hover-yellow-start),
+    var(--gm-btn-hover-yellow-end)
+  );
+  box-shadow: 0 10px 22px rgba(255, 195, 0, 0.18);
+}
+
+.club-detail__arrow:active {
+  transform: translateY(0);
 }
 
 .club-detail__arrow:focus-visible {
@@ -206,6 +223,12 @@
   width: 28px;
   height: 28px;
   object-fit: contain;
+  transition: filter 0.2s ease;
+}
+
+.club-detail__arrow:hover .club-detail__arrow-icon,
+.club-detail__arrow:active .club-detail__arrow-icon {
+  filter: brightness(0) saturate(100%);
 }
 
 .club-detail__facility-main {
@@ -216,29 +239,35 @@
 .club-detail__facility-image-wrapper {
   overflow: hidden;
   border-radius: 18px;
+  aspect-ratio: 16 / 9;
 }
 
 .club-detail__facility-image {
   width: 100%;
-  max-height: 430px;
+  height: 100%;
   object-fit: cover;
   display: block;
 }
 
 .club-detail__facility-title {
-  margin: 20px 0 34px;
-  color: var(--gm-white);
-  font-size: 3rem;
+  min-height: 1.6rem;
+  margin: 20px 0 20px;
+  color: var(--gm-accent);
+  font-size: 1.35rem;
   font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.02em;
+  line-height: 1.16;
+  letter-spacing: 0;
   text-align: center;
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .club-detail__facility-description {
   margin: 0;
   max-width: 760px;
+  min-height: 4.65rem;
   color: rgba(255, 255, 255, 0.92);
   font-size: 1rem;
   line-height: 1.55;
@@ -312,8 +341,8 @@
   }
 
   .club-detail__facility-title {
-    font-size: 2.2rem;
-    margin-bottom: 22px;
+    font-size: 1.35rem;
+    margin-bottom: 20px;
   }
 
   .club-detail__classes-grid {

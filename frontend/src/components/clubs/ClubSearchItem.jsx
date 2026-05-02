@@ -40,7 +40,10 @@ export default function ClubSearchItem({ club, isSelected, onSelect }) {
       onClick={() => onSelect(club.id)}
     >
       <div className="clubs-page__club-main">
-        <h2 className="clubs-page__club-name">{club.name}</h2>
+        <h2 className="clubs-page__club-name">
+          <span className="clubs-page__club-brand">{club.brand}</span>{" "}
+          <span>{club.shortName}</span>
+        </h2>
         <p className="clubs-page__club-city">{club.city}</p>
 
         <div className="clubs-page__club-line">

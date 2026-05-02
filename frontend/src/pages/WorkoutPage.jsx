@@ -58,7 +58,10 @@ export default function WorkoutPage() {
 
         <div className="workout-page__grid">
           {workoutPlans.map((plan) => (
-            <article key={plan.id} className="workout-card gm-surface-card">
+            <article
+              key={plan.id}
+              className="workout-card gm-surface-card gm-card-lift"
+            >
               <h2 className="workout-card__title">{plan.title}</h2>
 
               <div className="workout-card__pricing">

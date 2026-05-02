@@ -14,7 +14,7 @@ body {
 
 .gm-surface-card {
   border: 1px solid var(--gm-border);
-  background: var(--gm-surface-bg);
+  background: var(--gm-card-bg);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
   border-radius: 22px;
 }

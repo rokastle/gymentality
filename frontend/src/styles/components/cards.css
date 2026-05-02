@@ -6,7 +6,7 @@
 /* --- Base Card --- */
 .gm-surface-card {
   border: 1px solid var(--gm-border);
-  background: var(--gm-surface-bg);
+  background: var(--gm-card-bg);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
   border-radius: 22px;
 }
@@ -15,7 +15,7 @@
 
 /* Card con padding interno */
 .gm-surface-card--padded {
-  padding: 24px;
+  padding: var(--gm-card-padding);
 }
 
 /* Card más pequeño */
@@ -38,6 +38,20 @@
 .gm-surface-card--interactive:hover {
   transform: translateY(-2px);
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.22);
+}
+
+/* Card con elevacion al pasar el raton */
+.gm-card-lift {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
+}
+
+.gm-card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.24);
+  filter: brightness(1.03);
 }
 
 /* Card invertida (fondo claro) */

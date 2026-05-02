@@ -1,0 +1,55 @@
+/* --- Payment Card Form --- */
+
+.signup-details-page__payment-box {
+  margin-top: 12px;
+}
+
+.signup-details-page__payment-option {
+  min-height: 86px;
+  margin-bottom: 22px;
+  padding: 18px 24px;
+  border: 2px solid var(--gm-payment-selected-border);
+  border-radius: 8px;
+  background: var(--gm-white);
+  color: var(--gm-black);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.signup-details-page__payment-option strong {
+  color: var(--gm-black);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.signup-details-page__payment-option span {
+  display: block;
+  margin-top: 4px;
+  color: var(--gm-payment-muted-text);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.signup-details-page__payment-brands {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--gm-payment-brand-text);
+}
+
+.signup-details-page__payment-brand-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+}
+
+.signup-details-page__payment-brand-dot--red {
+  background: var(--gm-payment-brand-red);
+}
+
+.signup-details-page__payment-brand-dot--orange {
+  margin-left: -8px;
+  background: var(--gm-payment-brand-orange);
+}

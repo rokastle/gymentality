@@ -39,7 +39,7 @@
 .my-profile-page__intro,
 .my-workout-page__intro {
   margin: 0;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--gm-text-strong);
   font-size: 1.15rem;
   font-weight: 600;
   line-height: 1.35;
@@ -65,7 +65,7 @@
 /* --- My Page Section Title --- */
 .my-profile-page__section-title {
   margin: 0;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 1.45rem;
   font-weight: 700;
   text-align: center;
@@ -83,15 +83,15 @@
 }
 
 .my-profile-page__feedback--success {
-  border: 1px solid rgba(40, 201, 55, 0.5);
-  background: rgba(40, 201, 55, 0.12);
-  color: #28c937;
+  border: 1px solid var(--gm-success-border);
+  background: var(--gm-success-bg);
+  color: var(--gm-success-strong);
 }
 
 .my-profile-page__feedback--error {
-  border: 1px solid rgba(255, 107, 107, 0.55);
-  background: rgba(255, 107, 107, 0.14);
-  color: #ff8f8f;
+  border: 1px solid var(--gm-error-border);
+  background: var(--gm-error-bg);
+  color: var(--gm-form-error);
 }
 
 /* --- Stat Card --- */
@@ -113,7 +113,7 @@
 
 .my-membership-page__stat-label {
   margin: 0 0 4px;
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
   font-size: 0.95rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -132,7 +132,7 @@
 }
 
 .my-membership-page__stat-value--warning {
-  color: var(--gm-btn-start);
+  color: var(--gm-accent);
 }
 
 /* --- Stats Grid --- */

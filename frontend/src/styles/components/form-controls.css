@@ -19,8 +19,8 @@
   border: 1px solid transparent;
   border-radius: 7px;
   outline: none;
-  background: rgba(255, 255, 255, 0.95);
-  color: #111111;
+  background: var(--gm-form-bg);
+  color: var(--gm-form-text);
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 400;
@@ -32,22 +32,22 @@
 }
 
 .gm-form-control::placeholder {
-  color: rgba(17, 17, 17, 0.52);
+  color: var(--gm-form-placeholder);
 }
 
 .gm-form-control:focus {
-  border-color: rgba(255, 195, 0, 0.75);
-  box-shadow: 0 0 0 3px rgba(255, 195, 0, 0.14);
+  border-color: var(--gm-form-focus-border);
+  box-shadow: var(--gm-form-focus-shadow);
 }
 
 .gm-form-control.is-valid {
-  border-color: #44c27a;
-  background: rgba(236, 255, 244, 0.96);
+  border-color: var(--gm-form-valid-border);
+  background: var(--gm-form-valid-bg);
 }
 
 .gm-form-control.is-invalid {
-  border-color: #ff6b6b;
-  background: rgba(255, 240, 240, 0.98);
+  border-color: var(--gm-form-invalid-border);
+  background: var(--gm-form-invalid-bg);
 }
 
 .gm-form-control:disabled {
@@ -76,8 +76,8 @@
   appearance: none;
   cursor: pointer;
   background-image:
-    linear-gradient(45deg, transparent 50%, #111111 50%),
-    linear-gradient(135deg, #111111 50%, transparent 50%);
+    linear-gradient(45deg, transparent 50%, var(--gm-form-text) 50%),
+    linear-gradient(135deg, var(--gm-form-text) 50%, transparent 50%);
   background-position:
     calc(100% - 18px) calc(50% - 3px),
     calc(100% - 12px) calc(50% - 3px);
@@ -90,7 +90,7 @@
   display: block;
   min-height: 21px;
   margin-top: 4px;
-  color: #ff8f8f;
+  color: var(--gm-form-error);
   font-size: 0.84rem;
   font-weight: 600;
   line-height: 1.25;
@@ -133,7 +133,7 @@
 }
 
 .gm-password-toggle:focus-visible {
-  outline: 2px solid #f0c400;
+  outline: 2px solid var(--gm-accent);
   outline-offset: 2px;
   border-radius: 4px;
 }

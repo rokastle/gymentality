@@ -1,0 +1,98 @@
+/* ============================================
+   SIGNUP - COMPLETE & RESPONSIVE
+   Estilos para página de éxito y media queries
+   ============================================ */
+
+/* --- Complete Page --- */
+
+.signup-complete-page {
+  margin-top: var(--gm-navbar-height);
+  min-height: calc(100vh - var(--gm-navbar-height));
+  padding: 18px 0 42px;
+}
+
+.signup-complete-page__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.signup-complete-page__title {
+  margin: 14px 0 46px;
+  color: var(--gm-accent);
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.signup-complete-page__card {
+  width: 100%;
+  max-width: 760px;
+  padding: 38px 34px 32px;
+  border-radius: 22px;
+}
+
+.signup-complete-page__rows {
+  max-width: 400px;
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+}
+
+.signup-complete-page__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: var(--gm-white);
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.signup-complete-page__actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 46px;
+}
+
+.signup-complete-page__button {
+  text-decoration: none;
+}
+
+/* --- Responsive --- */
+
+@media (max-width: 900px) {
+  .signup-details-page__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .signup-details-page__payment-option {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .register-page__title {
+    font-size: 2.35rem;
+  }
+
+  .register-page__form,
+  .signup-selection-page__grid,
+  .signup-details-page__grid--two {
+    grid-template-columns: 1fr;
+  }
+
+  .signup-details-page__layout {
+    gap: 18px;
+  }
+
+  .register-page__field--full,
+  .register-page__submit {
+    grid-column: auto;
+  }
+
+  .register-page__submit {
+    width: 100%;
+  }
+}
