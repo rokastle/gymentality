@@ -27,16 +27,19 @@ public class ClubClassService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ClassNotificationRequestRepository classNotificationRequestRepository;
+    private final NotificationService notificationService;
 
     public ClubClassService(
             ClubClassRepository clubClassRepository,
             BookingRepository bookingRepository,
             UserRepository userRepository,
-            ClassNotificationRequestRepository classNotificationRequestRepository) {
+            ClassNotificationRequestRepository classNotificationRequestRepository,
+            NotificationService notificationService) {
         this.clubClassRepository = clubClassRepository;
         this.bookingRepository = bookingRepository;
         this.userRepository = userRepository;
         this.classNotificationRequestRepository = classNotificationRequestRepository;
+        this.notificationService = notificationService;
     }
 
     public List<ClubClass> getAllClasses() {
@@ -101,6 +104,7 @@ public class ClubClassService {
         notificationRequest.setNotifiedAt(null);
 
         classNotificationRequestRepository.save(notificationRequest);
+        notificationService.createClassReminderRequestedNotification(user, clubClass, classDate);
 
         return NotificationRequestResponse.builder()
                 .clubClassId(clubClassId)

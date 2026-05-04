@@ -1,8 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
-import { useAuth } from "../context/AuthContext";
+import useAuth from "./useAuth";
+import {
+  getMyNotifications,
+  markNotificationAsRead,
+  moveNotificationToTrash,
+} from "../services/notificationService";
 
 /**
- * Hook para gestionar las notificaciones del usuario
+ * Hook para gestionar las notificaciones del usuario.
  * @returns {Object} - { notifications, loading, error, markAsRead, refetch }
  */
 export function useNotifications() {
@@ -13,6 +18,7 @@ export function useNotifications() {
 
   const fetchNotifications = useCallback(async () => {
     if (!isAuthenticated) {
+      setNotifications([]);
       setLoading(false);
       return;
     }
@@ -21,11 +27,15 @@ export function useNotifications() {
     setError(null);
 
     try {
-      // Por ahora devolvemos array vacío
-      // Cuando haya endpoint /notifications, usar axiosClient.get('/notifications')
-      setNotifications([]);
+      const data = await getMyNotifications();
+      setNotifications(data);
     } catch (err) {
-      setError(err.message || "Error fetching notifications");
+      setError(
+        err?.response?.data?.message ||
+          err?.response?.data ||
+          err.message ||
+          "Error fetching notifications"
+      );
     } finally {
       setLoading(false);
     }
@@ -36,18 +46,59 @@ export function useNotifications() {
   }, [fetchNotifications]);
 
   const markAsRead = async (notificationId) => {
-    // Cuando haya endpoint, usar:
-    // await axiosClient.patch(`/notifications/${notificationId}/read`)
-    
-    // Por ahora actualizamos localmente
     setNotifications((prev) =>
-      prev.map((n) =>
-        n.id === notificationId ? { ...n, read: true } : n
+      prev.map((notification) =>
+        notification.id === notificationId
+          ? { ...notification, read: true }
+          : notification
       )
     );
+
+    try {
+      const updatedNotification = await markNotificationAsRead(notificationId);
+
+      setNotifications((prev) =>
+        prev.map((notification) =>
+          notification.id === notificationId
+            ? { ...notification, ...updatedNotification }
+          : notification
+        )
+      );
+    } catch {
+      // Keep the optimistic UI state even if the backend is temporarily unavailable.
+    }
   };
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const moveToTrash = async (notificationId) => {
+    setNotifications((prev) =>
+      prev.map((notification) =>
+        notification.id === notificationId
+          ? {
+              ...notification,
+              read: true,
+              deleted: true,
+              deletedAt: new Date().toISOString(),
+            }
+          : notification
+      )
+    );
+
+    try {
+      const deletedNotification = await moveNotificationToTrash(notificationId);
+
+      setNotifications((prev) =>
+        prev.map((notification) =>
+          notification.id === notificationId ? deletedNotification : notification
+        )
+      );
+    } catch {
+      // Keep the optimistic trash state even if the backend is temporarily unavailable.
+    }
+  };
+
+  const unreadCount = notifications.filter(
+    (notification) => !notification.read && !notification.deleted
+  ).length;
 
   return {
     notifications,
@@ -55,6 +106,7 @@ export function useNotifications() {
     error,
     unreadCount,
     markAsRead,
+    moveToTrash,
     refetch: fetchNotifications,
   };
 }

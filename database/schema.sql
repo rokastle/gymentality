@@ -9,6 +9,7 @@ USE gymentality;
 SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS class_notification_requests;
+DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS bookings;
 DROP TABLE IF EXISTS facilities;
 DROP TABLE IF EXISTS club_classes;
@@ -190,6 +191,28 @@ CREATE TABLE class_notification_requests (
 );
 
 -- ==================================================
+-- NOTIFICATIONS
+-- Notificaciones persistidas para el area privada.
+-- ==================================================
+CREATE TABLE notifications (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    category VARCHAR(48) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    eyebrow VARCHAR(255) NOT NULL,
+    message VARCHAR(1000) NOT NULL,
+    created_at DATETIME NOT NULL,
+    is_read BOOLEAN NOT NULL,
+    read_at DATETIME,
+    deleted_at DATETIME,
+    user_id BIGINT NOT NULL,
+
+    CONSTRAINT fk_notifications_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+);
+
+-- ==================================================
 -- INDEXES
 -- Índices útiles para consultas frecuentes.
 -- ==================================================
@@ -238,3 +261,15 @@ CREATE INDEX idx_class_notification_requests_class_date
 
 CREATE INDEX idx_class_notification_requests_active
     ON class_notification_requests(active);
+
+CREATE INDEX idx_notifications_user_id
+    ON notifications(user_id);
+
+CREATE INDEX idx_notifications_created_at
+    ON notifications(created_at);
+
+CREATE INDEX idx_notifications_is_read
+    ON notifications(is_read);
+
+CREATE INDEX idx_notifications_deleted_at
+    ON notifications(deleted_at);

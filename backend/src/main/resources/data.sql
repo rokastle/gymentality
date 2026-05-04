@@ -1,5 +1,6 @@
 -- Limpiar datos previos para evitar errores al reiniciar
 DELETE FROM class_notification_requests;
+DELETE FROM notifications;
 DELETE FROM bookings;
 DELETE FROM users;
 DELETE FROM facilities;
@@ -57,7 +58,7 @@ INSERT INTO users (
   workout_plan_id
 ) VALUES (
   1,
-  'demo.user@gymentality.local',
+  'demo@mail.com',
   'Demo',
   'User',
   -- Password: DemoUser123!

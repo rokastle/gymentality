@@ -1,19 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import IconImage from "../components/common/IconImage";
-import useAuth from "../hooks/useAuth";
-import {
-  markStoredNotificationAsRead,
-  readStoredNotifications,
-  saveStoredNotifications,
-} from "../utils/notificationsStorage";
+import { useNotifications } from "../hooks/useNotifications";
 
 const NOTIFICATION_TABS = [
-  { id: "all", label: "ALL" },
-  { id: "unread", label: "UNREAD" },
-  { id: "bookings", label: "BOOKINGS" },
-  { id: "classes", label: "CLASSES" },
-  { id: "membership", label: "MEMBERSHIP" },
-  { id: "promotions", label: "PROMOTIONS" },
+  { id: "all", label: "ALL", icon: "allNotifications" },
+  { id: "unread", label: "UNREAD", icon: "unreadNotifications" },
+  { id: "bookings", label: "BOOKING", icon: "bookClass" },
+  { id: "classes", label: "CLASS", icon: "class" },
+  { id: "membership", label: "MEMBERSHIP", icon: "membership" },
+  { id: "trash", label: "TRASH", icon: "notificationTrash" },
 ];
 
 const CATEGORY_ICON_NAMES = {
@@ -22,51 +17,6 @@ const CATEGORY_ICON_NAMES = {
   membership: "membership",
   promotions: "promotions",
 };
-
-function getSeedNotifications() {
-  const now = new Date();
-  const minutesAgo = (minutes) =>
-    new Date(now.getTime() - minutes * 60 * 1000).toISOString();
-
-  return [
-    {
-      id: "seed-class-open",
-      category: "classes",
-      title: "Class available to book",
-      eyebrow: "FRIDAY 13:20 A.M",
-      message: "New beginners course starting this Friday, booking now open!",
-      createdAt: minutesAgo(20),
-      read: false,
-    },
-    {
-      id: "seed-booking-confirmed",
-      category: "bookings",
-      title: "Booking confirmed",
-      eyebrow: "TODAY",
-      message: "Your class reservation has been confirmed successfully.",
-      createdAt: minutesAgo(42),
-      read: true,
-    },
-    {
-      id: "seed-membership-renewal",
-      category: "membership",
-      title: "Membership reminder",
-      eyebrow: "THIS WEEK",
-      message: "Your next membership payment is scheduled soon.",
-      createdAt: minutesAgo(140),
-      read: true,
-    },
-    {
-      id: "seed-promotion",
-      category: "promotions",
-      title: "Member promotion",
-      eyebrow: "GYMENTALITY",
-      message: "Invite a friend and unlock a special member reward.",
-      createdAt: minutesAgo(210),
-      read: true,
-    },
-  ];
-}
 
 function formatRelativeTime(value) {
   const createdAt = new Date(value);
@@ -114,29 +64,47 @@ function getDateGroupLabel(value) {
   }).toUpperCase();
 }
 
-function mergeNotifications(storedNotifications) {
-  const storedIds = new Set(storedNotifications.map((item) => item.id));
-  const seedNotifications = getSeedNotifications().filter(
-    (item) => !storedIds.has(item.id)
-  );
+function sortUnreadFirstByDate(notifications) {
+  return [...notifications].sort((a, b) => {
+    if (a.read !== b.read) {
+      return a.read ? 1 : -1;
+    }
 
-  return [...storedNotifications, ...seedNotifications].sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
 }
 
-function NotificationCard({ notification, onOpen }) {
+function NotificationCard({ notification, isTrashView, onOpen, onDelete }) {
   const iconName = CATEGORY_ICON_NAMES[notification.category] ?? "notifications";
+  const canOpen = !notification.deleted;
+
+  const handleOpen = () => {
+    if (canOpen) {
+      onOpen(notification.id);
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (!canOpen || (event.key !== "Enter" && event.key !== " ")) {
+      return;
+    }
+
+    event.preventDefault();
+    onOpen(notification.id);
+  };
 
   return (
-    <button
-      type="button"
+    <article
       className={`notifications-page__item ${
         notification.read ? "" : "is-unread"
-      }`}
-      onClick={() => onOpen(notification.id)}
+      } ${notification.deleted ? "is-deleted" : ""}`}
+      role={canOpen ? "button" : undefined}
+      tabIndex={canOpen ? 0 : undefined}
+      onPointerDown={handleOpen}
+      onClick={handleOpen}
+      onKeyDown={handleKeyDown}
     >
-      {!notification.read && (
+      {!notification.read && !notification.deleted && (
         <IconImage
           name="newMessage"
           decorative
@@ -144,63 +112,85 @@ function NotificationCard({ notification, onOpen }) {
         />
       )}
 
-      <span className="notifications-page__item-icon-shell">
-        <IconImage
-          name={iconName}
-          decorative
-          className="notifications-page__item-icon"
-        />
-      </span>
+      <div
+        className="notifications-page__item-main"
+      >
+        <span className="notifications-page__item-icon-shell">
+          <IconImage
+            name={iconName}
+            decorative
+            className="notifications-page__item-icon"
+          />
+        </span>
 
-      <span className="notifications-page__item-content">
-        <strong className="notifications-page__item-title">
-          {notification.title}
-        </strong>
-        <span className="notifications-page__item-eyebrow">
-          {notification.eyebrow}
+        <span className="notifications-page__item-content">
+          <strong className="notifications-page__item-title">
+            {notification.title}
+          </strong>
+          <span className="notifications-page__item-eyebrow">
+            {notification.eyebrow}
+          </span>
+          <span className="notifications-page__item-message">
+            {notification.message}
+          </span>
         </span>
-        <span className="notifications-page__item-message">
-          {notification.message}
-        </span>
-      </span>
+      </div>
 
       <span className="notifications-page__item-side">
         <span className="notifications-page__item-time">
           {formatRelativeTime(notification.createdAt)}
         </span>
-        <span className="notifications-page__item-arrow" aria-hidden="true">
-          &gt;
-        </span>
+
+        {!isTrashView && (
+          <button
+            type="button"
+            className="notifications-page__delete-btn"
+            onClick={(event) => {
+              event.stopPropagation();
+              onDelete(notification.id);
+            }}
+            aria-label={`Move ${notification.title} to trash`}
+          >
+            <IconImage
+              name="deleteNotification"
+              decorative
+              className="notifications-page__delete-icon"
+            />
+          </button>
+        )}
       </span>
-    </button>
+    </article>
   );
 }
 
 export default function NotificationsPage() {
-  const { user } = useAuth();
-  const userId = user?.id ?? "guest";
+  const {
+    notifications,
+    loading,
+    error,
+    markAsRead,
+    moveToTrash,
+  } = useNotifications();
   const [activeTabId, setActiveTabId] = useState("all");
-  const [storedNotifications, setStoredNotifications] = useState([]);
-
-  useEffect(() => {
-    setStoredNotifications(readStoredNotifications(userId));
-  }, [userId]);
-
-  const notifications = useMemo(
-    () => mergeNotifications(storedNotifications),
-    [storedNotifications]
-  );
 
   const visibleNotifications = useMemo(() => {
+    if (activeTabId === "trash") {
+      return notifications.filter((notification) => notification.deleted);
+    }
+
+    const activeNotifications = notifications.filter(
+      (notification) => !notification.deleted
+    );
+
     if (activeTabId === "all") {
-      return notifications;
+      return sortUnreadFirstByDate(activeNotifications);
     }
 
     if (activeTabId === "unread") {
-      return notifications.filter((notification) => !notification.read);
+      return activeNotifications.filter((notification) => !notification.read);
     }
 
-    return notifications.filter(
+    return activeNotifications.filter(
       (notification) => notification.category === activeTabId
     );
   }, [activeTabId, notifications]);
@@ -214,25 +204,22 @@ export default function NotificationsPage() {
     }, new Map());
   }, [visibleNotifications]);
 
-  const handleOpenNotification = (notificationId) => {
+  const handleOpenNotification = async (notificationId) => {
     const notification = notifications.find((item) => item.id === notificationId);
 
-    if (!notification || notification.read) {
+    if (!notification || notification.read || notification.deleted) {
       return;
     }
 
-    const storedNotificationExists = storedNotifications.some(
-      (item) => item.id === notificationId
-    );
-    const nextStoredNotifications = storedNotificationExists
-      ? markStoredNotificationAsRead(userId, notificationId)
-      : [{ ...notification, read: true }, ...storedNotifications];
+    await markAsRead(notificationId);
+  };
 
-    if (!storedNotificationExists) {
-      saveStoredNotifications(userId, nextStoredNotifications);
+  const handleDeleteNotification = async (notificationId) => {
+    await moveToTrash(notificationId);
+
+    if (activeTabId !== "trash") {
+      setActiveTabId("trash");
     }
-
-    setStoredNotifications(nextStoredNotifications);
   };
 
   return (
@@ -255,13 +242,22 @@ export default function NotificationsPage() {
               }`}
               onClick={() => setActiveTabId(tab.id)}
             >
-              {tab.label}
+              <IconImage
+                name={tab.icon}
+                decorative
+                className="notifications-page__tab-icon"
+              />
+              <span>{tab.label}</span>
             </button>
           ))}
         </div>
 
         <div className="notifications-page__panel gm-surface-card">
-          {visibleNotifications.length === 0 ? (
+          {loading ? (
+            <p className="notifications-page__empty">Loading notifications...</p>
+          ) : error ? (
+            <p className="notifications-page__empty">{error}</p>
+          ) : visibleNotifications.length === 0 ? (
             <p className="notifications-page__empty">
               No notifications in this section.
             </p>
@@ -285,7 +281,9 @@ export default function NotificationsPage() {
                       <NotificationCard
                         key={notification.id}
                         notification={notification}
+                        isTrashView={activeTabId === "trash"}
                         onOpen={handleOpenNotification}
+                        onDelete={handleDeleteNotification}
                       />
                     ))}
                   </div>

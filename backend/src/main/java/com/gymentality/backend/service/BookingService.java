@@ -24,14 +24,17 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final ClubClassRepository clubClassRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     public BookingService(
             BookingRepository bookingRepository,
             ClubClassRepository clubClassRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            NotificationService notificationService) {
         this.bookingRepository = bookingRepository;
         this.clubClassRepository = clubClassRepository;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
 
     @Transactional
@@ -88,6 +91,12 @@ public class BookingService {
 
         bookingRepository.save(booking);
 
+        if (newStatus == BookingStatus.CONFIRMED) {
+            notificationService.createBookingConfirmedNotification(user, clubClass, classDate);
+        } else {
+            notificationService.createWaitlistNotification(user, clubClass, classDate);
+        }
+
         String message = newStatus == BookingStatus.CONFIRMED
                 ? "Class booked successfully"
                 : "Class is full. Added to waiting list successfully";
@@ -120,6 +129,7 @@ public class BookingService {
         booking.setStatus(BookingStatus.CANCELLED);
         booking.setCancelledAt(LocalDateTime.now());
         bookingRepository.save(booking);
+        notificationService.createBookingCancelledNotification(user, clubClass, classDate);
 
         if (wasConfirmed) {
             promoteFirstWaitlistedUser(clubClassId, classDate);
@@ -166,8 +176,10 @@ public class BookingService {
         promotedBooking.setCancelledAt(null);
         bookingRepository.save(promotedBooking);
 
-        // Aquí más adelante conectaremos la creación de una notificación real
-        // para avisar al usuario de que ha pasado de waitlist a confirmed.
+        notificationService.createWaitlistPromotedNotification(
+                promotedBooking.getUser(),
+                promotedBooking.getClubClass(),
+                promotedBooking.getClassDate());
     }
 
     private UpcomingBookingResponse mapToUpcomingResponse(Booking booking) {
