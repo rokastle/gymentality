@@ -19,4 +19,6 @@ public interface ClassNotificationRequestRepository extends JpaRepository<ClassN
         Long clubClassId,
         LocalDate classDate
     );
+
+    List<ClassNotificationRequest> findByActiveTrueAndNotifiedAtIsNull();
 }

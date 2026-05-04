@@ -48,6 +48,10 @@ import notificationsIcon from "./icon_notifications_180x180.png";
 import myProfileIcon from "./icon_myProfile_180x180.png";
 import promotionsIcon from "./icon_promotions_180x180.png";
 import newMessageIcon from "./icon_newMessage_180x180.png";
+import allNotificationsIcon from "./icon_allNotifications_180x180.png";
+import unreadNotificationsIcon from "./icon_unreadNotifications_180x180.png";
+import deleteNotificationIcon from "./icon_deleteNotification_180x180.png";
+import notificationTrashIcon from "./icon_notificationTrash_180x180.png";
 
 export const icons = {
   profile,
@@ -100,6 +104,10 @@ export const icons = {
   myProfile: myProfileIcon,
   promotions: promotionsIcon,
   newMessage: newMessageIcon,
+  allNotifications: allNotificationsIcon,
+  unreadNotifications: unreadNotificationsIcon,
+  deleteNotification: deleteNotificationIcon,
+  notificationTrash: notificationTrashIcon,
 };
 
 export default icons;

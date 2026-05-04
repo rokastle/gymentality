@@ -50,6 +50,10 @@
   border-radius: 22px 22px 0 0;
   background: #242728;
   color: var(--gm-accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   font-size: 1rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -58,6 +62,12 @@
     background 0.2s ease,
     border-color 0.2s ease,
     color 0.2s ease;
+}
+
+.notifications-page__tab-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
 }
 
 .notifications-page__tab:hover {
@@ -79,7 +89,8 @@
 }
 
 .notifications-page__tab:focus-visible,
-.notifications-page__item:focus-visible {
+.notifications-page__item:focus-visible,
+.notifications-page__delete-btn:focus-visible {
   outline: 3px solid var(--gm-btn-start);
   outline-offset: 4px;
 }
@@ -125,16 +136,16 @@
   position: relative;
   width: 100%;
   min-height: 118px;
-  padding: 18px 24px 18px 134px;
+  padding: 0;
   border: 1px solid var(--gm-border);
   border-radius: 14px;
   background: var(--gm-card-bg);
   color: var(--gm-white);
-  cursor: pointer;
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
   gap: 18px;
+  cursor: pointer;
   text-align: left;
   overflow: hidden;
   transition:
@@ -149,6 +160,11 @@
   color: var(--gm-black);
 }
 
+.notifications-page__item.is-deleted {
+  opacity: 0.82;
+  cursor: default;
+}
+
 .notifications-page__new-icon {
   position: absolute;
   top: 0;
@@ -159,12 +175,9 @@
 }
 
 .notifications-page__item-icon-shell {
-  position: absolute;
-  left: 30px;
-  top: 50%;
   width: 58px;
   height: 58px;
-  transform: translateY(-50%);
+  flex: 0 0 58px;
   display: grid;
   place-items: center;
 }
@@ -179,6 +192,16 @@
   min-width: 0;
   display: grid;
   gap: 6px;
+}
+
+.notifications-page__item-main {
+  min-height: 116px;
+  padding: 18px 0 18px 30px;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  gap: 46px;
+  text-align: left;
 }
 
 .notifications-page__item-title {
@@ -200,6 +223,7 @@
 .notifications-page__item-side {
   min-width: 132px;
   height: 100%;
+  padding: 18px 24px 18px 0;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -214,15 +238,31 @@
   white-space: nowrap;
 }
 
-.notifications-page__item-arrow {
-  color: var(--gm-accent);
-  font-size: 3.25rem;
-  font-weight: 400;
-  line-height: 0.8;
+.notifications-page__delete-btn {
+  width: 46px;
+  height: 46px;
+  padding: 5px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
-.notifications-page__item.is-unread .notifications-page__item-arrow {
-  color: var(--gm-black);
+.notifications-page__delete-btn:hover {
+  background: rgba(230, 169, 0, 0.16);
+  transform: translateY(-1px);
+}
+
+.notifications-page__delete-icon {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
 }
 
 .notifications-page__empty {
@@ -242,6 +282,7 @@
 
   .notifications-page__tab {
     border-radius: 18px;
+    min-height: 58px;
   }
 
   .notifications-page__panel {
@@ -271,18 +312,24 @@
 
   .notifications-page__item {
     grid-template-columns: 1fr;
-    padding: 90px 18px 18px;
   }
 
-  .notifications-page__item-icon-shell {
-    top: 48px;
-    transform: none;
+  .notifications-page__item-main {
+    min-height: 0;
+    padding: 54px 18px 0;
+    align-items: flex-start;
+    gap: 16px;
   }
 
   .notifications-page__item-side {
     min-width: 0;
     width: 100%;
+    padding: 0 18px 18px;
     flex-direction: row;
     align-items: center;
+  }
+
+  .notifications-page__new-icon {
+    width: 64px;
   }
 }

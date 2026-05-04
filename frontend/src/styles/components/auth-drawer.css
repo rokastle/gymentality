@@ -233,7 +233,7 @@
   transition:
     background 0.2s ease,
     color 0.2s ease,
-    padding-left 0.2s ease;
+  padding-left 0.2s ease;
 }
 
 .auth-drawer__menu-item:hover {
@@ -258,6 +258,33 @@
 .auth-drawer__menu-item span {
   display: block;
   line-height: 1.2;
+}
+
+.auth-drawer__menu-label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.auth-drawer__menu-item .auth-drawer__notification-count {
+  flex: 0 0 auto;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--gm-accent);
+  color: #111111;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.auth-drawer__menu-item:hover .auth-drawer__notification-count {
+  background: #ffffff;
 }
 
 .auth-drawer__bottom-card {

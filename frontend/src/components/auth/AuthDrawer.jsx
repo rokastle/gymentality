@@ -1,11 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
+import { useNotifications } from "../../hooks/useNotifications";
 import IconImage from "../common/IconImage";
 
 export default function AuthDrawer({ open, onClose }) {
   const location = useLocation();
   const { user, isAuthenticated, login, logout } = useAuth();
+  const { unreadCount, refetch: refetchNotifications } = useNotifications();
 
   const [form, setForm] = useState({
     email: "",
@@ -18,6 +20,12 @@ export default function AuthDrawer({ open, onClose }) {
   useEffect(() => {
     onClose?.();
   }, [location.pathname, location.search]);
+
+  useEffect(() => {
+    if (open && isAuthenticated) {
+      refetchNotifications();
+    }
+  }, [open, isAuthenticated, refetchNotifications]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -211,7 +219,15 @@ export default function AuthDrawer({ open, onClose }) {
                   decorative
                   size={28}
                 />
-                <span>NOTIFICATIONS</span>
+                <span className="auth-drawer__menu-label">MY NOTIFICATIONS</span>
+                {unreadCount > 0 && (
+                  <span
+                    className="auth-drawer__notification-count"
+                    aria-label={`${unreadCount} unread notifications`}
+                  >
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
               </Link>
 
               <Link to="/account/profile" className="auth-drawer__menu-item">
