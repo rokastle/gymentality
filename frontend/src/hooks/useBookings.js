@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useAuth } from "../context/AuthContext";
+import useAuth from "./useAuth";
 import * as bookingService from "../services/bookingService";
 
 /**

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import ClassCard from "../components/classes/ClassCard";
 import {
   classesData,
@@ -89,15 +89,11 @@ export default function ClassesPage() {
     return availableClubs.filter((club) => club.city === selectedCity);
   }, [selectedCity]);
 
-  useEffect(() => {
-    const selectedClubStillVisible = clubsForSelectedCity.some(
-      (club) => String(club.id) === String(selectedClubId)
-    );
-
-    if (!selectedClubStillVisible) {
-      setSelectedClubId("");
-    }
-  }, [clubsForSelectedCity, selectedClubId]);
+  const safeSelectedClubId = clubsForSelectedCity.some(
+    (club) => String(club.id) === String(selectedClubId)
+  )
+    ? selectedClubId
+    : "";
 
   const visibleClasses = useMemo(() => {
     const filtered = classesData.filter((gymClass) => {
@@ -119,7 +115,7 @@ export default function ClassesPage() {
 
   const handleApplyFilters = () => {
     setAppliedCity(selectedCity);
-    setAppliedClubId(selectedClubId);
+    setAppliedClubId(safeSelectedClubId);
     setAppliedCategory(selectedCategory);
   };
 
@@ -140,7 +136,10 @@ export default function ClassesPage() {
               <select
                 className="classes-page__select"
                 value={selectedCity}
-                onChange={(event) => setSelectedCity(event.target.value)}
+                onChange={(event) => {
+                  setSelectedCity(event.target.value);
+                  setSelectedClubId("");
+                }}
                 aria-label="Filter classes by city"
               >
                 {availableCities.map((city) => (
@@ -155,7 +154,7 @@ export default function ClassesPage() {
               <span className="classes-page__filter-label">Club</span>
               <select
                 className="classes-page__select"
-                value={selectedClubId}
+                value={safeSelectedClubId}
                 onChange={(event) => setSelectedClubId(event.target.value)}
                 aria-label="Filter classes by club"
               >

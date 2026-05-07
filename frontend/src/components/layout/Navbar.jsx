@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import gymentalityLogo from "../../assets/logo/logo_gymentality.png";
@@ -20,24 +20,24 @@ export default function Navbar() {
 
   const userFirstName = user?.firstName?.trim() || user?.name?.trim() || "USER";
 
-  const handleOpenUserMenu = () => {
+  const handleOpenUserMenu = useCallback(() => {
     setIsUserMenuOpen(true);
-  };
+  }, []);
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = useCallback(() => {
     setIsUserMenuOpen(false);
-  };
+  }, []);
 
-  const handleJoinNowClick = () => {
+  const handleJoinNowClick = useCallback(() => {
     setIsUserMenuOpen(false);
     navigate("/clubs");
     window.scrollTo({ top: 0, behavior: "auto" });
-  };
+  }, [navigate]);
 
-  const handleNavClick = () => {
+  const handleNavClick = useCallback(() => {
     setIsUserMenuOpen(false);
     window.scrollTo({ top: 0, behavior: "auto" });
-  };
+  }, []);
 
   return (
     <>

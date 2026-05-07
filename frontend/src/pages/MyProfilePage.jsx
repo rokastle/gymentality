@@ -113,7 +113,7 @@ export default function MyProfilePage() {
   useEffect(() => {
     resetProfileForm();
     resetLoginState();
-  }, [user?.id]);
+  }, [resetLoginState, resetProfileForm, user?.id]);
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/" replace />;

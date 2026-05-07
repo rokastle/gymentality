@@ -43,7 +43,6 @@ import date from "./icon_date_180x180.png";
 import bookClassIcon from "./icon_bookClass_180x180.png";
 import classIcon from "./icon_class_180x180.png";
 import myWorkoutPlanIcon from "./icon_myWorkoutPlan_180x180.png";
-import membershipIcon from "./icon_membership_180x180.png";
 import notificationsIcon from "./icon_notifications_180x180.png";
 import myProfileIcon from "./icon_myProfile_180x180.png";
 import promotionsIcon from "./icon_promotions_180x180.png";
@@ -99,7 +98,6 @@ export const icons = {
   bookClass: bookClassIcon,
   class: classIcon,
   myWorkoutPlan: myWorkoutPlanIcon,
-  membership: membershipIcon,
   notifications: notificationsIcon,
   myProfile: myProfileIcon,
   promotions: promotionsIcon,

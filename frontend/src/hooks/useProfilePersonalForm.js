@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import useLocationFields from "./useLocationFields";
 import { buildTouchedFields } from "../utils/formStateUtils";
 import {
@@ -23,7 +23,7 @@ export default function useProfilePersonalForm({ user }) {
     setForm,
   });
 
-  const handleChange = (event) => {
+  const handleChange = useCallback((event) => {
     const { name, value } = event.target;
 
     setForm((current) => {
@@ -44,18 +44,18 @@ export default function useProfilePersonalForm({ user }) {
         nextForm,
       });
     });
-  };
+  }, [applyLocationChange]);
 
-  const handleProfileBlur = (event) => {
+  const handleProfileBlur = useCallback((event) => {
     const { name } = event.target;
 
     setProfileTouched((current) => ({
       ...current,
       [name]: true,
     }));
-  };
+  }, []);
 
-  const getProfileFieldProps = (fieldName) => ({
+  const getProfileFieldProps = useCallback((fieldName) => ({
     error: profileErrors[fieldName],
     touched: profileTouched[fieldName],
     submitAttempted: profileSubmitAttempted,
@@ -63,24 +63,24 @@ export default function useProfilePersonalForm({ user }) {
     controlClassName: "my-profile-page__input",
     errorClassName: "my-profile-page__error",
     errorId: `${fieldName}-profile-error`,
-  });
+  }), [profileErrors, profileSubmitAttempted, profileTouched]);
 
-  const resetProfileValidationState = () => {
+  const resetProfileValidationState = useCallback(() => {
     setProfileTouched({});
     setProfileSubmitAttempted(false);
-  };
+  }, []);
 
-  const resetProfileForm = () => {
+  const resetProfileForm = useCallback(() => {
     setForm(getInitialProfileForm(user));
     resetProfileValidationState();
-  };
+  }, [resetProfileValidationState, user]);
 
-  const validateProfileDetails = () => {
+  const validateProfileDetails = useCallback(() => {
     setProfileSubmitAttempted(true);
     setProfileTouched(buildTouchedFields(profileFieldOrder));
 
     return !hasValidationErrors(profileErrors);
-  };
+  }, [profileErrors]);
 
   return {
     form,

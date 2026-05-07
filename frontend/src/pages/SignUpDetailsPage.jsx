@@ -98,7 +98,10 @@ export default function SignUpDetailsPage() {
             aria-busy={isSubmitting}
           >
             {apiError && (
-              <p className="signup-details-page__api-error" role="alert">
+              <p
+                className="signup-details-page__feedback signup-details-page__feedback--error signup-details-page__api-error"
+                role="alert"
+              >
                 {apiError}
               </p>
             )}

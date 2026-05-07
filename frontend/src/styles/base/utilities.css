@@ -8,6 +8,10 @@
 
 .gm-dark-section-bg {
   background: var(--gm-section-bg);
+  background-attachment: fixed;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 /* ============================================

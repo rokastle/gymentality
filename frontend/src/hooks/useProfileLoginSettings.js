@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { buildTouchedFields } from "../utils/formStateUtils";
 import {
   hasValidationErrors,
@@ -58,13 +58,13 @@ export default function useProfileLoginSettings({ form, setForm }) {
     };
   }, [passwordErrors, passwordBackendErrors]);
 
-  const resetEmailState = () => {
+  const resetEmailState = useCallback(() => {
     setEmailTouched({});
     setEmailSubmitAttempted(false);
     setIsEmailChangeEnabled(false);
-  };
+  }, []);
 
-  const resetPasswordState = () => {
+  const resetPasswordState = useCallback(() => {
     setPasswordForm(initialPasswordForm);
     setPasswordTouched({});
     setPasswordSubmitAttempted(false);
@@ -73,23 +73,23 @@ export default function useProfileLoginSettings({ form, setForm }) {
     setShowCurrentPassword(false);
     setShowNewPassword(false);
     setShowConfirmPassword(false);
-  };
+  }, []);
 
-  const resetLoginState = () => {
+  const resetLoginState = useCallback(() => {
     resetEmailState();
     resetPasswordState();
-  };
+  }, [resetEmailState, resetPasswordState]);
 
-  const handleEmailBlur = (event) => {
+  const handleEmailBlur = useCallback((event) => {
     const { name } = event.target;
 
     setEmailTouched((current) => ({
       ...current,
       [name]: true,
     }));
-  };
+  }, []);
 
-  const handlePasswordChange = (event) => {
+  const handlePasswordChange = useCallback((event) => {
     const { name, value } = event.target;
 
     setPasswordForm((current) => ({
@@ -107,18 +107,18 @@ export default function useProfileLoginSettings({ form, setForm }) {
       delete nextErrors[name];
       return nextErrors;
     });
-  };
+  }, []);
 
-  const handlePasswordBlur = (event) => {
+  const handlePasswordBlur = useCallback((event) => {
     const { name } = event.target;
 
     setPasswordTouched((current) => ({
       ...current,
       [name]: true,
     }));
-  };
+  }, []);
 
-  const handleEmailToggleChange = (event) => {
+  const handleEmailToggleChange = useCallback((event) => {
     const enabled = event.target.checked;
 
     setIsEmailChangeEnabled(enabled);
@@ -129,9 +129,9 @@ export default function useProfileLoginSettings({ form, setForm }) {
       ...current,
       newEmail: "",
     }));
-  };
+  }, [setForm]);
 
-  const handlePasswordToggleChange = (event) => {
+  const handlePasswordToggleChange = useCallback((event) => {
     const enabled = event.target.checked;
 
     setIsPasswordChangeEnabled(enabled);
@@ -142,19 +142,19 @@ export default function useProfileLoginSettings({ form, setForm }) {
     setShowCurrentPassword(false);
     setShowNewPassword(false);
     setShowConfirmPassword(false);
-  };
+  }, []);
 
-  const markAllEmailFieldsAsTouched = () => {
+  const markAllEmailFieldsAsTouched = useCallback(() => {
     setEmailTouched(buildTouchedFields(profileEmailFieldOrder));
     setEmailSubmitAttempted(true);
-  };
+  }, []);
 
-  const markAllPasswordFieldsAsTouched = () => {
+  const markAllPasswordFieldsAsTouched = useCallback(() => {
     setPasswordTouched(buildTouchedFields(profilePasswordFieldOrder));
     setPasswordSubmitAttempted(true);
-  };
+  }, []);
 
-  const getEmailFieldProps = (fieldName) => ({
+  const getEmailFieldProps = useCallback((fieldName) => ({
     error: isEmailChangeEnabled ? emailErrors[fieldName] : "",
     touched: isEmailChangeEnabled ? emailTouched[fieldName] : false,
     submitAttempted: isEmailChangeEnabled ? emailSubmitAttempted : false,
@@ -164,9 +164,9 @@ export default function useProfileLoginSettings({ form, setForm }) {
     }`,
     errorClassName: "my-profile-page__error",
     errorId: `${fieldName}-profile-error`,
-  });
+  }), [emailErrors, emailSubmitAttempted, emailTouched, isEmailChangeEnabled]);
 
-  const getPasswordFieldProps = (fieldName) => ({
+  const getPasswordFieldProps = useCallback((fieldName) => ({
     error: mergedPasswordErrors[fieldName],
     touched: passwordTouched[fieldName],
     submitAttempted: passwordSubmitAttempted,
@@ -178,27 +178,27 @@ export default function useProfileLoginSettings({ form, setForm }) {
     errorClassName: "my-profile-page__error",
     errorId: `${fieldName}-profile-error`,
     showLabel: false,
-  });
+  }), [mergedPasswordErrors, passwordSubmitAttempted, passwordTouched]);
 
-  const validateEnabledEmailChange = () => {
+  const validateEnabledEmailChange = useCallback(() => {
     if (!isEmailChangeEnabled) {
       return true;
     }
 
     markAllEmailFieldsAsTouched();
     return !hasValidationErrors(emailErrors);
-  };
+  }, [emailErrors, isEmailChangeEnabled, markAllEmailFieldsAsTouched]);
 
-  const validateEnabledPasswordChange = () => {
+  const validateEnabledPasswordChange = useCallback(() => {
     if (!isPasswordChangeEnabled) {
       return true;
     }
 
     markAllPasswordFieldsAsTouched();
     return !hasValidationErrors(mergedPasswordErrors);
-  };
+  }, [isPasswordChangeEnabled, markAllPasswordFieldsAsTouched, mergedPasswordErrors]);
 
-  const registerPasswordBackendError = (message) => {
+  const registerPasswordBackendError = useCallback((message) => {
     setPasswordTouched((current) => ({
       ...current,
       currentPassword: true,
@@ -209,7 +209,19 @@ export default function useProfileLoginSettings({ form, setForm }) {
     setPasswordBackendErrors({
       currentPassword: message,
     });
-  };
+  }, []);
+
+  const toggleCurrentPassword = useCallback(() => {
+    setShowCurrentPassword((current) => !current);
+  }, []);
+
+  const toggleNewPassword = useCallback(() => {
+    setShowNewPassword((current) => !current);
+  }, []);
+
+  const toggleConfirmPassword = useCallback(() => {
+    setShowConfirmPassword((current) => !current);
+  }, []);
 
   return {
     passwordForm,
@@ -235,9 +247,8 @@ export default function useProfileLoginSettings({ form, setForm }) {
     resetEmailState,
     resetPasswordState,
     resetLoginState,
-    toggleCurrentPassword: () => setShowCurrentPassword((current) => !current),
-    toggleNewPassword: () => setShowNewPassword((current) => !current),
-    toggleConfirmPassword: () =>
-      setShowConfirmPassword((current) => !current),
+    toggleCurrentPassword,
+    toggleNewPassword,
+    toggleConfirmPassword,
   };
 }

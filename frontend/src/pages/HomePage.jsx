@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import IconImage from "../components/common/IconImage";
 
@@ -58,10 +59,57 @@ const benefits = [
 
 const Accent = ({ children }) => <span className="gm-accent">{children}</span>;
 
+const TypeRevealLine = ({ children, className = "", delay = 0 }) => (
+  <span
+    className={`home-type-line ${className}`}
+    style={{ "--typing-delay": `${delay}ms` }}
+  >
+    <span>{children}</span>
+  </span>
+);
+
 export default function HomePage() {
+  useEffect(() => {
+    const animatedElements = document.querySelectorAll("[data-home-animate]");
+    let lastScrollY = window.scrollY;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const currentScrollY = window.scrollY;
+        const isScrollingDown = currentScrollY >= lastScrollY;
+
+        entries.forEach((entry) => {
+          if (
+            entry.isIntersecting &&
+            entry.intersectionRatio >= 0.28 &&
+            isScrollingDown
+          ) {
+            entry.target.classList.add("is-visible");
+          } else if (
+            !entry.isIntersecting &&
+            !isScrollingDown &&
+            entry.boundingClientRect.top > 0
+          ) {
+            entry.target.classList.remove("is-visible");
+          }
+        });
+
+        lastScrollY = currentScrollY;
+      },
+      {
+        threshold: [0, 0.08, 0.28, 0.5],
+        rootMargin: "0px 0px -10% 0px",
+      },
+    );
+
+    animatedElements.forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <>
-      <section className="home-hero">
+    <div className="home-page">
+      <section className="home-hero home-full-section">
         <div className="home-hero__overlay" aria-hidden="true" />
 
         <div className="gm-container home-hero__content">
@@ -79,24 +127,49 @@ export default function HomePage() {
         </a>
       </section>
 
-      <section id="home-overview" className="home-overview gm-dark-section-bg">
-        <div className="gm-container">
+      <section
+        id="home-overview"
+        className="home-overview home-story home-full-section gm-dark-section-bg"
+        data-home-animate
+      >
+        <div className="gm-container home-section__inner">
           <p className="home-overview__eyebrow">
-            AT <Accent>GYMENTALITY</Accent>
+            <TypeRevealLine>
+              AT <Accent>GYMENTALITY</Accent>
+            </TypeRevealLine>
           </p>
 
           <h2 className="home-overview__title">
-            EVERY WORKOUT BUILDS <Accent>MENTAL TOUGHNESS</Accent>, HONES{" "}
-            <Accent>DISCIPLINE</Accent>, AND DRIVES <Accent>PROGRESS</Accent>{" "}
-            WHILE <Accent>PUSHING LIMITS</Accent>.
+            <TypeRevealLine delay={850}>
+              EVERY WORKOUT BUILDS
+            </TypeRevealLine>
+            <TypeRevealLine delay={1950}>
+              <Accent>MENTAL TOUGHNESS</Accent>,
+            </TypeRevealLine>
+            <TypeRevealLine delay={3050}>
+              HONES <Accent>DISCIPLINE</Accent>,
+            </TypeRevealLine>
+            <TypeRevealLine delay={4150}>
+              AND DRIVES <Accent>PROGRESS</Accent>
+            </TypeRevealLine>
+            <TypeRevealLine delay={5250}>
+              WHILE <Accent>PUSHING LIMITS</Accent>.
+            </TypeRevealLine>
           </h2>
+        </div>
+      </section>
 
+      <section
+        className="home-principles-section home-full-section gm-dark-section-bg"
+        data-home-animate
+      >
+        <div className="gm-container home-section__inner">
           <div className="home-principles">
             {principles.map((item, index) => (
               <div
                 key={item.title}
                 className="home-principle"
-                style={{ marginLeft: `${index * 110}px` }}
+                style={{ "--principle-delay": `${index * 160}ms` }}
               >
                 <div className="home-principle__title">
                   <span>{item.number}</span> {item.title}
@@ -105,7 +178,14 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
 
+      <section
+        className="home-offer-section home-full-section gm-dark-section-bg"
+        data-home-animate
+      >
+        <div className="gm-container home-section__inner">
           <div className="home-price-card gm-surface-card">
             <div className="home-price-card__left">
               <p className="home-price-card__label">STARTING THIS FEBRUARY</p>
@@ -124,8 +204,12 @@ export default function HomePage() {
           </div>
 
           <div className="home-benefits">
-            {benefits.map(({ title, description, iconName, alt }) => (
-              <article key={title} className="home-benefit">
+            {benefits.map(({ title, description, iconName, alt }, index) => (
+              <article
+                key={title}
+                className="home-benefit"
+                style={{ "--benefit-delay": `${520 + index * 140}ms` }}
+              >
                 <div className="home-benefit__icon">
                   <IconImage
                     name={iconName}
@@ -145,6 +229,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

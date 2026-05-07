@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import {
   cityOptionsByRegion,
   regionOptionsByCountry,
@@ -48,7 +48,7 @@ export default function useLocationFields({ country, region, city, setForm }) {
     }
   }, [city, cityOptions, setForm]);
 
-  const applyLocationChange = ({ name, value, nextForm }) => {
+  const applyLocationChange = useCallback(({ name, value, nextForm }) => {
     if (name === "country") {
       nextForm.region = "";
       nextForm.city = "";
@@ -69,7 +69,7 @@ export default function useLocationFields({ country, region, city, setForm }) {
     }
 
     return nextForm;
-  };
+  }, [cityCatalog]);
 
   return {
     regionOptions,
