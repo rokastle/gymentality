@@ -19,7 +19,7 @@ export default function AuthDrawer({ open, onClose }) {
 
   useEffect(() => {
     onClose?.();
-  }, [location.pathname, location.search]);
+  }, [location.pathname, location.search, onClose]);
 
   useEffect(() => {
     if (open && isAuthenticated) {
@@ -48,10 +48,11 @@ export default function AuthDrawer({ open, onClose }) {
         password: form.password,
       });
     } catch (error) {
+      const backendData = error?.response?.data;
       setApiError(
-        typeof error?.response?.data === "string"
-          ? error.response.data
-          : "No se pudo iniciar sesión."
+        typeof backendData === "string"
+          ? backendData
+          : backendData?.message || "No se pudo iniciar sesión."
       );
     } finally {
       setIsSubmitting(false);

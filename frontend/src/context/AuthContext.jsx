@@ -1,4 +1,5 @@
-import { createContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { AuthContext } from "./authContextValue";
 import {
   getMe,
   loginUser,
@@ -8,8 +9,6 @@ import {
   updatePaymentMethod as updatePaymentMethodRequest,
   updateProfile as updateProfileRequest,
 } from "../services/authService";
-
-export const AuthContext = createContext(null);
 
 const TOKEN_KEY = "gm_token";
 const USER_KEY = "gm_user";
@@ -30,64 +29,64 @@ export function AuthProvider({ children }) {
     Boolean(localStorage.getItem(TOKEN_KEY))
   );
 
-  const persistAuth = (authData) => {
+  const persistAuth = useCallback((authData) => {
     localStorage.setItem(TOKEN_KEY, authData.token);
     localStorage.setItem(USER_KEY, JSON.stringify(authData.user));
     setToken(authData.token);
     setUser(authData.user);
-  };
+  }, []);
 
-  const persistUser = (currentUser) => {
+  const persistUser = useCallback((currentUser) => {
     localStorage.setItem(USER_KEY, JSON.stringify(currentUser));
     setUser(currentUser);
-  };
+  }, []);
 
-  const clearAuth = () => {
+  const clearAuth = useCallback(() => {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     setToken("");
     setUser(null);
-  };
+  }, []);
 
-  const login = async (credentials) => {
+  const login = useCallback(async (credentials) => {
     const authData = await loginUser(credentials);
     persistAuth(authData);
     return authData;
-  };
+  }, [persistAuth]);
 
-  const register = async (payload) => {
+  const register = useCallback(async (payload) => {
     const authData = await registerUser(payload);
     persistAuth(authData);
     return authData;
-  };
+  }, [persistAuth]);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     clearAuth();
-  };
+  }, [clearAuth]);
 
-  const updateProfile = async (payload) => {
+  const updateProfile = useCallback(async (payload) => {
     const currentUser = await updateProfileRequest(payload);
     persistUser(currentUser);
     return currentUser;
-  };
+  }, [persistUser]);
 
-  const updatePaymentMethod = async (payload) => {
+  const updatePaymentMethod = useCallback(async (payload) => {
     const currentUser = await updatePaymentMethodRequest(payload);
     persistUser(currentUser);
     return currentUser;
-  };
+  }, [persistUser]);
 
-  const updateEmail = async (payload) => {
+  const updateEmail = useCallback(async (payload) => {
     const authData = await updateEmailRequest(payload);
     persistAuth(authData);
     return authData;
-  };
+  }, [persistAuth]);
 
-  const updatePassword = async (payload) => {
+  const updatePassword = useCallback(async (payload) => {
     const currentUser = await updatePasswordRequest(payload);
     persistUser(currentUser);
     return currentUser;
-  };
+  }, [persistUser]);
 
   useEffect(() => {
     async function initializeAuth() {
@@ -107,7 +106,7 @@ export function AuthProvider({ children }) {
     }
 
     initializeAuth();
-  }, [token]);
+  }, [clearAuth, persistUser, token]);
 
   const value = useMemo(
     () => ({
@@ -123,7 +122,18 @@ export function AuthProvider({ children }) {
       updateEmail,
       updatePassword,
     }),
-    [token, user, isInitializing]
+    [
+      token,
+      user,
+      isInitializing,
+      login,
+      register,
+      logout,
+      updateProfile,
+      updatePaymentMethod,
+      updateEmail,
+      updatePassword,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

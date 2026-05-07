@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { buildTouchedFields } from "../utils/formStateUtils";
 import {
   emptyCardForm,
@@ -13,25 +13,23 @@ import {
 } from "../utils/paymentValidation";
 
 export default function useProfilePaymentMethod({ user, updatePaymentMethod }) {
-  const [storedCard, setStoredCard] = useState(() => getInitialStoredCard(user));
+  const [storedCardOverride, setStoredCardOverride] = useState(null);
   const [isPaymentEditOpen, setIsPaymentEditOpen] = useState(false);
   const [cardForm, setCardForm] = useState(emptyCardForm);
   const [paymentTouched, setPaymentTouched] = useState({});
   const [paymentSubmitAttempted, setPaymentSubmitAttempted] = useState(false);
 
+  const storedCard = useMemo(() => {
+    if (storedCardOverride?.userId === user?.id) {
+      return storedCardOverride.card;
+    }
+
+    return getInitialStoredCard(user);
+  }, [storedCardOverride, user]);
+
   const paymentErrors = useMemo(() => validatePaymentForm(cardForm), [cardForm]);
 
   const hasPaymentErrors = hasPaymentValidationErrors(paymentErrors);
-
-  useEffect(() => {
-    setStoredCard(getInitialStoredCard(user));
-  }, [
-    user?.paymentMethod,
-    user?.cardLast4,
-    user?.cardExpiryMonth,
-    user?.cardExpiryYear,
-    user?.saveCardForFuture,
-  ]);
 
   const handleCardFormChange = (event) => {
     const { name, type, value, checked } = event.target;
@@ -95,13 +93,16 @@ export default function useProfilePaymentMethod({ user, updatePaymentMethod }) {
       saveCardForFuture: cardForm.saveForFuture,
     });
 
-    setStoredCard({
-      brand: getCardBrand(cleanCardNumber),
-      last4,
-      expiryMonth: cardForm.expiryMonth,
-      expiryYear: cardForm.expiryYear,
-      saveCardForFuture: cardForm.saveForFuture,
-      hasStoredCard: true,
+    setStoredCardOverride({
+      userId: user?.id,
+      card: {
+        brand: getCardBrand(cleanCardNumber),
+        last4,
+        expiryMonth: cardForm.expiryMonth,
+        expiryYear: cardForm.expiryYear,
+        saveCardForFuture: cardForm.saveForFuture,
+        hasStoredCard: true,
+      },
     });
 
     setCardForm(emptyCardForm);

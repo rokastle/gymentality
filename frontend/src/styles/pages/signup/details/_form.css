@@ -145,12 +145,20 @@
   accent-color: var(--gm-btn-start);
 }
 
-.signup-details-page__api-error {
-  margin: 14px 0 0;
-  color: var(--gm-form-api-error);
-  font-size: 0.92rem;
-  font-weight: 600;
+.signup-details-page__feedback {
+  width: min(100%, 860px);
+  margin: 0 auto 22px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 700;
   text-align: center;
+}
+
+.signup-details-page__feedback--error {
+  border: 1px solid var(--gm-error-border);
+  background: var(--gm-error-bg);
+  color: var(--gm-form-error);
 }
 
 .signup-details-page__submit {

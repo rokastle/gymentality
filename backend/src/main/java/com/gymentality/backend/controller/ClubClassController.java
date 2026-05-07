@@ -4,6 +4,7 @@ import com.gymentality.backend.dto.ClassScheduleItemResponse;
 import com.gymentality.backend.dto.NotificationRequestResponse;
 import com.gymentality.backend.dto.NotifyClassAvailabilityRequest;
 import com.gymentality.backend.entity.ClubClass;
+import com.gymentality.backend.exception.UnauthorizedException;
 import com.gymentality.backend.service.ClubClassService;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -38,6 +39,10 @@ public class ClubClassController {
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
         Principal principal
     ) {
+        if (principal == null) {
+            throw new UnauthorizedException("Authentication is required to view your class schedule.");
+        }
+
         return clubClassService.getScheduleForUserOnDate(date, principal.getName());
     }
 
@@ -47,6 +52,10 @@ public class ClubClassController {
         @Valid @RequestBody NotifyClassAvailabilityRequest request,
         Principal principal
     ) {
+        if (principal == null) {
+            throw new UnauthorizedException("Authentication is required to request class notifications.");
+        }
+
         return clubClassService.requestAvailabilityNotification(
             id,
             request.getClassDate(),

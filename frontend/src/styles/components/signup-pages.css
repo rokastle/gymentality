@@ -82,6 +82,21 @@
   border-radius: 22px;
   display: flex;
   flex-direction: column;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
+}
+
+.signup-plan-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 195, 0, 0.76);
+  box-shadow:
+    0 0 0 1px rgba(255, 195, 0, 0.28),
+    0 0 34px rgba(255, 195, 0, 0.32),
+    0 24px 48px rgba(0, 0, 0, 0.24);
+  filter: brightness(1.03);
 }
 
 .signup-plan-card__title {

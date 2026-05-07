@@ -121,7 +121,11 @@ export default function ClubsPage() {
   }, []);
 
   useEffect(() => {
-    updateScrollShadows();
+    const frameId = requestAnimationFrame(updateScrollShadows);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
   }, [updateScrollShadows, visibleClubs]);
 
   return (

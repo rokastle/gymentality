@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useEffect, useState } from "react";
+import useAuth from "./useAuth";
 
 /**
  * Hook para gestionar el perfil del usuario
@@ -7,14 +7,9 @@ import { useAuth } from "../context/AuthContext";
  */
 export function useUserProfile() {
   const { user, isAuthenticated, logout, isInitializing } = useAuth();
-  const [loading, setLoading] = useState(isInitializing);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    setLoading(isInitializing);
-  }, [isInitializing]);
-
-  const updateProfile = async (profileData) => {
+  const updateProfile = async () => {
     setError(null);
     try {
       // Por ahora no hay endpoint para actualizar perfil
@@ -28,7 +23,7 @@ export function useUserProfile() {
 
   return {
     user,
-    loading: loading || !isAuthenticated,
+    loading: isInitializing || !isAuthenticated,
     error,
     isAuthenticated,
     updateProfile,

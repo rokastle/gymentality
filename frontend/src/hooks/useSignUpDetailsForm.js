@@ -14,6 +14,18 @@ import {
   initialSignUpDetailsForm,
 } from "../utils/signupDetailsPageUtils";
 
+const SIGNUP_VALIDATION_ERROR =
+  "Please review the highlighted fields before continuing.";
+
+function scrollToPageTop() {
+  requestAnimationFrame(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  });
+}
+
 export default function useSignUpDetailsForm({
   club,
   membershipPlan,
@@ -62,6 +74,10 @@ export default function useSignUpDetailsForm({
         nextForm,
       });
     });
+
+    if (apiError) {
+      setApiError("");
+    }
   };
 
   const handleCreditCardChange = (event) => {
@@ -93,7 +109,7 @@ export default function useSignUpDetailsForm({
     );
 
     if (firstInvalidField) {
-      fieldRefs.current[firstInvalidField].focus();
+      fieldRefs.current[firstInvalidField].focus({ preventScroll: true });
     }
   };
 
@@ -117,7 +133,9 @@ export default function useSignUpDetailsForm({
     setApiError("");
 
     if (hasValidationErrors(errors)) {
+      setApiError(SIGNUP_VALIDATION_ERROR);
       focusFirstInvalidField(errors);
+      scrollToPageTop();
       return;
     }
 

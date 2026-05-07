@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ClubDetailCard from "../components/facilities/ClubDetailCard";
 import { clubs, cities } from "../data/clubsData";
@@ -22,15 +22,11 @@ export default function FacilitiesPage() {
     return clubs.filter((club) => club.city === selectedCity);
   }, [selectedCity]);
 
-  useEffect(() => {
-    const selectedClubStillVisible = clubsForSelectedCity.some(
-      (club) => String(club.id) === String(selectedClubId)
-    );
-
-    if (!selectedClubStillVisible) {
-      setSelectedClubId("");
-    }
-  }, [clubsForSelectedCity, selectedClubId]);
+  const safeSelectedClubId = clubsForSelectedCity.some(
+    (club) => String(club.id) === String(selectedClubId)
+  )
+    ? selectedClubId
+    : "";
 
   const visibleClubs = useMemo(() => {
     return clubs.filter((club) => {
@@ -44,10 +40,10 @@ export default function FacilitiesPage() {
 
   const handleApplyFilters = () => {
     setAppliedCity(selectedCity);
-    setAppliedClubId(selectedClubId);
+    setAppliedClubId(safeSelectedClubId);
 
-    if (selectedClubId) {
-      navigate(`/facilities/${selectedClubId}`);
+    if (safeSelectedClubId) {
+      navigate(`/facilities/${safeSelectedClubId}`);
     }
   };
 
@@ -72,7 +68,10 @@ export default function FacilitiesPage() {
               <select
                 className="facilities-page__select"
                 value={selectedCity}
-                onChange={(event) => setSelectedCity(event.target.value)}
+                onChange={(event) => {
+                  setSelectedCity(event.target.value);
+                  setSelectedClubId("");
+                }}
                 aria-label="Filter facilities by city"
               >
                 {cities.map((city) => (
@@ -87,7 +86,7 @@ export default function FacilitiesPage() {
               <span className="facilities-page__filter-label">Club</span>
               <select
                 className="facilities-page__select"
-                value={selectedClubId}
+                value={safeSelectedClubId}
                 onChange={(event) => setSelectedClubId(event.target.value)}
                 aria-label="Filter facilities by club"
               >
